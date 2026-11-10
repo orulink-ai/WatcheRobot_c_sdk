@@ -114,7 +114,7 @@ jobs:
     container: espressif/idf:v6.0.2
     timeout-minutes: 40
     env:
-      PACKAGE_OUTPUT: ${{ runner.temp }}/watcher-sdk-package-validation
+      PACKAGE_OUTPUT: /tmp/watcher-sdk-package-validation
     defaults:
       run:
         shell: bash
