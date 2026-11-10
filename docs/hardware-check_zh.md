@@ -91,5 +91,5 @@ monitor 支持 `diag status`、`diag photo`、`diag stream`、`diag record`、`d
 记录公开 commit、SOURCE.json 的上游 SHA、构建／工具链、板卡、配对固件哈希、
 日期／操作者及每项观察。Issue／Skip 不等于 Pass。无图、无声、丢事件、停不住或
 不安全运动均记失败／阻塞，不要为了推进点 Next。host／真实 LVGL 回归不是实物测试，
-[历史验收](../VALIDATION.md)也不能冒充当前快照新验收。官方恢复按
+[历史验收](../history/VALIDATION.md)也不能冒充当前快照新验收。官方恢复按
 [公开上手指南](getting-started_zh.md)，不猜地址、不用私有 workspace 命令。

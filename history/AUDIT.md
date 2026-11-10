@@ -17,7 +17,7 @@ Unrelated user changes, board branding, wire protocols and the service-dependent
 
 - Public components/headers/APIs/types/constants now use `watcher_hw_*` /
   `WATCHER_HW_*`; matching host targets, internal task names and CI paths agree.
-  Applications must follow [MIGRATION.md](MIGRATION.md). Old evidence stays historical.
+  Applications must follow [MIGRATION.md](../docs/migration.md). Old evidence stays historical.
 - Shell no longer treats explicit empty example/action arguments as defaults.
   Both entries reject blank flash/monitor ports before IDF (exit 2); omitted
   arguments retain robot/build defaults, and valid calls preserve IDF arguments
@@ -31,9 +31,9 @@ Unrelated user changes, board branding, wire protocols and the service-dependent
 
 ### H1 corrected: Lost release / 溢出丢失松手事件（原 High Risk）
 
-**Location:** [body runtime](components/sdk/watcher_hw_body/watcher_hw_body.c),
-[public contract](components/sdk/watcher_hw_body/include/watcher_hw_body.h),
-[body example](examples/body/main/app_main.c) and robot's matching callback.
+**Location:** [body runtime](../components/sdk/watcher_hw_body/watcher_hw_body.c),
+[public contract](../components/sdk/watcher_hw_body/include/watcher_hw_body.h),
+[body example](../examples/body/main/app_main.c) and robot's matching callback.
 
 The earlier characterization reproduced a lost release followed by a motion
 submission (dropped=1, moves=1), not physical robot movement. The original source
@@ -57,9 +57,9 @@ Windows Debug/Release pass. Hardware saturation/stop remains unverified.
 
 ### M1 corrected: Connected camera fault / 连通不等于就绪（原 Medium）
 
-**Location:** [SDK status](components/sdk/watcher_hw_camera/watcher_hw_camera.c),
-[PTL diagnostics](components/hal/hal_camera/src/hal_camera_ptl.c#L638),
-[test diagnostics](components/sdk/watcher_hw_camera/test_support/host/include/hal_camera.h).
+**Location:** [SDK status](../components/sdk/watcher_hw_camera/watcher_hw_camera.c),
+[PTL diagnostics](../components/hal/hal_camera/src/hal_camera_ptl.c#L638),
+[test diagnostics](../components/sdk/watcher_hw_camera/test_support/host/include/hal_camera.h).
 
 The original connected-fault regression failed. Status now prioritizes diagnostic
 query failure, disconnection, then device status; a connected fault is not READY.
@@ -83,8 +83,8 @@ H1 history and current limitations are recorded above.
 
 ### L1: Implementation dependencies leak into public headers / 依赖边界（Low）
 
-**Location:** [audio CMake](components/sdk/watcher_hw_audio/CMakeLists.txt#L1)
-line 1; [camera CMake](components/sdk/watcher_hw_camera/CMakeLists.txt#L4)
+**Location:** [audio CMake](../components/sdk/watcher_hw_audio/CMakeLists.txt#L1)
+line 1; [camera CMake](../components/sdk/watcher_hw_camera/CMakeLists.txt#L4)
 line 4.
 
 HAL dependencies are public even though these SDK headers only require core.
@@ -96,8 +96,8 @@ Not changed here.
 
 ### L2: Example startup failure retains resources / 示例失败重试边界（Low）
 
-**Location:** [head_demo_start](examples/common/head_demo.c#L673)
-lines 673–692; [example header](examples/common/head_demo.h#L3)
+**Location:** [head_demo_start](../examples/common/head_demo.c#L673)
+lines 673–692; [example header](../examples/common/head_demo.h#L3)
 lines 3–5.
 
 After media-task creation fails, UI objects remain but actions becomes NULL,

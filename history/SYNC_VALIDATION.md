@@ -30,9 +30,9 @@ The [independent hardware-check preview Release](https://github.com/orulink-ai/W
 ## Archived commands — original materials repository only / 原资料仓库历史命令
 
 The following commands were used in the original `WatcheRobot-public` checkout;
-`tools/tests`, Node/Wiki tooling and its CI are **not bundled in this standalone repository**.
-Do not run this block here. Current SDK build commands are in [getting started](docs/getting-started.md);
-local host-test instructions are in [the host guide](examples/hardware_check/test_support/host/README.md).
+the original tools/tests directory, Node/Wiki tooling and its CI are **not bundled in this standalone repository**.
+Do not run this block here. Current SDK build commands are in [getting started](../docs/getting-started.md);
+local host-test instructions are in [the host guide](../examples/hardware_check/test_support/host/README.md).
 以下命令仅保留原验证上下文，不适用于本独立仓库。
 
 ```sh

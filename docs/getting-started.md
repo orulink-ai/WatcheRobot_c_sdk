@@ -74,7 +74,7 @@ Always keep the full SDK checkout pinned; copying headers alone is insufficient.
 ## 3. Prepare the paired device — before flashing ESP32
 
 Record board revision, STM32 firmware version/commit, Himax PTL image SHA256 and
-all recovery asset hashes. [Historical evidence](../VALIDATION.md) is not current
+all recovery asset hashes. [Historical evidence](../history/VALIDATION.md) is not current
 pair acceptance. The STM32 must advertise motion/LED/touch capabilities; the camera
 requires matching **PTL** Himax firmware. Public product Releases are **not guaranteed**
 to contain a validated SDK-compatible pair. If a verified pair or recovery bundle is
@@ -159,7 +159,7 @@ From the previous namespace, migrate includes/functions/types/CMake dependencies
 from `watche_hw_*` to `watcher_hw_*`, constants to `WATCHER_HW_*` and the IDF check to
 `watcher_hw_check_idf()`; there are no aliases. Build fresh with
 `idf.py -C examples/robot -B build-watcher build`.
-Never relabel an old binary. [Migration](../MIGRATION.md) also covers event-loss changes.
+Never relabel an old binary. [Migration](migration.md) also covers event-loss changes.
 Historical names/hashes in validation records are retained intentionally, not newly accepted.
 
 ## Troubleshooting and acceptance boundary
@@ -173,7 +173,7 @@ Historical names/hashes in validation records are retained intentionally, not ne
 
 Software/host/site tests do not certify motion limits, stop timing, edge touch,
 JPEG quality, acoustic quality, repeated teardown or long-duration combined operation.
-Full paired-device and official-restore acceptance remains pending; see [validation](../VALIDATION.md).
+Full paired-device and official-restore acceptance remains pending; see [validation](../history/VALIDATION.md).
 Documentation edits do not establish a new build, device flash, hardware acceptance
 or stable Release. Create a branch and use a reviewed PR for changes; see the
 [repository workflow](repository-workflow.md).

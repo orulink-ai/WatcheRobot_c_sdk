@@ -64,7 +64,7 @@ main 声明所需 `watcher_hw_*`，沿用对应 manifest、defaults 和 partitio
 ## 3. 首次准备配套固件：不确定就停在烧录之前
 
 记录板卡版本、STM32 固件版本／commit、Himax PTL 镜像 SHA256 和恢复包哈希。
-[历史验收](../VALIDATION.md)不等于当前源码配对验收。STM32 必须声明 motion／LED／touch
+[历史验收](../history/VALIDATION.md)不等于当前源码配对验收。STM32 必须声明 motion／LED／touch
 能力；摄像头必须使用匹配的 **PTL** Himax 固件。公开产品 Releases **不保证**已有 SDK
 验证过的配对组合。缺少可信兼容记录或可用恢复包，先联系维护者，**不要烧录猜测的镜像**。
 HELLO、文件名、Latest 标签或 build 成功均不证明兼容。
@@ -135,7 +135,7 @@ LVGL 访问需加锁；阻塞音频 read/write/drain 由同一 owner 任务执�
 旧工程需将 `watche_hw_*` 头文件／函数／类型／CMake 依赖改为 `watcher_hw_*`，
 常量改为 `WATCHER_HW_*`，IDF 检查改为 `watcher_hw_check_idf()`；没有兼容别名。
 第一次执行 `idf.py -C examples/robot -B build-watcher build` 避开旧缓存，
-不要给旧固件改名冒充新版本。[迁移指南](../MIGRATION.md)还包含丢事件合同变化。
+不要给旧固件改名冒充新版本。[迁移指南](migration.md)还包含丢事件合同变化。
 历史记录保留当时名称与哈希，不能当作改名后新验收。
 
 ## 排障与验收边界
@@ -148,6 +148,6 @@ LVGL 访问需加锁；阻塞音频 read/write/drain 由同一 owner 任务执�
 - 体检结果只在 RAM，重启清空；人工结论另行记录。
 
 软件／host／站点构建不证明机械限位、停止时延、边缘触摸、图像／声音质量、资源反复释放
-或长期组合稳定性。完整配对实机与官方恢复验收仍未完成，见[验收边界](../VALIDATION.md)。
+或长期组合稳定性。完整配对实机与官方恢复验收仍未完成，见[验收边界](../history/VALIDATION.md)。
 文档修改不代表新完成构建、烧录或实机验收，也不代表已发布稳定 Release。
 提交修改前创建分支，通过 PR 审阅后合并；见[仓库开发流程](repository-workflow.md)。

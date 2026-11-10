@@ -1,0 +1,148 @@
+name: SDK validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-and-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install validation tools
+        run: python -m pip install -r packaging/requirements.txt cmake==3.31.6 ninja==1.11.1.4
+      - name: Test offline validators against real fixtures
+        run: python -m pytest tests -v
+      - name: Check every Markdown file and current SOURCE hashes
+        run: python tools/check_docs.py --check-source
+
+  host:
+    name: Host ${{ matrix.os }} ${{ matrix.config }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        config: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Set up MSVC for Ninja
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Install pinned build tools
+        run: python -m pip install cmake==3.31.6 ninja==1.11.1.4
+      - name: Fetch actual LVGL 8.4.0 source at immutable commit
+        uses: actions/checkout@v4
+        with:
+          repository: lvgl/lvgl
+          ref: 4495f428630cc1741bd8bfd977f080e8460e8e8d
+          path: .deps/lvgl
+          persist-credentials: false
+      - name: Fetch actual cJSON 1.7.19 source at immutable commit
+        uses: actions/checkout@v4
+        with:
+          repository: DaveGamble/cJSON
+          ref: c859b25da02955fef659d658b8f324b5cde87be3
+          path: .deps/cjson
+          persist-credentials: false
+      - name: Discover, build and run all actual host suites
+        run: >-
+          python tools/run_host_tests.py --config ${{ matrix.config }}
+          --lvgl-source .deps/lvgl --cjson-source .deps/cjson
+          --report .host-build/${{ matrix.config }}/report.json
+      - name: Preserve actual versions, suite results and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-${{ matrix.os }}-${{ matrix.config }}
+          path: |
+            .host-build/${{ matrix.config }}/report.json
+            .host-build/${{ matrix.config }}/**/runner.log
+            .host-build/${{ matrix.config }}/**/ctest.xml
+          include-hidden-files: true
+          if-no-files-found: error
+
+  idf-examples:
+    name: ESP-IDF 6.0.2 / ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    container: espressif/idf:v6.0.2
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [body, head, robot, hardware_check]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the real ESP32-S3 example
+        run: |
+          . /opt/esp/idf/export.sh
+          idf.py --version
+          idf.py -C examples/${{ matrix.example }} build
+      - name: Preserve firmware build evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: idf-6.0.2-${{ matrix.example }}
+          path: |
+            examples/${{ matrix.example }}/build/*.bin
+            examples/${{ matrix.example }}/build/*.elf
+            examples/${{ matrix.example }}/build/project_description.json
+          if-no-files-found: error
+
+  package-validation:
+    # Local pack + archive consumer rehearsal only. Never upload to Registry.
+    runs-on: ubuntu-latest
+    container: espressif/idf:v6.0.2
+    timeout-minutes: 40
+    env:
+      PACKAGE_OUTPUT: ${{ runner.temp }}/watcher-sdk-package-validation
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the packaging tool's declared requirements
+        run: |
+          . /opt/esp/idf/export.sh
+          python -m pip install -r packaging/requirements.txt
+      - name: Test real component preparation and packing
+        run: |
+          . /opt/esp/idf/export.sh
+          python -m pytest tests/test_packaging.py -v
+      - name: Pack tracked public source with the real Component Manager
+        run: |
+          . /opt/esp/idf/export.sh
+          python tools/package_components.py --namespace ci_preview --revision HEAD --output "$PACKAGE_OUTPUT" --pack
+      - name: Compile the clean consumer from actual package archives
+        run: |
+          . /opt/esp/idf/export.sh
+          idf.py -C "$PACKAGE_OUTPUT/consumer" build
+      - name: Preserve package validation provenance (no publication)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: component-package-validation
+          path: |
+            ${{ env.PACKAGE_OUTPUT }}/release.json
+            ${{ env.PACKAGE_OUTPUT }}/archives.sha256.json
+            ${{ env.PACKAGE_OUTPUT }}/consumer/build/project_description.json
+          if-no-files-found: warn

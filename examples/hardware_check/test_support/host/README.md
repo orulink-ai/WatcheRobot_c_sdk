@@ -36,7 +36,7 @@ ctest --test-dir build -C Release --output-on-failure --no-tests=error
 没有 LVGL 源码时，在 **WatcheRobot_c_sdk 仓库根目录**执行下列准备和回归命令。
 依赖放在相邻目录，避免混入提交；示例目标目录必须尚不存在，否则先检查原目录而非覆盖。
 `$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用。固定 SHA 是原验证的 LVGL 8.4.0，
-不是浮动分支。本仓库暂未迁入 CI，以下是本地执行方式，不代表远端 CI 已运行：
+不是浮动分支。以下是本地执行方式；CI 文件存在不代表远端已运行，具体结果见 PR Checks 与 [测试证据](../../../../docs/testing.md)：
 
 ```text
 git clone --no-checkout https://github.com/lvgl/lvgl.git ../WatcheRobot-c-sdk-lvgl

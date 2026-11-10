@@ -4,7 +4,7 @@ The development preview now uses `watcher_hw_*` consistently. This is a source
 API rename, not a change to the MCU protocol, hardware behavior or board branding.
 No compatibility aliases or second implementation are maintained.
 This statement describes the rename itself. The separate event-loss/status
-corrections in [AUDIT.md](AUDIT.md) do change runtime behavior as described below.
+corrections in [AUDIT.md](../history/AUDIT.md) do change runtime behavior as described below.
 
 开发预览统一使用 `watcher_hw_*`。这是源码接口改名，不改变 MCU 协议、硬件行为
 或 `WatcheRobot` 项目名称。不保留两套实现或旧名称别名。
@@ -54,10 +54,10 @@ READY 和用户操作。不能相信旧 LINK READY，也不能把停止命令提
 
 ## Evidence boundary / 验收边界
 
-Historical entries in [VALIDATION.md](VALIDATION.md) retain the names and hashes
+Historical entries in [VALIDATION.md](../history/VALIDATION.md) retain the names and hashes
 of the firmware that was actually tested. They do not establish hardware
 acceptance of this renamed source. Namespace checks and rebuilt examples prove
 source/build consistency, not audible, visible or mechanical correctness.
 
-[VALIDATION.md](VALIDATION.md) 的旧条目保留当时实际测试固件的名称和校验值。
+[VALIDATION.md](../history/VALIDATION.md) 的旧条目保留当时实际测试固件的名称和校验值。
 改名测试、重新构建不等于重新完成声音、图像或机械运动的实机验收。

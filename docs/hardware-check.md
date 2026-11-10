@@ -106,6 +106,6 @@ Record public commit, SOURCE.json upstream SHA, build/toolchain, board and paire
 firmware hashes, date/operator and each observed result. Issue/Skip is not Pass.
 Missing image, silent audio, dropped events, failure to stop or unsafe motion is a
 failed/blocked item, never a reason to tap Next. The host/LVGL regression suite is
-not a robot test; [historical validation](../VALIDATION.md) is not this snapshot's
+not a robot test; [historical validation](../history/VALIDATION.md) is not this snapshot's
 new acceptance. Official recovery follows [the public setup guide](getting-started.md),
 not guessed offsets or private workspace scripts.

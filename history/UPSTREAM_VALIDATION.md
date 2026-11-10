@@ -293,7 +293,7 @@ No stable release or fully validated firmware pairing is claimed.
 - Unified hardware component/header/API/type/constant names and the three
   example app targets under `watcher_hw_*` / `WATCHER_HW_*`. Task/host names,
   CI paths and active bilingual docs agree. This is a preview source-API break;
-  [MIGRATION.md](../MIGRATION.md) explains consumer updates and fresh build directories.
+  [MIGRATION.md](../docs/migration.md) explains consumer updates and fresh build directories.
   Earlier entries retain the actual names/checksums of the tested old firmware.
 - TDD namespace guards failed against the old source before the rename.
   Additional script regressions exposed blank-port and explicit-empty-argument
@@ -312,7 +312,7 @@ No stable release or fully validated firmware pairing is claimed.
   match between canonical/public copies after newline/trailing-end normalization.
   Nine Mermaid diagrams parsed; renamed first-party C/headers passed the
   canonical clang-format 18.1.8 check.
-- The audit also found unresolved non-naming risks; see [AUDIT.md](../AUDIT.md).
+- The audit also found unresolved non-naming risks; see [AUDIT.md](AUDIT.md).
   An isolated Debug/Release characterization compiled the real event FIFO and
   the exact current body-example callback, replacing every hardware API with
   a mock. Normal case: dropped=0, requests=1, stops=1, moves=0. Queue saturation:

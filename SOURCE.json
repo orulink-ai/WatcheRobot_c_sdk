@@ -11,55 +11,63 @@
     },
     {
       "source": "examples/hardware_sdk/AUDIT.md",
-      "destination": "AUDIT.md",
+      "destination": "history/AUDIT.md",
       "source_sha256": "372f9f5dc0d19c5bbea430284356c653b9f6e6737c3b77981c6be62a990c03ca",
-      "sha256": "d06ea36971e7c790b92fff02b324a927140b2063a6e3fb5d15e9431c67ea9257",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "sha256": "1c599818db82fee2b516f24ef2c6612fda6e1c5467abbc8260060433e5a32da4",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
       "imported_sha256": "21b542933deda0ed357dd3c78f78764f53591efa73008989080525d105664c39",
-      "imported_transform": "public component links"
+      "imported_transform": "public component links",
+      "imported_destination": "AUDIT.md"
     },
     {
       "source": "examples/hardware_sdk/DESIGN.md",
-      "destination": "DESIGN.md",
+      "destination": "docs/design/DESIGN.md",
       "source_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
-      "sha256": "eabb126e86fcd7cf437a24b5d878ac0bef1b86a6df8e79fdee50d350fa709f5b",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "sha256": "58fa9fe338456636e4d552989535441be24fdebdb2b82a4d081d0a6a60294cc1",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
       "imported_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
-      "imported_transform": null
+      "imported_transform": null,
+      "imported_destination": "DESIGN.md"
     },
     {
       "source": "examples/hardware_sdk/MIGRATION.md",
-      "destination": "MIGRATION.md",
+      "destination": "docs/migration.md",
       "source_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "transform": null
+      "sha256": "5fb953d8f16630d8a79779fe92bd2b952f7318efd37aed1388ef221ce8d1758b",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
+      "imported_transform": null,
+      "imported_destination": "MIGRATION.md"
     },
     {
       "source": "examples/hardware_sdk/PRODUCT.md",
-      "destination": "PRODUCT.md",
+      "destination": "docs/design/PRODUCT.md",
       "source_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
       "sha256": "3349224f8d810d79bb15362ad6fcac491f327d44aadef988523a897045bc16bb",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
       "imported_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
-      "imported_transform": null
+      "imported_transform": null,
+      "imported_destination": "PRODUCT.md"
     },
     {
       "source": "examples/hardware_sdk/UX_REVIEW.md",
-      "destination": "UX_REVIEW.md",
+      "destination": "history/UX_REVIEW.md",
       "source_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
       "sha256": "f09a31adbd3b6fa11b3dd3204a3040b8b9976c0515e54d21ffd346a4b8fbcb6f",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
       "imported_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
-      "imported_transform": null
+      "imported_transform": null,
+      "imported_destination": "UX_REVIEW.md"
     },
     {
       "source": "examples/hardware_sdk/VALIDATION.md",
       "destination": "history/UPSTREAM_VALIDATION.md",
       "source_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
-      "sha256": "c71f025aeb4ed508140978743268cd42b89384676e5ef0d9043def127b556a1c",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "sha256": "02af6988e57bade7a414a960c43b3347811dd88a9317f7a2fdd6fe46fea486e9",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
       "imported_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
-      "imported_transform": null
+      "imported_transform": null,
+      "imported_destination": "history/UPSTREAM_VALIDATION.md"
     },
     {
       "source": "examples/hardware_sdk/body/CMakeLists.txt",
@@ -338,8 +346,11 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
-      "transform": "replace stale feedback-dependent upstream instructions with bilingual public guides"
+      "sha256": "d102b744847f2ed103cc61696e0fe7437fc0722abb8af9350ff599c9ef4922e5",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
+      "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
+      "imported_destination": "examples/hardware_check/README.md"
     },
     {
       "source": "examples/hardware_sdk/hardware_check/main/CMakeLists.txt",
@@ -450,10 +461,11 @@
       "source": "examples/hardware_sdk/hardware_check/test_support/host/README.md",
       "destination": "examples/hardware_check/test_support/host/README.md",
       "source_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "sha256": "f3d9173cbba7e21f928850d9097ca8e23c0f9fbba8b0b5e56176c650bd1390f9",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "sha256": "7486bdd86497ea77f2c3f0e50cbc4c1969776da4b6b50c238d3b7edb2d224838",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
       "imported_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "imported_transform": null
+      "imported_transform": null,
+      "imported_destination": "examples/hardware_check/test_support/host/README.md"
     },
     {
       "source": "examples/hardware_sdk/hardware_check/test_support/host/host_mocks.c",
@@ -2390,8 +2402,11 @@
       "source": "firmware/s3/components/sensecap-watcher/README.md",
       "destination": "components/sensecap-watcher/README.md",
       "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "transform": null
+      "sha256": "c3330a074faa954e2c2239bb3f92667af3deec2120f55b5d7eae477a226d2a5a",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "imported_transform": null,
+      "imported_destination": "components/sensecap-watcher/README.md"
     },
     {
       "source": "firmware/s3/components/sensecap-watcher/idf_component.yml",
@@ -3029,6 +3044,6 @@
     "import_commit": "eb78c212999374c9afd48de9c160c73991e646ae",
     "import_path": "firmware/sdk",
     "standalone_import_commit": "85c6af84c93db63db335d4b93f2a114ba66cd7f1",
-    "scope": "Documentation only; no source, license, dependency or hardware behavior change."
+    "scope": "Standalone documentation organization; source behavior, dependencies and license files unchanged."
   }
 }

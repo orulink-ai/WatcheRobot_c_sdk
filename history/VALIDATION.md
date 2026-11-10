@@ -1,6 +1,6 @@
 # Development-preview acceptance / 开发预览验收
 
-> Historical evidence from the original delivery, not a fresh standalone-repository run. Original commits and PR links identify the old test context. Current commands: [getting started](docs/getting-started.md). / 原交付历史证据，不是独立仓库本次执行；旧提交与 PR 只标识当时上下文。
+> Historical evidence from the original delivery, not a fresh standalone-repository run. Original commits and PR links identify the old test context. Current commands: [getting started](../docs/getting-started.md). / 原交付历史证据，不是独立仓库本次执行；旧提交与 PR 只标识当时上下文。
 
 No stable release or fully validated firmware pairing is claimed.
 本页仅记录实际执行结果；构建成功不等于整机安全验证完成。
