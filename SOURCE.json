@@ -33,7 +33,7 @@
       "source": "examples/hardware_sdk/MIGRATION.md",
       "destination": "docs/migration.md",
       "source_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "sha256": "4c2c2cd4c4b0d92089dca3425370b3c80b2dcf34acb3c007feb4c1e5f316f549",
+      "sha256": "745d857051d174bc5b8b6987fb8f60be6b1099f6f4f0fc76dab312d9801ceb29",
       "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved",
       "imported_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
       "imported_transform": null,
