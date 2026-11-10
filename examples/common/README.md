@@ -32,5 +32,5 @@ These are implementation names, not additional SDK features or stable public int
 | [assets](assets/README.md) | Speaker-test sample and license / 扬声器测试样本与许可 |
 | `test_support/host` | Computer-side tests / 电脑端测试，见 [commands and evidence](../../docs/development.md#testing) |
 
-Use the [API guides](../../docs/README.md) for application-facing interfaces. This directory is not a
+Use the [API guides](../../docs/api/README.md) for application-facing interfaces. This directory is not a
 separately published Component Registry package.

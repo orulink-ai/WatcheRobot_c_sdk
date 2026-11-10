@@ -66,4 +66,4 @@ App-only updates are appropriate **only after verifying the device already uses 
 Do not run `idf.py -C examples/common build`.
 common 不是独立工程或公开 SDK 接口，不要单独构建。
 
-[API guides](../docs/README.md) · [Tests and evidence](../docs/development.md#testing) · [Dependencies](../docs/development.md#dependencies)
+[API guides](../docs/api/README.md) · [Tests and evidence](../docs/development.md#testing) · [Dependencies](../docs/development.md#dependencies)

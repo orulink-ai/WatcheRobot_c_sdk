@@ -20,11 +20,11 @@ ctest --test-dir build -C Release --output-on-failure --no-tests=error
 
 单配置生成器还应在 configure 时传 `-DCMAKE_BUILD_TYPE=Release`；Windows 可显式传 `-G "Visual Studio 17 2022" -A x64`。
 
-固件 `main/idf_component.yml` / `dependencies.lock` 和本轮本地库均为 **LVGL 8.4.0**。根据最新合同，工程严格要求真实 8.4.0；配置时读取版本头，运行时也断言版本，提供其他版本会明确失败，不修改/伪造库版本。
+固件 `main/idf_component.yml` / `dependencies.lock` 使用 **LVGL 8.4.0**。工程严格要求真实 8.4.0；配置时读取版本头，运行时也断言版本，提供其他版本会明确失败，不修改/伪造库版本。
 
 没有 LVGL 源码时，在 **WatcheRobot_c_sdk 仓库根目录**执行下列准备和回归命令。
 依赖放在相邻目录，避免混入提交；示例目标目录必须尚不存在，否则先检查原目录而非覆盖。
-`$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用。固定 SHA 是原验证的 LVGL 8.4.0，
+`$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用。固定 SHA 对应 LVGL 8.4.0，
 不是浮动分支。以下是本地执行方式；CI 文件存在不代表远端已运行，具体结果见 PR Checks 与 [测试证据](../../../../docs/development.md#testing)：
 
 ```text
@@ -40,24 +40,8 @@ ctest --test-dir ../WatcheRobot-c-sdk-host-build-release -C Release --output-on-
 可归档构建目录中的 `snapshots/*.ppm` 与 `Testing/Temporary/LastTest.log`。
 Debug 验证使用单独的 `../WatcheRobot-c-sdk-host-build-debug` 目录，并将配置值改为 Debug。
 不依赖 ESP-IDF、不运行固件 build/flash；输出为电脑软件渲染，不是实机证明。
-本页其余带日期的红／绿结果描述原上游迭代，保留历史测试数量，不宣称当前已重跑。
 
 `lv_conf.h` 开启 RGB565、snapshot 和 Montserrat 14/16/18/20/24/48。所有测试源通过 `#ifdef NDEBUG / #error` 防止断言失效；MSVC 用 `/UNDEBUG`，其他编译器用 `-UNDEBUG`，Release 同样执行断言。新增测试和 mock 目标使用 `/W4 /WX`（其他编译器 `-Wall -Wextra -Werror`）；生产代码与 LVGL 是独立依赖目标，保留警告而不要求上游库零警告。注意字体名的 px 大小不等于其 `line_height`（18px 的行高实际为 21）。
-
-## 历史回归结果（不是本次独立仓库验证）
-
-2026-10-08，Windows x64 / MSVC 19.40，真实 LVGL **8.4.0**，guard 与显式 image attempt 接口落地后：
-
-| 配置 | 结果 | CTest 用时 |
-| --- | --- | --- |
-| Release | 21/21 通过，0 失败 | 0.47s |
-| Debug | 21/21 通过，0 失败 | 0.91s |
-
-`release_outside` 与 `release_disabled` 均由真实运行红转绿；弧外直接 release、setting_pending/cancelling/stopping 下直接 release 都不入队。第 3 个 Screen 触点移至 y198 后，running 内容不再与 status 重叠。显式 `check_view_image(image, attempt)` 的事件先于 model render 到达用例通过，图像不会绑定到过期 shown attempt。
-
-新增测试与 mock 在 MSVC `/W4 /WX` 下成功编译，Debug/Release 均保持断言有效。只改本 host 目录，没有修改主代码、CI、common，没有提交或操作硬件。
-
-软件截图目录：`build/snapshots/`（相对此主机工程目录）。21 个场景各有一个 PPM，包括 `nav_pixels.ppm`、`detail_tail.ppm`、`stopping.ppm`、`photo.ppm`、`live_image.ppm`、`release_outside.ppm`、`release_disabled.ppm`。Debug/Release 共用输出目录，最后执行的配置会覆盖同名截图和 `build/Testing/Temporary/LastTest.log`。全部是软件渲染数据，不是 LCD 实机证明。
 
 ## 验证合同
 
@@ -88,37 +72,3 @@ Debug 验证使用单独的 `../WatcheRobot-c-sdk-host-build-debug` 目录，并
 ## 软件截图
 
 `HOST_WRITE_PPM=ON` 时测试程序直接写 `build/snapshots/<scenario>.ppm`，失败也会保存当时画面。也可运行 `build/Release/check_view_tests photo --ppm <文件路径>`（单配置生成器的程序在 build 根目录）。仅为 LVGL 软件渲染证据，**不是 LCD 实机证明**。构建产物和 PPM 均在本目录忽略，不提交。
-
-## 首轮红结果
-
-2026-10-08，Windows x64 / MSVC 19.40，Release，实际 LVGL 8.4.0，旧版 `check_view.c`：13 项，3 通过（config、geometry_oracle、report），10 项预期失败。
-
-- 导航仍为 100×52；逐像素形状/颜色有 23832 个不一致。
-- Back 中心实际 (148,330)，合同 (108,340)。
-- 标题/状态尚未迁移到 y80/y260；STOP 仍非 20px，禁用色尚未调整。
-- 照片中心仍 (206,206)，合同 (206,188)。
-- `full_image=true` 但无本轮 retained image 时，旧视图错误隐藏 status。
-
-最近一次原始输出保存在 `build/Testing/Temporary/LastTest.log`（每次 CTest 会覆盖；首轮红结果以上述记录为准）。本工程不修改主代码、CI 或 common。
-
-## 第一轮移植后的新增红点
-
-扩充到 18 项后，14 通过、4 失败：
-
-- `running_content`：Screen running 第三个触点 (180,221)..(231,272) 与 status (66,260)..(345,277) 重叠。
-- `report` / `detail_tail`：短列表仍从 y114 开始；两行末页应从 y155 开始，一行列表应从 y175 开始。
-- `stopping`：当时模型字段尚未加入。交付版已删除临时探测/兼容逻辑，直接编译固定 `stopping` 字段和 `main/check_layout.c`；API 缺失即编译失败，不能跳过场景。
-
-首轮移植的照片变换检查曾因测试把 LVGL 每侧 2px 的采样余量误当成 1px 而失败，已校正；可见图像像素边界仍严格限制在目标矩形的 1px 量化范围内。真实 thumbnail/放大、停止取消、按下色、禁用和导航滑出均已通过。
-
-上一轮固定 API 版本：Release 构建通过，18 项中 **17 通过、1 失败**。短列表居中和 stopping 文案/禁用/红 STOP/保持 RUNNING 均已转绿。剩余失败是 `check_view_running_content` 的第三触点与 status 重叠；现有 52px 高度要求其顶部 y≤208，才能让底边低于 status 的 y260。
-
-## 直接 release 的 TDD 新增回归
-
-新增后共 21 个场景。Release 构建成功后仅运行三项新增用例，观察到：
-
-- `release_outside` 红：右区 (304,340) 按下，下一样本直接在弧外 (237,290) release，实际错误入队 1 条意图。
-- `release_disabled` 红：按住后 setting_pending render 成 disabled，下一样本直接 release，实际错误入队 1 条意图。旧 `render()` helper 自带 timer，会插入 pressing 样本而掩盖这个缺陷，因此新用例直接调用生产 render 并断言 pointer read 计数未变化。
-- `image_arrival_attempt` 绿：主代理在此次测试完成构建前已提供新的显式 attempt 实现，没有观察到旧实现的该项运行红结果，不伪造基线。
-
-图像相关全部用例已直接使用固定的 `(demo_image_t *, uint32_t attempt)` API，无旧签名探测或兼容。guard 修复后已分别 build/CTest Debug 和 Release 全量，各 21 项通过，见本文最终回归结果。MSVC 同一 build 目录可通过 `--config Debug` / `--config Release` 选择配置；CTest 对应使用 `-C Debug` / `-C Release`。
