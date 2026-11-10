@@ -1,58 +1,58 @@
 English | [简体中文](README_zh.md)
 
-# WatcheRobot C SDK (Development Preview)
+# WatcheRobot C SDK
 
-Write your own `app_main` with `watcher_hw_*`, independently of the official app,
-Python SDK, Daemon, server, SD card and models. This is a hardware-only source
-snapshot, **not a stable release or complete paired-device acceptance**.
+Build your own ESP32-S3 robot application with `watcher_hw_*` for body motion, lights,
+camera, audio and display. No Python SDK or official application is required.
+**Development preview: complete paired-device and restoration acceptance remains pending.**
 
-## Start here
+## Quick start
 
-1. [Pin public source, install ESP-IDF 6.0.2 and build](docs/getting-started.md).
-2. [Run the 8-group / 26-item hardware check](docs/hardware-check.md).
-3. Edit `examples/robot/main/app_main.c`, then build from repository root:
-   `idf.py -C examples/robot build`.
+Install Git and [ESP-IDF 6.0.2 for ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html),
+then open a terminal with the IDF environment activated; `idf.py --version` must report 6.0.2.
+For first-time setup or environment errors, start with the [setup guide](docs/getting-started.md).
 
-Flashing changes the ESP32 application/partitions and can overwrite storage.
-Verify your ESP32 port and paired STM32/Himax images **before flashing**; setup,
-custom flash, official recovery and expected results are in the first guide.
-Current servos have **no physical position feedback**. Reference X90/Y120 can
-require large movement from an unknown start. ACK/DONE is not a position sensor.
+Run in the directory where you want to keep the project:
 
-## What do you want to do?
+```sh
+git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
+cd WatcheRobot_c_sdk
+idf.py -C examples/robot build
+```
 
-| Goal | Entry |
+Expected output: `examples/robot/build/watcher_hw_robot.bin` and the associated flash files.
+Component downloads require network access. This only builds; it does not write to a device.
+For errors, see [troubleshooting](docs/getting-started.md#troubleshooting-and-acceptance-boundary).
+Next, edit [`examples/robot/main/app_main.c`](examples/robot/main/app_main.c) and run the same build command.
+Record `git rev-parse HEAD` when reproducing a result or reporting an issue; the setup guide explains version pinning.
+
+**Before flashing:** verify the ESP32 port and paired STM32/Himax firmware, and prepare a
+complete official recovery bundle. A full custom flash overwrites official configuration;
+back up required data and do not flash without verified preparation. Servos have no physical
+position feedback, reference moves can be large, and ACK/DONE does not establish physical stopping.
+Clear the entire travel, keep manual power disconnection available, and follow the
+[safe flashing and recovery guide](docs/getting-started.md).
+
+## Choose an example
+
+Each directory is an independent ESP-IDF project. Replace `robot` in the build command with its project name.
+
+| Goal | Project |
 | --- | --- |
-| Check real hardware, safely and one item at a time | [Hardware check](docs/hardware-check.md) |
-| Build/flash/restore or use your own project | [Getting started](docs/getting-started.md) |
-| Migrate the old namespace | [Migration](MIGRATION.md) |
-| Understand open-loop motion | [Current hardware contract](docs/servo-open-loop.md) |
-| Inspect public headers | `components/sdk/watcher_hw_{core,body,camera,audio,display}/include/` |
-| Understand ownership, locks and event overflow | Headers, [audit](AUDIT.md), [setup](docs/getting-started.md) |
-| Review actual evidence, not assumptions | [Historical validation](VALIDATION.md), [historical public-sync evidence](SYNC_VALIDATION.md) |
-| Develop on a computer with existing official firmware | [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk/blob/main/README.md) — separate route |
+| Body motion, lights and touch | [`body`](examples/body) |
+| Camera, audio and display | [`head`](examples/head) |
+| Build a combined application | [`robot`](examples/robot) |
+| Check real hardware one item at a time | [`hardware_check`](examples/hardware_check) · [operator guide](docs/hardware-check.md) |
 
-`examples/body`, `head`, `robot`, and `hardware_check` are independent ESP-IDF projects.
-`examples/common` contains shared UI, pure flow, open-loop body adapter and CC0
-speech assets. Do not include the official firmware top-level project.
+`hardware_check` requires human observations; it is not an automatically passing unit test.
 
-## Provenance, scope and licensing
+## Developer documentation
 
-[SOURCE.json](SOURCE.json) pins upstream ESP32 commit
-`e23bee2a642f6c90753b370cb18c46815e0c8f58` and inventories exported file hashes.
-The public checkout commit is the delivery version; the private upstream is provenance
-only, not a user prerequisite. This standalone repository was imported from the
-already-public SDK snapshot; it does not expose additional upstream source.
-The historical export tool is not bundled here and is not needed to build.
-See [repository workflow and provenance](docs/repository-workflow.md) for the import
-baseline, current file-hash semantics and branch/PR contribution process.
-No official app/cloud/voice business services, models, credentials or firmware binaries
-are exported. Downloaded managed dependencies/build outputs are excluded.
+- [Setup, flashing and recovery](docs/getting-started.md) · [open-loop motion and safety](docs/servo-open-loop.md)
+- [Public API headers](components/sdk) · [old API migration](MIGRATION.md)
+- [Branch/PR workflow and provenance](docs/repository-workflow.md)
+- Building a computer-side application on existing firmware? Use the separate [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk).
 
-First-party snapshot code is licensed under [Apache-2.0](LICENSE). Seeed, SSCMA, codec, expander and Espressif files keep their
-original copyright/licenses. Registry dependencies retain their own licenses.
-This is a delivery snapshot, not an independently maintained fork; fixes should flow
-upstream. Historical names/hashes in evidence remain untouched and do not prove
-acceptance of this renamed snapshot. Complete physical pairing, safety and restoration
-checks remain pending. No stable v1 or production deployment is claimed. This repository does not yet have
-its own CI workflow; historical CI results are not current standalone-repository checks.
+## License
+
+First-party code is [Apache-2.0](LICENSE). Third-party components and assets retain their own licenses.
