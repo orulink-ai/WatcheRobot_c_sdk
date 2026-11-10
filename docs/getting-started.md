@@ -18,7 +18,7 @@ Do not initialize the same hardware alongside the existing demo. Sections are in
 - Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0**.
 - `init()` opens hardware and `close()` closes it. Check every result; `ESP_OK` means that call succeeded.
 - A successful status query does not mean the device is ready. Check `state`; body initialization can still be connecting.
-- Declarations and parameters are defined in the [public headers](../components/sdk); these interfaces do not require direct pin or communication-bus control.
+- Declarations and parameters are defined in the [public headers](../bsp/watche_robot); these interfaces do not require direct pin or communication-bus control.
 
 ## Display & touch
 

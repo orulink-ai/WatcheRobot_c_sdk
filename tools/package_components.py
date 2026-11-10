@@ -2,7 +2,7 @@
 """Prepare real, coordinated ESP-IDF component packages, without uploading.
 
 Source bytes come only from tracked files at an immutable public-repository Git
-revision. The source checkout is never changed. Requires PyYAML (install packaging/requirements.txt); use compote 2.5.2 for --pack.
+revision. The source checkout is never changed. Requires PyYAML (install tools/packaging/requirements.txt); use compote 2.5.2 for --pack.
 """
 from __future__ import annotations
 
@@ -25,24 +25,24 @@ VERSION = "0.1.0-preview.1"
 # Explicit public component allowlist. Never discover managed_components or
 # export another repository. Edges include public header and CMake requirements.
 LOCAL = {
-    "watcher_hw_core": ("components/sdk/watcher_hw_core", []),
-    "watcher_hw_body": ("components/sdk/watcher_hw_body", ["watcher_hw_core", "mcu_runtime", "mcu_motion_service", "mcu_led_service", "mcu_sensor_service", "motion_arbiter"]),
-    "watcher_hw_audio": ("components/sdk/watcher_hw_audio", ["watcher_hw_core", "hal_audio"]),
-    "watcher_hw_camera": ("components/sdk/watcher_hw_camera", ["watcher_hw_core", "hal_camera"]),
-    "watcher_hw_display": ("components/sdk/watcher_hw_display", ["watcher_hw_core", "sensecap-watcher", "esp_lvgl_port"]),
-    "mcu_link": ("components/protocols/mcu_link", []),
-    "mcu_runtime": ("components/services/mcu_runtime", ["mcu_link", "mcu_motion_service", "mcu_led_service", "mcu_sensor_service", "mcu_power_service"]),
-    "mcu_motion_service": ("components/services/mcu_motion_service", ["mcu_link", "motion_arbiter"]),
-    "mcu_led_service": ("components/services/mcu_led_service", ["mcu_link"]),
-    "mcu_sensor_service": ("components/services/mcu_sensor_service", ["mcu_link"]),
-    "mcu_power_service": ("components/services/mcu_power_service", ["mcu_link"]),
-    "motion_arbiter": ("components/services/motion_arbiter", []),
-    "watcher_input_router": ("components/services/watcher_input_router", []),
-    "hal_audio": ("components/hal/hal_audio", ["esp_codec_dev", "sensecap-watcher", "media_lib_sal"]),
-    "hal_camera": ("components/hal/hal_camera", ["sensecap-watcher", "sscma_client", "watcher_hx_ptl", "hx_media_protocol", "hx_ptl_protocol", "jpeg_integrity"]),
+    "watcher_hw_core": ("bsp/watche_robot/watcher_hw_core", []),
+    "watcher_hw_body": ("bsp/watche_robot/watcher_hw_body", ["watcher_hw_core", "mcu_runtime", "mcu_motion_service", "mcu_led_service", "mcu_sensor_service", "motion_arbiter"]),
+    "watcher_hw_audio": ("bsp/watche_robot/watcher_hw_audio", ["watcher_hw_core", "hal_audio"]),
+    "watcher_hw_camera": ("bsp/watche_robot/watcher_hw_camera", ["watcher_hw_core", "hal_camera"]),
+    "watcher_hw_display": ("bsp/watche_robot/watcher_hw_display", ["watcher_hw_core", "sensecap-watcher", "esp_lvgl_port"]),
+    "mcu_link": ("components/mcu_link", []),
+    "mcu_runtime": ("components/mcu_runtime", ["mcu_link", "mcu_motion_service", "mcu_led_service", "mcu_sensor_service", "mcu_power_service"]),
+    "mcu_motion_service": ("components/mcu_motion_service", ["mcu_link", "motion_arbiter"]),
+    "mcu_led_service": ("components/mcu_led_service", ["mcu_link"]),
+    "mcu_sensor_service": ("components/mcu_sensor_service", ["mcu_link"]),
+    "mcu_power_service": ("components/mcu_power_service", ["mcu_link"]),
+    "motion_arbiter": ("components/motion_arbiter", []),
+    "watcher_input_router": ("components/watcher_input_router", []),
+    "hal_audio": ("components/hal_audio", ["esp_codec_dev", "sensecap-watcher", "media_lib_sal"]),
+    "hal_camera": ("components/hal_camera", ["sensecap-watcher", "sscma_client", "watcher_hx_ptl", "hx_media_protocol", "hx_ptl_protocol", "jpeg_integrity"]),
     "esp_codec_dev": ("components/esp_codec_dev", []),
     "esp_lvgl_port": ("components/esp_lvgl_port", ["watcher_input_router"]),
-    "sensecap-watcher": ("components/sensecap-watcher", ["esp_io_expander_pca95xx_16bit", "esp_lvgl_port", "sscma_client", "esp_codec_dev"]),
+    "sensecap-watcher": ("bsp/watche_robot/sensecap-watcher", ["esp_io_expander_pca95xx_16bit", "esp_lvgl_port", "sscma_client", "esp_codec_dev"]),
     "sscma_client": ("components/sscma_client", []),
     "esp_io_expander_pca95xx_16bit": ("components/esp_io_expander_pca95xx_16bit", []),
     "watcher_hx_ptl": ("components/watcher_hx_ptl", ["hx_media_protocol", "hx_ptl_protocol", "sensecap-watcher"]),

@@ -5,7 +5,7 @@
 ## 接口与依赖
 
 - 接口：[`watcher_hw_body.h`](include/watcher_hw_body.h)；参数与错误处理见[使用指南](../../../docs/api/body.md)。
-- 依赖：[`mcu_runtime`](../../services/mcu_runtime/README.md)、`mcu_motion_service`、`mcu_led_service`、`mcu_sensor_service` 和 `watcher_hw_core`；内部使用 FreeRTOS、`esp_timer`、`motion_arbiter`。
+- 依赖：[`mcu_runtime`](../../../components/mcu_runtime/README.md)、`mcu_motion_service`、`mcu_led_service`、`mcu_sensor_service` 和 `watcher_hw_core`；内部使用 FreeRTOS、`esp_timer`、`motion_arbiter`。
 - 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
 
 ## 使用约束

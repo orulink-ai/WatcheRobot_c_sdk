@@ -12,6 +12,31 @@ def run(root, *args):
                           capture_output=True, text=True)
 
 
+def test_discovery_preserves_all_migrated_repository_suites():
+    import importlib.util
+    root = SCRIPT.parents[1]
+    spec = importlib.util.spec_from_file_location('host_runner', SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    # Baseline 00580fc's 19 suites, mapped to the new layout. No Git history
+    # dependency: CI deliberately uses a shallow checkout.
+    expected = {
+        f'bsp/watche_robot/watcher_hw_{name}/test_support/host'
+        for name in ('core', 'body', 'audio', 'camera', 'display')
+    } | {
+        f'components/{name}/test_support/host'
+        for name in ('mcu_link', 'hx_media_protocol', 'esp_lvgl_port',
+                     'mcu_led_service', 'mcu_sensor_service', 'sscma_client',
+                     'hx_ptl_protocol', 'motion_arbiter', 'mcu_motion_service',
+                     'esp_codec_dev', 'watcher_hx_ptl')
+    } | {'components/mcu_link/test_support/uart_host',
+         'examples/hardware_check/test_support/host',
+         'examples/common/test_support/host'}
+    assert len(expected) == 19
+    assert {p.relative_to(root).as_posix() for p in module.discover(root)} == expected
+
+
 def test_zero_suites_is_failure_with_json_report(tmp_path):
     report = tmp_path / 'result.json'
     result = run(tmp_path, '--report', str(report))

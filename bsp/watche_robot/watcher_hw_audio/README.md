@@ -5,7 +5,7 @@
 ## 接口与依赖
 
 - 接口：[`watcher_hw_audio.h`](include/watcher_hw_audio.h)；参数与错误处理见[使用指南](../../../docs/api/audio.md)。
-- 依赖：`watcher_hw_core`、[`hal_audio`](../../hal/hal_audio/README.md)，内部使用 FreeRTOS。
+- 依赖：`watcher_hw_core`、[`hal_audio`](../../../components/hal_audio/README.md)，内部使用 FreeRTOS。
 - 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
 
 ## 使用约束

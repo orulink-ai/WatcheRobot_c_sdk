@@ -8,13 +8,14 @@ For contributors changing the SDK itself. To build an application, start with th
 
 | Layer / 层次 | Location / 位置 | Responsibility / 用途 |
 | --- | --- | --- |
-| Public API / 公开接口 | [`components/sdk`](../components/sdk) | `watcher_hw_*`: body, camera, audio, display and shared status/events / 机身、相机、音频、显示及公共状态事件 |
-| Implementation / 内部实现 | [`components`](../components) | Services, transport, board wiring and locally adapted vendor components / 服务、通信、板级支持与本地适配组件 |
+| Board support and public API / 板级支持与公开接口 | [`bsp/watche_robot`](../bsp/watche_robot) | `watcher_hw_*`: body, camera, audio, display and shared status/events / 机身、相机、音频、显示及公共状态事件 |
+| Implementation / 内部实现 | [`components`](../components) | Services, transport, hardware adapters and vendor components / 服务、通信、硬件适配与厂商组件 |
 | Applications / 示例应用 | [`examples`](../examples) | Independent ESP-IDF projects; `common` contains shared example code / 独立工程及示例共享代码 |
 | Validation / 验证 | [`tests`](../tests), [`tools`](../tools), component `test_support` directories | Tool regressions, host tests, source/link checks and local package generation / 工具回归、主机测试、来源链接检查与本地打包 |
 
 `examples/sdk.cmake` selects the local components; it does not install this SDK from Registry.
-Do not reorganize components or remove the shared CMake entry merely to copy another BSP's layout.
+`bsp/watche_robot` groups the existing public API and board-support components without merging them;
+`components` contains one independent component per direct subdirectory. Keep the shared CMake entry.
 共享构建入口选择本地组件，不从组件平台安装 SDK；目录范式参考乐鑫，不机械改写现有构建。
 
 Give each hardware resource one application owner. Do not open or poll the SDK-managed body
@@ -64,7 +65,7 @@ independent package consumer after any dependency/build change.
 ## Testing
 
 Run commands below from the **repository root**. Tool tests need Python with the pinned
-[`packaging/requirements.txt`](../packaging/requirements.txt) dependencies installed in an isolated environment.
+[`tools/packaging/requirements.txt`](../tools/packaging/requirements.txt) dependencies installed in an isolated environment.
 在**仓库根目录**运行以下命令；工具测试使用隔离 Python 环境，并安装上述固定依赖。
 
 ```sh
@@ -134,7 +135,7 @@ Python virtual environment; set the example executable paths below to that envir
 
 ```sh
 python3 -m venv /tmp/watcher-package-tools
-/tmp/watcher-package-tools/bin/python -m pip install -r packaging/requirements.txt
+/tmp/watcher-package-tools/bin/python -m pip install -r tools/packaging/requirements.txt
 /tmp/watcher-package-tools/bin/python tools/package_components.py \
   --revision HEAD --namespace preview_test --version 0.1.0-preview.1 \
   --output /tmp/watcher-registry-rehearsal \

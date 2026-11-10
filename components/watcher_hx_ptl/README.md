@@ -2,7 +2,7 @@
 
 在主芯片一侧接收、检查摄像头图像，并记录超时、损坏和丢帧等诊断数据。排查图像传输问题时阅读。
 
-内部实现组件（internal implementation）。由 [`hal_camera`](../hal/hal_camera/README.md) 使用；公开 SDK 入口为 [`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)。
+内部实现组件（internal implementation）。由 [`hal_camera`](../hal_camera/README.md) 使用；公开 SDK 入口为 [`watcher_hw_camera`](../../bsp/watche_robot/watcher_hw_camera/README.md)。
 
 ## 接口与依赖
 

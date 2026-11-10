@@ -5,7 +5,7 @@ WatcheRobot 使用的本地界面适配组件，负责图形刷新和输入接�
 
 ## Usage / 使用
 
-Applications normally use [`watcher_hw_display`](../sdk/watcher_hw_display/README.md).
+Applications normally use [`watcher_hw_display`](../../bsp/watche_robot/watcher_hw_display/README.md).
 Do not start a second display stack while the public display API owns the hardware.
 应用通过公开显示接口使用本组件；不要在 SDK 已管理屏幕时重复初始化或另起刷新任务。
 

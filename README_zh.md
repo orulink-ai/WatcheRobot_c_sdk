@@ -55,7 +55,7 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 | ✓ | 界面绘制 | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [界面适配](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
 | ✓ | 扬声器播放 | ES8311 | [音频组件](components/esp_codec_dev/README.md) · [使用指南](docs/api/audio.md) | 1.2.0，含本地适配 |
 | ✓ | 麦克风录音 | ES7243 / ES7243E | [音频组件](components/esp_codec_dev/README.md) · [使用指南](docs/api/audio.md) | 1.2.0，含本地适配 |
-| ✓ | 拍照与连续画面 | OV5647 / Himax HX6538 | [摄像接口](components/sdk/watcher_hw_camera/README.md) | 随本仓库源码提供 |
+| ✓ | 拍照与连续画面 | OV5647 / Himax HX6538 | [摄像接口](bsp/watche_robot/watcher_hw_camera/README.md) | 随本仓库源码提供 |
 | ✓ | 身体转动 | 双舵机、机身控制芯片 | [运动接口](docs/api/body.md) | 随本仓库源码提供 |
 | ✓ | 身体触摸 | TTP223 | [触摸事件](docs/api/body.md) | 随本仓库源码提供 |
 | ✓ | 侧边与底座灯光 | WS2812B2020 | [灯光接口](docs/api/body.md) | 随本仓库源码提供 |

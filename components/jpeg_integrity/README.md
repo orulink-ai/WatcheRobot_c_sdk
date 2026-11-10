@@ -2,7 +2,7 @@
 
 检查图像是否有正确的开头和结尾、是否带有多余尾部数据，并读取或核对图像尺寸。适合排查收到图片却无法解码的问题。
 
-内部实现组件（internal implementation）。由摄像头实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)。
+内部实现组件（internal implementation）。由摄像头实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../../bsp/watche_robot/watcher_hw_camera/README.md)。
 
 ## 接口与依赖
 

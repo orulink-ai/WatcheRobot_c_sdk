@@ -2,7 +2,7 @@
 
 为传来的图像附上编号、时间和校验信息，并检查收到的数据是否符合约定。需要排查丢帧、重复帧或损坏数据时，阅读这一层。
 
-内部实现组件（internal implementation）。由摄像头传输实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)。
+内部实现组件（internal implementation）。由摄像头传输实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../../bsp/watche_robot/watcher_hw_camera/README.md)。
 
 ## 接口与依赖
 

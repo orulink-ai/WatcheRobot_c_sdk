@@ -5,7 +5,7 @@
 ## 接口与依赖
 
 - 接口：[`watcher_hw_camera.h`](include/watcher_hw_camera.h)；参数与错误处理见[使用指南](../../../docs/api/camera.md)。
-- 依赖：`watcher_hw_core` 和 [`hal_camera`](../../hal/hal_camera/README.md)。必须启用 `CONFIG_WATCHER_CAMERA_BACKEND_PTL` 并配套匹配的 Himax 摄像头固件。
+- 依赖：`watcher_hw_core` 和 [`hal_camera`](../../../components/hal_camera/README.md)。必须启用 `CONFIG_WATCHER_CAMERA_BACKEND_PTL` 并配套匹配的 Himax 摄像头固件。
 - 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
 
 ## 使用约束

@@ -47,7 +47,7 @@ esp_err_t inspect_body(void) {
 - `ACK` 表示对端对指令的应答，`DONE` 表示对端报告这条指令结束；两者以及报告中的最终角度都不是角度传感器实测，**不证明已经到位或停止**。运动事件里的角度字段以 0.1° 为单位。
 - 确保整个可能运动的区域内没有人手、线缆或障碍，并始终保留人工断电手段。与控制芯片断连后，软件停止指令无法送到；`watcher_hw_body_stop()` 成功也不等于物理急停验收。
 
-`watcher_hw_body_light(const mcu_led_request_t *)` 设置灯光；颜色分量与亮度是 0–255。区域、模式、效果及请求字段见[灯光接口头文件](../../components/services/mcu_led_service/include/mcu_led_service.h)。这些请求仍经过同一个机身连接，不要另外启动底层通信。
+`watcher_hw_body_light(const mcu_led_request_t *)` 设置灯光；颜色分量与亮度是 0–255。区域、模式、效果及请求字段见[灯光接口头文件](../../components/mcu_led_service/include/mcu_led_service.h)。这些请求仍经过同一个机身连接，不要另外启动底层通信。
 
 ## 接收触摸、连接与动作事件
 
@@ -78,7 +78,7 @@ SDK 把事件按到达顺序暂存，应用选择一种方式取出：
 
 ## 接入与完整示例
 
-- 公开头文件：[`watcher_hw_body.h`](../../components/sdk/watcher_hw_body/include/watcher_hw_body.h)。接口名称和参数以此为准。
+- 公开头文件：[`watcher_hw_body.h`](../../bsp/watche_robot/watcher_hw_body/include/watcher_hw_body.h)。接口名称和参数以此为准。
 - 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
 - 直接 CMake 依赖：watcher_hw_core、mcu_runtime、mcu_motion_service、mcu_led_service、mcu_sensor_service；私有依赖 freertos、esp_timer、motion_arbiter。详见[依赖与本地适配](../development.md#dependencies)。
 - [可运行的 body 示例](../../examples/body/README.md) · [组合示例](../../examples/robot/README.md)

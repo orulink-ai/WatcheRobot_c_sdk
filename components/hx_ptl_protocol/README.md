@@ -2,7 +2,7 @@
 
 从摄像头传来的数据中识别一张图像的边界，检查消息和 JPEG，并在边界丢失时重新寻找下一条消息的开头。排查传输格式问题时使用。
 
-内部实现组件（internal implementation）。由摄像头传输实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)。
+内部实现组件（internal implementation）。由摄像头传输实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../../bsp/watche_robot/watcher_hw_camera/README.md)。
 
 ## 接口与依赖
 

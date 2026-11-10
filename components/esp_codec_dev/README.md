@@ -2,7 +2,7 @@
 
 > This is upstream component reference documentation, not WatcheRobot board wiring or a runnable SDK quickstart. The upstream `test_apps/codec_dev_test` application is not included; the `ut_*` helpers below belong to that application. Start WatcheRobot development with [this repository's examples](../../examples/README.md).
 - [![Component Registry](https://components.espressif.com/components/espressif/esp_codec_dev/badge.svg)](https://components.espressif.com/components/espressif/esp_codec_dev)
-- [中文版本](./README_CN.md)
+- [中文版本](README_CN.md)
 
 ## General Information
 
@@ -14,7 +14,7 @@
 * Easy-to-use high-level API for playback and recording
 * Support for volume adjustment in software when it is not supported in hardware
 * Support customized volume curve and customized volume control
-* Easy to port to other platform after replacing codes under [platform](./platform)
+* Easy to port to other platform after replacing codes under [platform](platform)
 
 The currently supported codec devices are listed as below:
 

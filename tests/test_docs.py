@@ -58,7 +58,7 @@ Source: `components/no/include/missing.h`.
 
 
 def test_component_and_example_readmes_require_descriptive_body(tmp_path):
-    for directory in ['components/sdk/foo', 'examples/hello']:
+    for directory in ['components/foo', 'examples/hello']:
         folder = tmp_path / directory
         folder.mkdir(parents=True)
         (folder / 'CMakeLists.txt').write_text('project(foo)')
@@ -66,6 +66,29 @@ def test_component_and_example_readmes_require_descriptive_body(tmp_path):
     result = check(tmp_path)
     assert result.returncode == 1
     assert result.stdout.count('missing or empty description') == 2
+
+
+def test_bsp_inline_source_paths_are_checked(tmp_path):
+    (tmp_path / 'README.md').write_text('# SDK\nSource: `bsp/watche_robot/missing.h`.\n')
+    result = check(tmp_path)
+    assert result.returncode == 1
+    assert 'missing source path: bsp/watche_robot/missing.h' in result.stdout
+    source = tmp_path / 'bsp/watche_robot/missing.h'
+    source.parent.mkdir(parents=True)
+    source.write_text('/* present */\n')
+    assert check(tmp_path).returncode == 0
+
+
+def test_bsp_component_readmes_require_descriptive_body(tmp_path):
+    component = tmp_path / 'bsp/watche_robot/watcher_hw_core'
+    component.mkdir(parents=True)
+    (component / 'CMakeLists.txt').write_text('idf_component_register()\n')
+    (component / 'README.md').write_text('# Core\n')
+    result = check(tmp_path)
+    assert result.returncode == 1
+    assert 'bsp/watche_robot/watcher_hw_core: missing or empty description' in result.stdout
+    (component / 'README.md').write_text('# Core\nHardware lifecycle component.\n')
+    assert check(tmp_path).returncode == 0
 
 
 def test_no_markdown_is_a_failure(tmp_path):

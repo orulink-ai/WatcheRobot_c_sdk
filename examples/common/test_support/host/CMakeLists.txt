@@ -50,18 +50,15 @@ else()
 endif()
 add_test(NAME check_flow_tests COMMAND check_flow_tests)
 
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../firmware/s3/components/sdk")
-  get_filename_component(hw_components "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../firmware/s3/components" ABSOLUTE)
-else()
-  get_filename_component(hw_components "${CMAKE_CURRENT_SOURCE_DIR}/../../../../components" ABSOLUTE)
-endif()
+get_filename_component(hw_components "${CMAKE_CURRENT_SOURCE_DIR}/../../../../components" ABSOLUTE)
+get_filename_component(hw_bsp "${CMAKE_CURRENT_SOURCE_DIR}/../../../../bsp/watche_robot" ABSOLUTE)
 add_executable(check_body_tests test_check_body.c ../../check_body.c)
 target_include_directories(check_body_tests PRIVATE include ../..
-  "${hw_components}/sdk/watcher_hw_body/test_support/host/include"
-  "${hw_components}/sdk/watcher_hw_body/include" "${hw_components}/sdk/watcher_hw_core/include"
-  "${hw_components}/protocols/mcu_link/include" "${hw_components}/protocols/mcu_link/test_support/host/include"
-  "${hw_components}/services/mcu_motion_service/include" "${hw_components}/services/mcu_led_service/include"
-  "${hw_components}/services/mcu_sensor_service/include")
+  "${hw_bsp}/watcher_hw_body/test_support/host/include"
+  "${hw_bsp}/watcher_hw_body/include" "${hw_bsp}/watcher_hw_core/include"
+  "${hw_components}/mcu_link/include" "${hw_components}/mcu_link/test_support/host/include"
+  "${hw_components}/mcu_motion_service/include" "${hw_components}/mcu_led_service/include"
+  "${hw_components}/mcu_sensor_service/include")
 set_target_properties(check_body_tests PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED YES)
 if(MSVC)
   target_compile_options(check_body_tests PRIVATE /W4 /WX /UNDEBUG)

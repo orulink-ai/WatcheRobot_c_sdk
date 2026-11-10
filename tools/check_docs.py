@@ -2,7 +2,7 @@
 """Validate all repository Markdown, local source references and descriptions offline.
 
 External URLs are deliberately not fetched. Inline code that is exactly a repository
-path (components/, examples/, docs/, tools/, tests/) is checked, but shell commands,
+path (bsp/, components/, examples/, docs/, tools/, tests/) is checked, but shell commands,
 globs and placeholders are not treated as literal paths. Code fences are excluded.
 """
 import argparse
@@ -104,7 +104,7 @@ def check(root):
                     errors.append(f'{doc.relative_to(root)}: missing anchor: {link}')
             # Source #L123[-L456] fragments are line references, not headings.
         for value in re.findall(r'`([^`\n]+)`', text):
-            if re.fullmatch(r'(?:components|examples|tools|tests|docs)/[\w./-]+(?:#L\d+(?:-L\d+)?)?', value):
+            if re.fullmatch(r'(?:bsp|components|examples|tools|tests|docs)/[\w./-]+(?:#L\d+(?:-L\d+)?)?', value):
                 path = value.split('#', 1)[0]
                 # A documented output filename is not an existing source file.
                 # Actual Markdown links still must exist, even under build/.
@@ -113,9 +113,10 @@ def check(root):
                 if not (root / path).exists():
                     errors.append(f'{doc.relative_to(root)}: missing source path: {value}')
     directories = []
-    for cmake in (root / 'components').rglob('CMakeLists.txt'):
-        if 'test_support' not in cmake.relative_to(root).parts:
-            directories.append(cmake.parent)
+    for folder in ('bsp', 'components'):
+        for cmake in (root / folder).rglob('CMakeLists.txt'):
+            if 'test_support' not in cmake.relative_to(root).parts:
+                directories.append(cmake.parent)
     directories.extend(p.parent for p in (root / 'examples').glob('*/CMakeLists.txt'))
     for directory in sorted(directories):
         readme = directory / 'README.md'

@@ -41,7 +41,7 @@ esp_err_t local_queue_roundtrip(void) {
 
 ## 接入与完整示例
 
-- 公开头文件：[`watcher_hw_core.h`](../../components/sdk/watcher_hw_core/include/watcher_hw_core.h)。接口名称和参数以此为准。
+- 公开头文件：[`watcher_hw_core.h`](../../bsp/watche_robot/watcher_hw_core/include/watcher_hw_core.h)。接口名称和参数以此为准。
 - 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
 - 直接 CMake 依赖：没有额外声明组件；esp_err.h 由 ESP-IDF 提供。详见[依赖与本地适配](../development.md#dependencies)。
 - [可运行的 body 示例](../../examples/body/README.md) · [组合示例](../../examples/robot/README.md)

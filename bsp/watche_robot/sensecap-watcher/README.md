@@ -5,9 +5,9 @@ Board wiring and initialization for the display, touch, audio and camera used by
 
 ## Usage / 使用
 
-- Display / 屏幕：[`watcher_hw_display`](../sdk/watcher_hw_display/README.md)
-- Audio / 声音：[`watcher_hw_audio`](../sdk/watcher_hw_audio/README.md)
-- Camera / 相机：[`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)
+- Display / 屏幕：[`watcher_hw_display`](../watcher_hw_display/README.md)
+- Audio / 声音：[`watcher_hw_audio`](../watcher_hw_audio/README.md)
+- Camera / 相机：[`watcher_hw_camera`](../watcher_hw_camera/README.md)
 
 Do not initialize shared hardware separately while those APIs own it. In particular, do not draw
 directly to the panel alongside LVGL. Stop users and close the owning API before handing resources over.

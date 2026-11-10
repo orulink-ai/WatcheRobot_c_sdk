@@ -2,7 +2,7 @@
 
 > 本页保留第三方组件参考说明；通用 ES8311 接线／API 示例不等于 WatcheRobot 硬件配置。上游 `test_apps/codec_dev_test` 未随本 SDK 导出，下面的 `ut_*` 是该测试应用辅助函数，不是可直接运行的 SDK 示例。WatcheRobot 开发请从[本仓库示例](../../examples/README.md)开始。
 - [![组件注册](https://components.espressif.com/components/espressif/esp_codec_dev/badge.svg)](https://components.espressif.com/components/espressif/esp_codec_dev)
-- [English version](./README.md)
+- [English version](README.md)
 
 ## 概要
 
@@ -14,7 +14,7 @@
 * 为播放和录音提供易用的上层 API
 * 支持软件音量调节 (硬件不支持音量调节时)
 * 支持定制化音量曲线以及音量控制实现
-* 兼容多平台仅需替换 [platform](./platform)
+* 兼容多平台仅需替换 [platform](platform)
 
 已经支持的编解码器设备如下:
 |       |播放|录音|

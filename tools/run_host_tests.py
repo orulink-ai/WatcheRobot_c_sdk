@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Discover every components/examples host or uart_host CMake suite and run it.
+"""Discover every bsp/components/examples host or uart_host CMake suite and run it.
 
 Requires real dependencies via --lvgl-source / --cjson-source (or the matching
 LVGL_SOURCE_DIR / CJSON_SOURCE_DIR environment variables). Never downloads or
@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 
 def discover(root):
-    return sorted(p.parent for folder in ('components', 'examples')
+    return sorted(p.parent for folder in ('bsp', 'components', 'examples')
                   for p in (root / folder).rglob('CMakeLists.txt')
                   if p.parent.name in ('host', 'uart_host'))
 

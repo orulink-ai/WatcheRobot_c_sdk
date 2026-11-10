@@ -9,7 +9,7 @@ set(CMAKE_C_EXTENSIONS OFF)
 enable_testing()
 
 set(MCU_SENSOR_COMPONENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..")
-set(MCU_LINK_COMPONENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../protocols/mcu_link")
+set(MCU_LINK_COMPONENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../mcu_link")
 
 add_executable(mcu_sensor_service_host_tests
     "${MCU_SENSOR_COMPONENT_DIR}/src/mcu_sensor_service.c"

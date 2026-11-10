@@ -6,7 +6,7 @@
 # 必须用配置阶段脚本持久化。脚本幂等：已打过补丁则跳过，driver 未拉取时也安全跳过。
 #
 # Python 解释器优先级：IDF 的 PYTHON 变量 > find_package(Python3) 缓存 > 退化到系统 python。
-get_filename_component(_official_project "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
+get_filename_component(_official_project "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
 if(NOT PROJECT_DIR STREQUAL _official_project)
     # Standalone projects own their managed dependencies. Never patch the
     # official application checkout while configuring a hardware example.
@@ -36,7 +36,7 @@ else()
     set(_spd2010_py "python")
 endif()
 execute_process(
-    COMMAND "${_spd2010_py}" "${CMAKE_CURRENT_LIST_DIR}/../../scripts/patch_spd2010_idf6_touch.py"
+    COMMAND "${_spd2010_py}" "${CMAKE_CURRENT_LIST_DIR}/../../../scripts/patch_spd2010_idf6_touch.py"
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
     OUTPUT_VARIABLE _spd2010_patch_out
     RESULT_VARIABLE _spd2010_patch_ret
@@ -51,7 +51,7 @@ endif()
 
 if(IDF_VERSION_MAJOR GREATER_EQUAL 6)
     execute_process(
-        COMMAND "${_spd2010_py}" "${CMAKE_CURRENT_LIST_DIR}/../../scripts/patch_led_strip_idf6.py"
+        COMMAND "${_spd2010_py}" "${CMAKE_CURRENT_LIST_DIR}/../../../scripts/patch_led_strip_idf6.py"
         WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
         OUTPUT_VARIABLE _led_strip_patch_out
         RESULT_VARIABLE _led_strip_patch_ret
@@ -67,7 +67,7 @@ endif()
 # WatcheRobot intentionally uses path 0 for RTC audio and path 1 for MJPEG,
 # so apply the tracked, idempotent sparse-path fix after dependencies resolve.
 execute_process(
-    COMMAND "${_spd2010_py}" "${CMAKE_CURRENT_LIST_DIR}/../../scripts/patch_esp_capture_sparse_video_paths.py"
+    COMMAND "${_spd2010_py}" "${CMAKE_CURRENT_LIST_DIR}/../../../scripts/patch_esp_capture_sparse_video_paths.py"
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
     OUTPUT_VARIABLE _esp_capture_patch_out
     RESULT_VARIABLE _esp_capture_patch_ret

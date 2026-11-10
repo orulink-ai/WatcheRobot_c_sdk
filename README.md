@@ -57,7 +57,7 @@ Hardware features do not automatically imply SDK interfaces. Current SDK support
 | ✓ | UI drawing | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [UI port](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
 | ✓ | Speaker playback | ES8311 | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
 | ✓ | Microphone recording | ES7243 / ES7243E | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
-| ✓ | Photos and image stream | OV5647 / Himax HX6538 | [Camera interface](components/sdk/watcher_hw_camera/README.md) | Included in this source repository |
+| ✓ | Photos and image stream | OV5647 / Himax HX6538 | [Camera interface](bsp/watche_robot/watcher_hw_camera/README.md) | Included in this source repository |
 | ✓ | Body movement | Two servos, body controller | [Movement interface](docs/api/body.md) | Included in this source repository |
 | ✓ | Body touch | TTP223 | [Touch events](docs/api/body.md) | Included in this source repository |
 | ✓ | Side and dock lights | WS2812B2020 | [Light interface](docs/api/body.md) | Included in this source repository |

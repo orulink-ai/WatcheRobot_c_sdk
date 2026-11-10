@@ -18,6 +18,37 @@ def generate(output, *args):
                            "--output", str(output), *args], capture_output=True, text=True)
 
 
+def test_migrated_component_roots_preserve_release_contract(tmp_path):
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('migrated_packager', SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    names = {
+        'watcher_hw_core', 'watcher_hw_body', 'watcher_hw_audio',
+        'watcher_hw_camera', 'watcher_hw_display', 'mcu_link', 'mcu_runtime',
+        'mcu_motion_service', 'mcu_led_service', 'mcu_sensor_service',
+        'mcu_power_service', 'motion_arbiter', 'watcher_input_router',
+        'hal_audio', 'hal_camera', 'esp_codec_dev', 'esp_lvgl_port',
+        'sensecap-watcher', 'sscma_client', 'esp_io_expander_pca95xx_16bit',
+        'watcher_hx_ptl', 'hx_media_protocol', 'hx_ptl_protocol',
+        'jpeg_integrity', 'media_lib_sal',
+    }
+    assert set(module.LOCAL) == names
+    board = {'watcher_hw_' + n for n in ('core', 'body', 'audio', 'camera', 'display')} | {'sensecap-watcher'}
+    for name, (source, _) in module.LOCAL.items():
+        assert source == ('bsp/watche_robot/' if name in board else 'components/') + name
+    output = tmp_path / 'migrated'
+    report = module.prepare(output, 'preview_test', module.VERSION, 'HEAD')
+    assert report['version'] == '0.1.0-preview.1'
+    assert set(report['components']) == names
+    for name in board - {'sensecap-watcher'}:
+        header = f'include/{name}.h'
+        original = subprocess.check_output(['git', '-C', str(ROOT), 'show', f'HEAD:{module.LOCAL[name][0]}/{header}'])
+        assert (output / 'components' / name / header).read_bytes() == original
+        assert f'#include "{name}.h"' in (output / 'consumer/main/main.c').read_text()
+
+
 def test_release_tree_has_closed_real_components(tmp_path):
     output = tmp_path / "release"
     run = generate(output)
@@ -48,7 +79,7 @@ def test_release_tree_has_closed_real_components(tmp_path):
 def test_real_compote_packages_and_consumer_are_closed(tmp_path):
     compote = shutil.which("compote")
     if not compote:
-        pytest.fail("compote required: install packaging/requirements.txt and put its bin on PATH")
+        pytest.fail("compote required: install tools/packaging/requirements.txt and put its bin on PATH")
     output = tmp_path / "packed"
     run = generate(output, "--pack", "--compote", compote)
     assert run.returncode == 0, run.stdout + run.stderr

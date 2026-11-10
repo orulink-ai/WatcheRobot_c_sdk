@@ -151,7 +151,7 @@ dependencies:
   sensecap-watcher:
     dependencies: []
     source:
-      path: ../../components/sensecap-watcher
+      path: ../../bsp/watche_robot/sensecap-watcher
       type: local
     version: 1.0.0
 direct_dependencies:
