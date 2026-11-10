@@ -1,6 +1,6 @@
 # ESP Codec Device
 
-> 本页保留第三方组件参考说明；通用 ES8311 接线／API 示例不等于 WatcheRobot 硬件配置。上游 `test_apps/codec_dev_test` 未随本 SDK 导出，下面的 `ut_*` 是该测试应用辅助函数，不是可直接运行的 SDK 示例。WatcheRobot 开发请从[本仓库上手指南](../../docs/getting-started_zh.md)开始。
+> 本页保留第三方组件参考说明；通用 ES8311 接线／API 示例不等于 WatcheRobot 硬件配置。上游 `test_apps/codec_dev_test` 未随本 SDK 导出，下面的 `ut_*` 是该测试应用辅助函数，不是可直接运行的 SDK 示例。WatcheRobot 开发请从[本仓库上手指南](../../docs/build-and-flash_zh.md)开始。
 - [![组件注册](https://components.espressif.com/components/espressif/esp_codec_dev/badge.svg)](https://components.espressif.com/components/espressif/esp_codec_dev)
 - [English version](./README.md)
 

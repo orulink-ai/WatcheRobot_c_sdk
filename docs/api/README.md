@@ -31,4 +31,4 @@ Start with what you want to do, not an internal component name:
 Each page includes working interface names, a short C example and English usage precautions.
 Use the complete source examples first. Registry installation and hardware acceptance are not implied.
 Before movement, read [motion precautions](../servo-open-loop.md); before flashing, follow
-[backup and recovery preparation](../getting-started.md).
+[backup and recovery preparation](../build-and-flash.md).

@@ -64,12 +64,12 @@ inspect `state` and `last_error`. See the [API guides](README.md) and
 
 ## 3. Verify before using hardware / 使用硬件前验证
 
-Run [software tests](testing.md), then follow [setup, backups and recovery](getting-started.md)
+Run [software tests](testing.md), then follow [setup, backups and recovery](build-and-flash.md)
 before any flashing. Use generated flash arguments or the documented example flash command.
 Read [servo safety](servo-open-loop.md) before moving the body.
 Successful builds establish source consistency, not physical sound, image or motion quality.
 [Historical results](../history/VALIDATION.md) retain the old tested names and hashes.
 
-先运行[软件测试](testing.md)，烧录前完成[上手、备份与恢复准备](getting-started_zh.md)，
+先运行[软件测试](testing.md)，烧录前完成[上手、备份与恢复准备](build-and-flash_zh.md)，
 使用构建生成的参数或示例规定命令；运动前阅读[舵机安全](servo-open-loop_zh.md)。
 构建通过不等于声音、画面或机械验收，历史记录保留当时的固件名称和哈希。

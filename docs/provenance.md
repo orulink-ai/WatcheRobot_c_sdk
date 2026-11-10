@@ -15,7 +15,7 @@ services, models and production firmware bundles are not supplied here.
 本仓库提供硬件接口和四个独立 ESP-IDF 示例，可直接在根目录构建，不依赖私库或旧资料仓库。
 不提供官方产品应用、STM32/Himax 实现、云服务、模型或生产固件包。
 
-- Build, backups and recovery / 构建、备份与恢复：[English](getting-started.md) · [中文](getting-started_zh.md)
+- Build, backups and recovery / 构建、备份与恢复：[English](build-and-flash.md) · [中文](build-and-flash_zh.md)
 - Official flashing and recovery / 官方烧录与恢复：<https://wiki.orulink.ai/docs/flashing>
 - Separate Python SDK / 独立 Python SDK：<https://github.com/orulink-ai/WatcheRobot_python_sdk>
 

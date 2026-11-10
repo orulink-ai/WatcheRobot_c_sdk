@@ -9,7 +9,7 @@ validation results. Do not export private sources or change the old product repo
 ## 1. Prepare a working branch / 准备工作分支
 
 Install Git. Firmware work also needs activated ESP-IDF **6.0.2** and ESP32-S3 tools:
-[setup](getting-started.md) / [中文上手](getting-started_zh.md).
+[setup](build-and-flash.md) / [中文上手](build-and-flash_zh.md).
 Documentation-only changes do not need ESP-IDF.
 先安装 Git；涉及固件另需按上手指南准备开发环境。纯文档修改不需要 ESP-IDF。
 

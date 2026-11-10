@@ -79,7 +79,8 @@ See [build requirements](docs/dependencies.md) for paired firmware and dependenc
 
 Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
 
-- [Getting started](docs/getting-started.md): install tools, build, connect the device and run an example.
+- [API usage guide](docs/getting-started.md): initialization and short examples organized by feature.
+- [Build, flash and restore](docs/build-and-flash.md): install tools, connect the device and run an example.
 - [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
 - [Hardware check](docs/hardware-check.md): observe and record actual device behavior.
 - [Build requirements and dependencies](docs/dependencies.md) · [Contributing](docs/contributing.md) · [All documentation](docs/README.md).

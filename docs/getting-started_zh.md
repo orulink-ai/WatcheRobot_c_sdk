@@ -1,132 +1,215 @@
 [English](getting-started.md) | 简体中文
 
-# C SDK 上手指南
+# 如何使用 WatcheRobot C SDK
 
-为机器人 ESP32-S3 编写应用，体验拍照、录音播放和触摸灯光。不需要官方应用源码、Python SDK、
-服务端、SD 卡或模型。在电脑上基于现有固件开发，请使用独立的 [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk)。
-**当前为开发预览，完整配对实机与官方恢复验收仍未完成。**
+| [屏幕与触摸](#屏幕与触摸) | [录音与播放](#录音与播放) | [拍照与连续画面](#拍照与连续画面) | [灯光与身体触摸](#灯光与身体触摸) | [身体运动](#身体运动) |
+| --- | --- | --- | --- | --- |
 
-## 1. 安装工具并构建
+## 概述
 
-安装 Git 与 [ESP-IDF 6.0.2（含 ESP32-S3 工具）](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)。
-每个新终端都要激活 IDF：Linux/macOS 加载实际安装目录下的 `export.sh`，Windows 使用
-ESP-IDF PowerShell 终端。`idf.py --version` 必须显示 6.0.2，构建会拒绝其他版本。
+本页按功能介绍接口：先初始化硬件，再调用需要的操作。不需要先了解内部组件或通信协议。
+首次使用请先完成[环境准备与编译](build-and-flash_zh.md)；烧录、备份和恢复也在该页说明。
 
-```sh
-git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
-cd WatcheRobot_c_sdk
-idf.py --version
-idf.py -C examples/robot build
+下面的 C 代码是应用函数，不是终端命令，可参考[组合示例](../examples/robot/README.md)的工程配置接入。
+由应用任务调用，不要与原有演示同时初始化同一硬件。各节是独立用法，不要求全部运行。
+
+## 通用用法
+
+- 开发环境：**ESP-IDF 6.0.2、ESP32-S3**；界面库为 **LVGL 8.4.0**。
+- `init()` 打开硬件，`close()` 关闭硬件；检查每个函数的返回值，`ESP_OK` 表示本次调用成功。
+- 查询状态成功不等于设备已就绪，仍需检查 `state`。机身初始化后可能还在连接，见下方示例。
+- 函数声明和参数以[公开头文件](../components/sdk)为准；使用这些接口无需直接操作硬件引脚或底层通信总线。
+
+## 屏幕与触摸
+
+### 显示文字
+
+初始化会准备屏幕、触摸和 LVGL。修改界面前先加锁，完成后解锁，避免同时改动界面。
+
+```c
+#include "watcher_hw_display.h"
+
+esp_err_t show_message(void) {
+    esp_err_t err = watcher_hw_display_init();
+    if (err != ESP_OK) return err;
+    if (!watcher_hw_display_lock(1000)) return ESP_ERR_TIMEOUT;
+    lv_obj_t *label = lv_label_create(lv_scr_act());
+    if (label) {
+        lv_label_set_text(label, "Hello, WatcheRobot!");
+        lv_obj_center(label);
+    }
+    watcher_hw_display_unlock();
+    return label ? ESP_OK : ESP_ERR_NO_MEM;
+}
 ```
 
-**后续命令均在本仓库根目录、已激活 IDF 的终端执行。**
-下载依赖需要网络。预期生成 `examples/robot/build/watcher_hw_robot.bin`、bootloader、分区表和烧录参数。
-构建不会写入设备，也不证明实机功能。失败时先解决报错，再继续。反馈问题请附上
-`git rev-parse HEAD`、`idf.py --version` 和错误日志。
+调用成功后应显示文字，屏幕保持打开；可用 LVGL 的按钮和事件处理屏幕触摸。
+不再使用时先停止其他任务访问界面，再在**没有持锁**的地方调用 `watcher_hw_display_close()`。
+初始化或后续操作失败也要检查关闭结果，清理失败时重试，不能直接假定资源已释放。
+[完整显示接口与注意事项](api/display.md)。
 
-## 2. 选择要体验的功能
+## 录音与播放
 
-| 目标 | 工程名 | 修改文件 |
-| --- | --- | --- |
-| 触摸控制身体灯光 | `body` | `examples/body/main/app_main.c` |
-| 拍照、录音播放和屏幕操作 | `head` | `examples/head/main/app_main.c` |
-| 组合以上功能 | `robot` | `examples/robot/main/app_main.c` |
-| 引导式硬件体检 | `hardware_check` | `examples/hardware_check/main/app_main.c` |
+### 录制一小段声音并回放
 
-将命令中的 `robot` 换成所选工程。全部示例选择 ESP32-S3、16 MB flash 和自定义分区。
-head/robot/hardware_check 启用 80 MHz 八线 PSRAM 与 LVGL 8.4.0，body 默认不启用 PSRAM。
-每个工程的配置、分区和依赖清单需配套保留，见[示例说明](../examples/README.md)和[依赖说明](dependencies.md)。
+接口使用 PCM，即未压缩的声音采样，不是直接打开 MP3 或 WAV 文件。
+以下按 16 kHz、16 位单声道录制约 0.1 秒，再回放；所有声音操作在同一个任务中依次执行。
 
-修改 `app_main.c` 后重新构建。body 和 robot 示例收到触摸时请求设置灯光、松手时请求停止，
-不会自动启动舵机运动。
+```c
+#include "watcher_hw_audio.h"
+#include "esp_log.h"
 
-## 3. 安全检查——任何烧录或运动之前
-
-- **兼容固件：**身体控制需要支持运动、灯光、触摸的兼容 STM32 固件；摄像需要匹配的
-  Himax **PTL** 固件。记录板卡、固件版本与镜像哈希。产品 Release、文件名、握手成功或构建成功
-  都不能证明兼容。配套未经核实，先停止并向维护者索取兼容记录。
-- **备份与恢复：**准备已核实的完整官方恢复包，备份所需设置和数据。首次完整自定义烧录会覆盖
-  官方 `agentcfg` **0x12000–0x20000** 区域。回到官方固件必须**完整恢复**，不能只刷应用。
-  仅有备份无法恢复官方分区布局。缺少恢复包时停止。
-- **正确端口：**ESP32 接口为 **SERIAL-B**，仍须在设备管理器或 `/dev/serial/by-id/` 核实实际端口。
-  不要使用 STM32/Himax 端口；关闭其他串口监视器。
-- **运动：**应用**不能读取舵机实际转到的角度**。实际起点未知，即使要求转到 X90/Y120 参考位置，也可能从另一端移动很远。
-  清空整个行程，保持人工断电可用。ACK/DONE 和软件 STOP 不证明实际位置或机械停止。
-  断连后 ESP32 无法保证停止命令到达，仍需 STM32 安全机制和操作者断电。运动检查前阅读
-  [运动安全](servo-open-loop_zh.md)。
-
-首次准备或恢复，使用已核实的整套镜像并遵循[官方烧录指南](https://wiki.orulink.ai/docs/flashing)；
-该指南不是日常更新自定义应用的入口。SDK 不提供未经验证的 STM32/Himax 替换镜像。
-
-## 4. 烧录并观察
-
-完成上述检查后，将 `<PORT>` 替换为本机已核实的 **ESP32 端口**，如实际识别到的
-`COM7` 或 `/dev/ttyACM0`：
-
-```sh
-idf.py -C examples/robot -p <PORT> flash
-idf.py -C examples/robot -p <PORT> monitor
+esp_err_t record_and_play(void) {
+    static int16_t pcm[1600];
+    esp_err_t err = watcher_hw_audio_init(16000, 30);
+    if (err == ESP_OK) err = watcher_hw_audio_read(pcm, sizeof(pcm));
+    if (err == ESP_OK) err = watcher_hw_audio_write(pcm, sizeof(pcm));
+    if (err == ESP_OK) err = watcher_hw_audio_drain(1000);
+    esp_err_t closed = watcher_hw_audio_close();
+    if (closed != ESP_OK)
+        ESP_LOGE("guide", "Audio cleanup failed: %s", esp_err_to_name(closed));
+    return err != ESP_OK ? err : closed;
+}
 ```
 
-`flash` 写入自定义 ESP32 bootloader、分区表和应用，不刷 STM32/Himax。
-**不要执行 `erase-flash`，不要猜偏移，不要把应用单独 `.bin` 从 `0x0` 写入。**
-预期 esptool 写入校验成功，随后 robot 示例显示拍照、音频操作界面，并记录身体初始化和触摸事件。
-尝试 Photo，再 Record、Play，亲自检查照片和声音。触摸身体时请求绿灯，松手时请求停止。
-控件禁用不算通过。用 **Ctrl+]** 退出 monitor。
+先用较低音量，亲耳确认结果。`drain()` 等待已提交的声音数据送出，之后才关闭；进度完成不证明声音正常。
+播放数据必须可修改，`sizeof(pcm)` 是字节数。不要在硬件回调、中断或屏幕锁内调用这些函数。
+关闭失败时须继续处理清理，再交给其他代码使用；[完整音频用法](api/audio.md)。
 
-若选 `hardware_check`，屏幕应显示 **Hardware check**，日志包含 `Hardware check v2 | curved zones`。
-按 [26 项操作指南](hardware-check_zh.md)检查。结果只保存在 RAM，重启清空，应另行记录；未测不算通过。
+## 拍照与连续画面
 
-后续仅更新应用时，**只有确认连接设备已经使用相同自定义分区布局**，才可执行
-`idf.py -C examples/robot -p <PORT> app-flash`。本地文件相同不能证明设备布局相同。
-设备布局未知或中途刷过官方固件时，重新完成安全检查，使用完整自定义 `flash`。
+### 拍一张照片
 
-可选便捷脚本提供同样的 build/flash/monitor 操作：
+摄像头需要配套的 Himax 固件。照片以 JPEG 数据交给下面的接收函数：
 
-```sh
-bash examples/hardware-sdk.sh robot build
+```c
+#include "watcher_hw_camera.h"
+#include "esp_log.h"
+
+static void receive_photo(const uint8_t *jpeg, size_t size,
+                          uint32_t timestamp_ms, void *context) {
+    (void)jpeg; (void)timestamp_ms; (void)context;
+    ESP_LOGI("guide", "JPEG received: %u bytes", (unsigned)size);
+    /* Copy jpeg[0..size) here if the application needs to keep the photo. */
+}
+
+esp_err_t take_photo(void) {
+    esp_err_t err = watcher_hw_camera_init();
+    if (err == ESP_OK) err = watcher_hw_camera_capture(receive_photo, NULL);
+    esp_err_t closed = watcher_hw_camera_close();
+    if (closed != ESP_OK)
+        ESP_LOGE("guide", "Camera cleanup failed: %s", esp_err_to_name(closed));
+    return err != ESP_OK ? err : closed;
+}
 ```
 
-```powershell
-./examples/hardware-sdk.ps1 robot build
+成功时串口记录照片字节数。此片段只接收和记录，不保存或显示照片。
+图片数据只在接收函数返回前有效；要留用必须先复制，不要在接收函数里停止或关闭摄像头。
+关闭失败时先完成清理，不要启动第二套摄像头控制。
+
+### 连续取图
+
+连续取图的流程是：初始化 → 启动取图 → 停止 → 关闭。初始化后调用 `watcher_hw_camera_stream(fps, receive_photo, NULL)`，每张图交给相同的接收函数；
+`fps` 是请求帧率。需要结束时由应用任务调用 `watcher_hw_camera_stop()`，检查成功后再关闭。
+[帧率限制、停止与出错处理](api/camera.md)。
+
+## 灯光与身体触摸
+
+### 初始化身体并检查是否就绪
+
+灯光、身体触摸和运动共用同一次机身初始化。应用启动时调用 `watcher_hw_body_init()`；
+之后重复查询状态，等 `WATCHER_HW_READY` 再操作。处于 `WATCHER_HW_STARTING` 时可以稍后再查；处于 `WATCHER_HW_FAULT` 时停止操作并排查，不要一直重试。下面的检查函数可在应用循环中调用，未就绪时先等待，不要强行发指令。
+
+```c
+#include "watcher_hw_body.h"
+
+esp_err_t check_body_ready(void) {
+    watcher_hw_status_t status;
+    esp_err_t err = watcher_hw_body_status(&status);
+    if (err != ESP_OK) return err;
+    if (status.state == WATCHER_HW_READY) return ESP_OK;
+    return status.last_error != ESP_OK ? status.last_error : ESP_ERR_INVALID_STATE;
+}
 ```
 
-支持 body/head/robot/hardware_check 和 build/flash/monitor；flash/monitor 必须以第三个参数传入真实端口。
-脚本不会扫描端口、烧录配套芯片或擦除设备。
+### 设置侧边绿灯
 
-## 5. 恢复官方固件
+```c
+esp_err_t set_side_light(void) {
+    esp_err_t err = check_body_ready();
+    if (err != ESP_OK) return err;
+    mcu_led_request_t light = {
+        .mode = MCU_LED_MODE_STATIC,
+        .zone = MCU_LED_ZONE_SIDE,
+        .primary_green = 128,
+        .brightness = 64,
+    };
+    return watcher_hw_body_light(&light);
+}
+```
 
-停止自定义应用，关闭串口监视器。选择已核实的**完整官方**恢复包，按
-[完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)使用该包对应的准确端口和镜像。
-恢复会替换自定义 ESP32 应用，也可能替换存储和配套固件。之后检查官方启动和配对。
-返回 SDK 开发时重新构建、烧录自定义工程。恢复资产或来源不明时停止，不能猜偏移。
+预期侧边灯呈绿色。颜色和亮度范围为 0–255；底座灯用 `MCU_LED_ZONE_BOTTOM`，全部灯用 `MCU_LED_ZONE_ALL`。
+关灯时使用 `MCU_LED_MODE_OFF`。返回成功表示请求成功，实际效果仍需观察。
 
-## 常见问题
+### 读取身体触摸
 
-- IDF 版本错误：在当前终端激活 6.0.2，不绕过版本检查。
-- 缺少依赖：检查完整仓库、网络和工程依赖清单，不要引入官方应用源码。
-- 身体未就绪或日志报告事件丢失：先停止操作，排查供电、线缆和兼容固件。不要反复触摸尝试解锁，
-  不要自动重试旧动作；重连或清空待处理事件也不能解除这一故障。自行编写恢复逻辑时，
-  取消待执行动作并按[身体 API 的完整恢复步骤](api/body.md)处理；重新动作必须由**新的用户操作**发起。
-- 没有照片：核实 PTL 摄像头固件配套，保留超时或错误日志；没有图片不能通过。
-- 没有声音：尝试 Test speaker 的 voice/tone。默认输出 90、上限 95；进度完成不证明可听。
-  简单头部示例没有自动重试或动态关闭流程，不能再创建一个控制同一音频、摄像头的任务来恢复。
+应用可主动取出事件，识别按下、松手或长按。不要同时使用主动读取和回调分发两种方式。
 
-## 扩展应用时再看
+```c
+#include <string.h>
+#include "esp_log.h"
 
-音频操作交给同一任务；不要在硬件回调、中断或持有屏幕锁时调用阻塞音频函数。
-摄像头回调图片需复制后留用，访问 LVGL 要加锁。精确接口与使用规则见 [API 指南](README.md)。
-独立 ESP-IDF 工程可参考现有示例的 CMake、配置与[依赖说明](dependencies.md)，不能只复制头文件。
-保留已知 SDK 版本以便复现；旧 `watche_hw_*` 应用见[迁移指南](migration.md)。
+esp_err_t read_body_event(void) {
+    watcher_hw_event_t event;
+    esp_err_t err = watcher_hw_body_next_event(&event);
+    if (err != ESP_OK) return err;
+    if (event.type == WATCHER_HW_EVENT_OVERFLOW) {
+        ESP_LOGE("guide", "Events lost: cancel pending actions and recover before continuing");
+        return ESP_ERR_INVALID_STATE;
+    }
+    if (event.type == WATCHER_HW_EVENT_TOUCH && event.size == sizeof(mcu_touch_state_t)) {
+        mcu_touch_state_t touch;
+        memcpy(&touch, event.payload, sizeof(touch));
+        ESP_LOGI("guide", "Touch %u: event=%d", touch.touch_id, touch.event_code);
+    }
+    return ESP_OK;
+}
+```
 
-## 可选：预编译测试固件与验证记录
+没有事件时返回 `ESP_ERR_NOT_FOUND`，这是“暂时没有新输入”。触摸时应看到对应日志：`event=1` 为按下，`2` 为松手，`3` 为长按。
+若事件丢失，应用必须取消待执行动作，按[机身接口的恢复步骤](api/body.md)重新初始化、订阅并等待就绪；
+仅打印错误不够，恢复后也不得重放旧动作，必须等用户新的操作。
 
-外部[硬件体检预览 Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030)
-不是官方整机稳定版，源码构建不需要先下载它。按照该 Release 的资产、来源/哈希和安装说明操作，
-不要默认其二进制来自当前仓库版本。下载包需要 Python 3.10+ 和说明中的 esptool 依赖。
-使用完整文件集及其文档指定偏移，不要把应用单独文件写入 `0x0`。资产缺失时联系维护者，不能找相似文件替代。
-前述安全检查仍然适用。
+## 身体运动
 
-软件测试不证明机械限位、停止时延、边缘触摸、图像/声音质量、反复关闭或长期组合运行稳定性。
-见[测试与证据](testing.md)、[历史验收](../history/VALIDATION.md)及[来源说明](provenance.md)。
-文档不是新完成的构建、烧录或实机验收结果。
+### 发送运动请求
+
+先完成上节的机身初始化，并复用 `check_body_ready()` 检查函数。
+
+**先读[运动注意事项](servo-open-loop_zh.md)**：清空整个可能运动的区域，保证可随时人工断电。
+程序不能读取舵机实际转到的角度；即使移到参考位置，也可能从另一端移动很远。
+下面的函数不会自动运行，仅在应用根据当前用户操作明确调用时发出指令。
+
+```c
+esp_err_t request_move(int x_degrees, int y_degrees, uint32_t duration_ms) {
+    esp_err_t err = check_body_ready();
+    if (err != ESP_OK) return err;
+    uint32_t sequence;
+    return watcher_hw_body_move(x_degrees, y_degrees, duration_ms, &sequence);
+}
+```
+
+角度和时间范围见[运动接口](api/body.md)。请求成功不表示已经到位；收到命令确认或完成报告，也不证明机械已经停止。
+停止请求使用 `watcher_hw_body_stop()`；断线时请求可能无法送达，它不是物理急停装置。
+不再使用身体控制时调用 `watcher_hw_body_close()` 并检查关闭结果；关闭失败须继续清理，不能自动重试旧运动。
+
+## 完整示例与进一步阅读
+
+- [触摸控制灯光](../examples/body/README.md) · [屏幕、拍照与声音](../examples/head/README.md) · [组合应用](../examples/robot/README.md)。
+- [编译、烧录与恢复](build-and-flash_zh.md)：工具安装、端口、备份、运行与恢复。
+- [完整 API 指南](api/README.md)：参数、任务配合、错误恢复和关闭规则。
+- [人工硬件体检](hardware-check_zh.md) · [已有验证结果](verification.md)。
+
+本页只介绍当前 SDK 提供的接口；SD 卡、电池、USB 等硬件不在本页的专用接口范围内。代码编译通过不代替实机验收。
+
+文档结构参考 [ESP-BSP API 使用指南](https://github.com/espressif/esp-bsp/blob/master/docu/how_to_use.md)，代码使用 WatcheRobot 自己的公开接口。

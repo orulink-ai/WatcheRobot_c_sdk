@@ -1,7 +1,7 @@
 # Examples / 示例
 
 Choose what you want to try. Each project can be built independently.
-按功能选择，每个工程都能独立构建。首次使用先看[中文上手](../docs/getting-started_zh.md) / [English setup](../docs/getting-started.md)。
+按功能选择，每个工程都能独立构建。首次使用先看[中文上手](../docs/build-and-flash_zh.md) / [English setup](../docs/build-and-flash.md)。
 
 | I want to… / 我想…… | Project / 工程 |
 | --- | --- |
@@ -35,8 +35,8 @@ The body and robot examples do not automatically start servo movement.
 
 ## Before flash or movement / 烧录或运动前
 
-Follow the [English safety checklist and recovery](../docs/getting-started.md) /
-[中文安全检查与恢复](../docs/getting-started_zh.md). Verify the ESP32 port, compatible paired firmware,
+Follow the [English safety checklist and recovery](../docs/build-and-flash.md) /
+[中文安全检查与恢复](../docs/build-and-flash_zh.md). Verify the ESP32 port, compatible paired firmware,
 backups and a complete official restore bundle. Full custom flash overwrites official configuration;
 app-only restoration is insufficient. Stop if compatibility or recovery assets are unknown.
 Servos have no physical position feedback; reference movement can be large. Clear the entire travel

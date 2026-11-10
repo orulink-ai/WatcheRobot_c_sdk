@@ -1,7 +1,7 @@
 # Build requirements and dependency changes / 构建要求与依赖变更
 
 Use this page to prepare a source build or review a dependency upgrade. For your
-first build, follow [setup](getting-started.md) / [中文上手](getting-started_zh.md).
+first build, follow [setup](build-and-flash.md) / [中文上手](build-and-flash_zh.md).
 Use the complete pinned checkout and network access for declared downloads.
 本页用于准备构建环境、检查依赖升级。请使用固定版本的完整仓库，并允许下载声明的依赖。
 

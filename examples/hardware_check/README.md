@@ -23,8 +23,8 @@ STM32 body firmware and matching Himax PTL camera firmware; a build cannot verif
 
 ## Safety before flashing or movement / 烧录或运动前的安全检查
 
-Follow [English setup, safety and recovery](../../docs/getting-started.md) /
-[中文上手、安全检查与恢复](../../docs/getting-started_zh.md), using **hardware_check** as the project name.
+Follow [English setup, safety and recovery](../../docs/build-and-flash.md) /
+[中文上手、安全检查与恢复](../../docs/build-and-flash_zh.md), using **hardware_check** as the project name.
 Verify the ESP32 port, compatible firmware, backups and a complete official recovery bundle.
 Full custom flash overwrites official configuration; app-only restoration is insufficient.
 Unknown compatibility or recovery assets means stop. Never guess flash offsets or write an app-only binary at `0x0`.

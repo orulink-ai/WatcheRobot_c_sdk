@@ -33,8 +33,8 @@
       "source": "examples/hardware_sdk/MIGRATION.md",
       "destination": "docs/migration.md",
       "source_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "sha256": "0553dcd17e27c6df11eb233eccf732c001d75f64ea1ef25dfff2b236b638f736",
-      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
+      "sha256": "efdef722058a88530ef8a710307dcf16bb3feb47ce323f91ce9b9989f1060ca6",
+      "transform": "public usage documentation organized by hardware feature; original source/import evidence preserved",
       "imported_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
       "imported_transform": null,
       "imported_destination": "MIGRATION.md"
@@ -348,8 +348,8 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "d732cc9db5252238b440d6ce83af52051352f8058edc0ba32d2a2eccdc7c442c",
-      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
+      "sha256": "934237882233c0dfdbf84bafce233776082ac5a7ebe255c902d6fdd9740b0eca",
+      "transform": "public usage documentation organized by hardware feature; original source/import evidence preserved",
       "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
       "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
       "imported_destination": "examples/hardware_check/README.md"
@@ -685,8 +685,8 @@
       "source": "firmware/s3/components/esp_codec_dev/README.md",
       "destination": "components/esp_codec_dev/README.md",
       "source_sha256": "0705ad17f2cdd175105cfd6c7f96e945fea088b4de1df46447ba782c7266e35e",
-      "sha256": "294455704eb9b32c8488ecd7ce21005a595f39d7ba04f07989fa91a3f98f715e",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "sha256": "c0715f71296c52514b69a844c7c6065d08dc92258b54121666ccc411e0a3ae62",
+      "transform": "public usage documentation organized by hardware feature; original source/import evidence preserved",
       "imported_sha256": "0705ad17f2cdd175105cfd6c7f96e945fea088b4de1df46447ba782c7266e35e",
       "imported_transform": null
     },
@@ -694,8 +694,8 @@
       "source": "firmware/s3/components/esp_codec_dev/README_CN.md",
       "destination": "components/esp_codec_dev/README_CN.md",
       "source_sha256": "85d1ade369492a349998adbd330697edd6594417634d69d7a268366e8e5bb03a",
-      "sha256": "b91f2d893137fa2612ef6268ad6edd90924ae9e6beeb8ebe34960c0cd66064f9",
-      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "sha256": "01e01f112ff0cc792d4f1908b5a5af4571e63c519d74017501452e209ceb76e3",
+      "transform": "public usage documentation organized by hardware feature; original source/import evidence preserved",
       "imported_sha256": "85d1ade369492a349998adbd330697edd6594417634d69d7a268366e8e5bb03a",
       "imported_transform": null
     },

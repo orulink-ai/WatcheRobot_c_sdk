@@ -9,7 +9,7 @@ private repository. It is not factory certification or an emergency-stop device.
 
 ## 1. Prepare safely
 
-Before flashing, complete [setup, backups and official recovery preparation](getting-started.md).
+Before flashing, complete [setup, backups and official recovery preparation](build-and-flash.md).
 Verify paired STM32/Himax compatibility and a complete recovery bundle; stop if either
 is unknown. This example runs on ESP32, not the Himax or STM32 port.
 
@@ -142,5 +142,5 @@ source provenance if available. Upstream source identifiers are in repository-ro
 firmware. They are not required fields for the simple observation log.
 
 Host tests and [historical results](../history/VALIDATION.md) do not replace these
-observations. For recovery use the [public setup guide](getting-started.md), never
+observations. For recovery use the [public setup guide](build-and-flash.md), never
 guessed flash offsets or private-workspace scripts.

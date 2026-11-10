@@ -57,7 +57,7 @@ Expected: current file hashes match. Keep immutable upstream source hashes uncha
 ## 3. Build examples / 构建示例
 
 Activate **ESP-IDF 6.0.2** with ESP32-S3 tools as described in
-[setup](getting-started.md) / [中文上手](getting-started_zh.md).
+[setup](build-and-flash.md) / [中文上手](build-and-flash_zh.md).
 From repository root, choose new dedicated output directories:
 按上手指南激活开发环境，在仓库根目录使用新的独立输出目录：
 
@@ -150,10 +150,10 @@ Software checks do not establish physical position, stop timing, mechanical limi
 edge touch, image/sound quality, repeated device teardown, long combined operation
 or complete official restoration. No flashing, paired-device run, local Windows
 run or official restore is established by the Linux record. Before custom flashing,
-prepare backups and a complete verified [official recovery bundle](getting-started.md).
+prepare backups and a complete verified [official recovery bundle](build-and-flash.md).
 Servos have no position feedback: read [motion safety](servo-open-loop.md).
 
 软件检查不证明真实位置、停止时间、机械限位、边缘触摸、画面声音质量、反复设备启停、长时间组合
 运行或完整恢复。Linux 记录不代表已完成烧录、配套实机、Windows 本地运行或官方恢复。
-自定义烧录前准备备份及[完整官方恢复包](getting-started_zh.md)，运动前阅读[安全说明](servo-open-loop_zh.md)。
+自定义烧录前准备备份及[完整官方恢复包](build-and-flash_zh.md)，运动前阅读[安全说明](servo-open-loop_zh.md)。
 未测项目必须保持未测。

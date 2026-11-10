@@ -25,8 +25,8 @@ This project enables 80 MHz octal PSRAM and LVGL 8.4.0. The camera needs matchin
 
 ## Before flashing / 烧录前
 
-Complete the [English safety checklist and recovery guide](../../docs/getting-started.md) /
-[中文安全检查与恢复指南](../../docs/getting-started_zh.md). Verify the ESP32 port, compatible paired
+Complete the [English safety checklist and recovery guide](../../docs/build-and-flash.md) /
+[中文安全检查与恢复指南](../../docs/build-and-flash_zh.md). Verify the ESP32 port, compatible paired
 firmware, backups and a complete official restore bundle. Full custom flash overwrites official
 configuration; an app-only flash cannot restore the official partition layout. Unknown compatibility
 or missing recovery assets means stop. Do not guess offsets, write an app-only binary at `0x0` or use

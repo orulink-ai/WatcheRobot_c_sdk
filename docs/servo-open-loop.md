@@ -11,7 +11,7 @@ is not stuck, or has stopped. Read this page before enabling motion.
 
 - Verify paired STM32 firmware compatibility. This SDK does not update STM32 or
   Himax firmware. Unknown compatibility or a missing complete official restore
-  bundle is a **do-not-flash** blocker. Prepare [backups and official recovery](getting-started.md).
+  bundle is a **do-not-flash** blocker. Prepare [backups and official recovery](build-and-flash.md).
 - Before **every** motion, clear the **entire possible travel**, not just the expected
   small move. Keep operator-controlled power disconnection available.
 - The hardware check first commands **X90/Y120**, then **X93/Y120** or **X90/Y123**.

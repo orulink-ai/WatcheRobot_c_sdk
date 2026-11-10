@@ -37,10 +37,10 @@ on hardware.
 - **Installation from Espressif Registry:** packages were built locally, not uploaded or installed from the service.
 
 **编译通过不代表机器人实机测试通过。** 例如，程序可以发出转动指令，但不能据此确认舵机已经转到目标角度或停止。
-开始连接设备前，请阅读[上手指南](getting-started_zh.md)和[运动控制注意事项](servo-open-loop_zh.md)。
+开始连接设备前，请阅读[上手指南](build-and-flash_zh.md)和[运动控制注意事项](servo-open-loop_zh.md)。
 
 **A successful build is not hardware acceptance.** A sent command does not prove
-that a servo reached its target or stopped. Read [getting started](getting-started.md)
+that a servo reached its target or stopped. Read [getting started](build-and-flash.md)
 and [motion precautions](servo-open-loop.md) before connecting hardware.
 
 ## 如何复查 / How to reproduce

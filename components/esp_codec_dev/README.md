@@ -1,6 +1,6 @@
 # ESP Codec Device
 
-> This is upstream component reference documentation, not WatcheRobot board wiring or a runnable SDK quickstart. The upstream `test_apps/codec_dev_test` application is not included; the `ut_*` helpers below belong to that application. Start WatcheRobot development with [this repository's setup guide](../../docs/getting-started.md).
+> This is upstream component reference documentation, not WatcheRobot board wiring or a runnable SDK quickstart. The upstream `test_apps/codec_dev_test` application is not included; the `ut_*` helpers below belong to that application. Start WatcheRobot development with [this repository's setup guide](../../docs/build-and-flash.md).
 - [![Component Registry](https://components.espressif.com/components/espressif/esp_codec_dev/badge.svg)](https://components.espressif.com/components/espressif/esp_codec_dev)
 - [中文版本](./README_CN.md)
 

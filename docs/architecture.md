@@ -1,8 +1,8 @@
 # How the SDK fits your application / SDK 如何配合你的应用
 
 Use this page when you are deciding where to put application logic or investigating
-conflicting access to hardware. For build commands, start with [setup](getting-started.md).
-本页面向开发应用和排查硬件访问冲突的人；构建步骤见[中文上手](getting-started_zh.md)。
+conflicting access to hardware. For build commands, start with [setup](build-and-flash.md).
+本页面向开发应用和排查硬件访问冲突的人；构建步骤见[中文上手](build-and-flash_zh.md)。
 
 ## Choose what your application needs / 按需要选择能力
 
