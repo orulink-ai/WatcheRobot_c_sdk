@@ -71,6 +71,7 @@ measure actual servo angles. Interface compatibility details are in the
 [developer notes](../../docs/api/body.md#motion-safety-english).
 
 ![Software-rendered motion safety page showing reference pose, whole-travel warning and no position sensor](../../docs/images/hardware-check-motion-safety.png)
+Illustration retained from the [original public artwork](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png); not a device photograph.
 
 This LVGL (screen graphics library) host-rendered illustration is not a robot photograph.
 

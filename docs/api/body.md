@@ -80,11 +80,11 @@ SDK 把事件按到达顺序暂存，应用选择一种方式取出：
 
 - 公开头文件：[`watcher_hw_body.h`](../../bsp/watche_robot/watcher_hw_body/include/watcher_hw_body.h)。接口名称和参数以此为准。
 - 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
-- 直接 CMake 依赖：watcher_hw_core、mcu_runtime、mcu_motion_service、mcu_led_service、mcu_sensor_service；私有依赖 freertos、esp_timer、motion_arbiter。详见[依赖与本地适配](../development.md#dependencies)。
+- 直接 CMake 依赖：watcher_hw_core、mcu_runtime、mcu_motion_service、mcu_led_service、mcu_sensor_service；私有依赖 freertos、esp_timer、motion_arbiter。详见[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 - [可运行的 body 示例](../../examples/body/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
 
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../development.md#testing)。
+代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../CONTRIBUTING.md#checks--修改后检查)。
 
 ## English: Motion, lights and touch
 

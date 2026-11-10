@@ -60,6 +60,7 @@ idf.py -C examples/hardware_check build
 接口兼容细节见[安全指南末尾的开发接口说明](../../docs/api/body.md#motion-safety)。
 
 ![软件渲染的运动安全页：参考姿态、完整行程警告和无位置传感器说明](../../docs/images/hardware-check-motion-safety.png)
+配图沿用[原公开示意图](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png)，不是实物照片。
 
 上图由 LVGL（屏幕绘图库）在电脑上渲染，不是机器人实拍。
 

@@ -45,7 +45,7 @@ and lights into your own interactions.
 </tr>
 </table>
 
-Product images and hardware details come from the product manual; see [image attribution](docs/images/product/README.md).
+Product renders and hardware details come from Orulink’s WatcheRobot Product Manual V1.1. Images belong to Orulink; the code’s Apache-2.0 license does not grant rights to product artwork or trademarks.
 Hardware features do not automatically imply SDK interfaces. Current SDK support is listed below.
 
 ## Capabilities and dependencies
@@ -64,7 +64,7 @@ Hardware features do not automatically imply SDK interfaces. Current SDK support
 
 ✓ indicates an interface provided by the source, not completed whole-device testing.
 Repository components have not been formally published to Espressif's Component Registry.
-See [build requirements](docs/development.md#dependencies) for paired firmware and dependency details.
+See [build requirements](examples/README.md#requirements--环境要求) for paired firmware and dependency details.
 
 ## Examples
 
@@ -81,7 +81,7 @@ Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
 
 - [API usage guide](docs/getting-started.md): initialization and short examples organized by feature.
 - [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
-- [Development and contributing](docs/development.md): SDK changes, tests and local packaging for maintainers.
+- [Contributing](docs/CONTRIBUTING.md): submitting changes and running checks.
 
 This is a development preview. Flashing replaces device software: prepare backups and a complete official
 recovery bundle using the [example precautions](examples/README.md). Read [movement precautions](docs/api/body.md#motion-safety-english) before enabling

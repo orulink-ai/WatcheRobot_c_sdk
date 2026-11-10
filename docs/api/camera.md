@@ -61,11 +61,11 @@ esp_err_t capture_once(void) {
 
 - 公开头文件：[`watcher_hw_camera.h`](../../bsp/watche_robot/watcher_hw_camera/include/watcher_hw_camera.h)。接口名称和参数以此为准。
 - 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
-- 直接 CMake 依赖：watcher_hw_core、hal_camera（必须启用 PTL）。详见[依赖与本地适配](../development.md#dependencies)。
+- 直接 CMake 依赖：watcher_hw_core、hal_camera（必须启用 PTL）。详见[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 - [可运行的 head 示例](../../examples/head/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
 
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../development.md#testing)。
+代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../CONTRIBUTING.md#checks--修改后检查)。
 
 ## English: Take photos and receive images
 

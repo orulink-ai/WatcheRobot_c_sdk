@@ -44,7 +44,7 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 </tr>
 </table>
 
-产品图片与硬件信息摘自产品手册；[图片来源](docs/images/product/README.md)。硬件具有的能力不等于本 SDK 已提供对应接口，当前支持范围见下表。
+产品图与硬件信息摘自或宇连接《WatcheRobot 产品手册 V1.1》；图片为渲染图，归或宇连接所有，代码的 Apache-2.0 许可不授予图片或商标使用权。硬件具有的能力不等于本 SDK 已提供对应接口，当前支持范围见下表。
 
 ## 功能与依赖
 
@@ -61,7 +61,7 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 | ✓ | 侧边与底座灯光 | WS2812B2020 | [灯光接口](docs/api/body.md) | 随本仓库源码提供 |
 
 ✓ 表示当前源码提供相应接口，不代表完成了整机实测。表内仓库组件尚未正式发布到乐鑫组件平台。
-配套固件与完整依赖说明见[构建要求](docs/development.md#dependencies)。
+配套固件与完整依赖说明见[构建要求](examples/README.md#requirements--环境要求)。
 
 ## 示例
 
@@ -78,7 +78,7 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 
 - [接口使用指南](docs/getting-started_zh.md)：按功能查看初始化与调用示例。
 - [按功能查接口](docs/api/README.md)：运动、灯光、触摸、拍照、声音与屏幕。
-- [开发与贡献](docs/development.md)：供修改 SDK、测试和打包的维护者参考。
+- [贡献指南](docs/CONTRIBUTING.md)：提交修改与运行检查。
 
 当前为开发预览。烧录会改写设备软件，开始前请按[示例注意事项](examples/README.md#before-flash-or-movement--烧录或运动前)准备备份和官方恢复包；运动前请阅读
 [运动注意事项](docs/api/body.md#motion-safety)。编译通过不代表实机验收。
