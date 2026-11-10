@@ -405,7 +405,7 @@
       "source": "examples/hardware_sdk/hardware_check/test_support/host/README.md",
       "destination": "examples/hardware_check/test_support/host/README.md",
       "source_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "sha256": "ae8e279f602d961e0d7b5e771feb8ecca0c708d31083b04477ae6571dfcdbe15",
+      "sha256": "ef54f078dbfe5adf3a7a2b7ff79a7a68b6d6074b6571e2285363ac79f2f49d9c",
       "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved",
       "imported_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
       "imported_transform": null,

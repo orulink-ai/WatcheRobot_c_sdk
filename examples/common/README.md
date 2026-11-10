@@ -30,7 +30,7 @@ These are implementation names, not additional SDK features or stable public int
 | `demo_image.*`, `demo_state.*` | Picture storage and screen state / 图片保存与界面状态 |
 | `check_*` | Guided checks and interaction / 引导式体检与交互 |
 | [assets](assets/README.md) | Speaker-test sample and license / 扬声器测试样本与许可 |
-| `test_support/host` | Computer-side tests / 电脑端测试，见 [commands and evidence](../../docs/CONTRIBUTING.md#checks--修改后检查) |
+| `test_support/host` | Computer-side tests / 电脑端测试，见 [commands and evidence](../../CONTRIBUTING.md#checks--修改后检查) |
 
 Use the [API guides](../../docs/api/README.md) for application-facing interfaces. This directory is not a
 separately published Component Registry package.

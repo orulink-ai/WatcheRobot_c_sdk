@@ -84,7 +84,7 @@ SDK 把事件按到达顺序暂存，应用选择一种方式取出：
 - [可运行的 body 示例](../../examples/body/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
 
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../CONTRIBUTING.md#checks--修改后检查)。
+代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../../CONTRIBUTING.md#checks--修改后检查)。
 
 ## English: Motion, lights and touch
 

@@ -81,7 +81,7 @@ Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
 
 - [API usage guide](docs/getting-started.md): initialization and short examples organized by feature.
 - [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
-- [Contributing](docs/CONTRIBUTING.md): submitting changes and running checks.
+- [Contributing](CONTRIBUTING.md): submitting changes and running checks.
 
 This is a development preview. Flashing replaces device software: prepare backups and a complete official
 recovery bundle using the [example precautions](examples/README.md). Read [movement precautions](docs/api/body.md#motion-safety-english) before enabling
