@@ -11,6 +11,13 @@ def test_feature_branches_are_validated_once_through_pull_requests():
     assert 'pull_request' in triggers
 
 
+def test_container_packaging_trusts_only_the_checked_out_workspace():
+    workflow = yaml.safe_load((ROOT / '.github/workflows/ci.yml').read_text())
+    setup = workflow['jobs']['package-validation']['steps'][1]['run']
+    assert 'git config --global --add safe.directory "$GITHUB_WORKSPACE"' in setup
+    assert 'safe.directory "*"' not in setup
+
+
 def test_job_level_environment_uses_supported_github_contexts():
     workflow = yaml.safe_load((ROOT / '.github/workflows/ci.yml').read_text())
     for name, job in workflow['jobs'].items():

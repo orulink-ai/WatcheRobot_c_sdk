@@ -18,7 +18,7 @@ materials repository's acceptance record.
 
 | Gate | Actual result | Boundary |
 | --- | --- | --- |
-| Python validators and packaging regressions | 24 tests passed | Includes real compote packaging; not firmware/hardware acceptance |
+| Python validators and packaging regressions | 25 tests passed | Includes real compote packaging; not firmware/hardware acceptance |
 | Documentation | Offline Markdown targets/anchors and SOURCE output hashes passed; `git diff --check` passed | External availability is not inferred from local checks |
 | Host Debug | 19 actual suites, 58 CTests passed | No missing/skipped/zero-test suite treated as success |
 | Host Release | 19 actual suites, 58 CTests passed | Assertions remain enabled |
