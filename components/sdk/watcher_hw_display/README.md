@@ -44,14 +44,14 @@ esp_err_t inspect_display_lifecycle(void) {
 
 一个应用任务负责打开和关闭；操作 LVGL 界面前加锁并检查成功，结束后解锁。SDK 管理的屏幕和触摸对象只允许临时引用（借用句柄），不能自行释放或在关闭后使用。关闭前停止所有使用者，不得在锁内或 LVGL 回调内关闭；不要绕过 LVGL 同时直接绘图。
 
-完整参数、错误恢复与限制见[使用指南](../../../docs/api/display.md)，公开符号见[`watcher_hw_display.h`](include/watcher_hw_display.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/testing.md)。
+完整参数、错误恢复与限制见[使用指南](../../../docs/api/display.md)，公开符号见[`watcher_hw_display.h`](include/watcher_hw_display.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/development.md#testing)。
 
 ## 接入项目
 
 当前为开发预览。使用完整源码和 `examples/sdk.cmake`，不要假定可从组件仓库独立安装。示例使用 ESP-IDF 6.0.2 / ESP32-S3；显示示例使用 LVGL 8.4.0。配置、分区和依赖清单要与示例匹配。
 
 - [可运行的 head 示例](../../../examples/head/README.md)
-- [依赖与本地适配](../../../docs/dependencies.md)
+- [依赖与本地适配](../../../docs/development.md#dependencies)
 
 第一方代码遵循仓库[许可证](../../../LICENSE)；依赖保留各自许可证。
 

@@ -9,7 +9,7 @@ private repository. It is not factory certification or an emergency-stop device.
 
 ## 1. Prepare safely
 
-Before flashing, complete [setup, backups and official recovery preparation](build-and-flash.md).
+Before flashing, complete [setup, backups and official recovery preparation](../examples/README.md).
 Verify paired STM32/Himax compatibility and a complete recovery bundle; stop if either
 is unknown. This example runs on ESP32, not the Himax or STM32 port.
 
@@ -142,5 +142,5 @@ source provenance if available. Upstream source identifiers are in repository-ro
 firmware. They are not required fields for the simple observation log.
 
 Host tests and [historical results](../history/VALIDATION.md) do not replace these
-observations. For recovery use the [public setup guide](build-and-flash.md), never
+observations. For recovery use the [Wiki full recovery procedure](https://wiki.orulink.ai/docs/flashing#full), never
 guessed flash offsets or private-workspace scripts.

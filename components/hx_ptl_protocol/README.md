@@ -11,7 +11,7 @@
 PTL 是两颗芯片共同遵守的图像传输规则，不是图像识别功能。这里包含基础消息头、JPEG 数据包检查、重新寻找消息边界和控制消息解析工具。检查消息合法不能证明照片清晰或实际摄像头已经验收。解析得到的图像指针引用输入数据，使用期间必须保留输入内存。
 
 - 底层接口：[`hx_ptl_protocol.h`](include/hx_ptl_protocol.h)
-- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
-- [测试与实际验证范围](../../docs/testing.md)
+- [架构与资源配合](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

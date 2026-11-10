@@ -64,7 +64,7 @@ Hardware features do not automatically imply SDK interfaces. Current SDK support
 
 ✓ indicates an interface provided by the source, not completed whole-device testing.
 Repository components have not been formally published to Espressif's Component Registry.
-See [build requirements](docs/dependencies.md) for paired firmware and dependency details.
+See [build requirements](docs/development.md#dependencies) for paired firmware and dependency details.
 
 ## Examples
 
@@ -80,13 +80,12 @@ See [build requirements](docs/dependencies.md) for paired firmware and dependenc
 Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
 
 - [API usage guide](docs/getting-started.md): initialization and short examples organized by feature.
-- [Build, flash and restore](docs/build-and-flash.md): install tools, connect the device and run an example.
 - [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
 - [Hardware check](docs/hardware-check.md): observe and record actual device behavior.
-- [Build requirements and dependencies](docs/dependencies.md) · [Contributing](docs/contributing.md) · [All documentation](docs/README.md).
+- [Development and contributing](docs/development.md): SDK changes, tests and local packaging for maintainers.
 
 This is a development preview. Flashing replaces device software: prepare backups and a complete official
-recovery bundle using the setup guide. Read [movement precautions](docs/servo-open-loop.md) before enabling
+recovery bundle using the [example precautions](examples/README.md). Read [movement precautions](docs/servo-open-loop.md) before enabling
 movement. [Verification results](docs/verification.md) distinguish software checks from pending hardware acceptance.
 
 ## License

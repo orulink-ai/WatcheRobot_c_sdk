@@ -25,16 +25,16 @@ This project enables 80 MHz octal PSRAM and LVGL 8.4.0. The camera needs matchin
 
 ## Before flashing / 烧录前
 
-Complete the [English safety checklist and recovery guide](../../docs/build-and-flash.md) /
-[中文安全检查与恢复指南](../../docs/build-and-flash_zh.md). Verify the ESP32 port, compatible paired
+Complete the [English safety checklist and recovery guide](../README.md) /
+[中文安全检查与恢复指南](../README.md). Verify the ESP32 port, compatible paired
 firmware, backups and a complete official restore bundle. Full custom flash overwrites official
 configuration; an app-only flash cannot restore the official partition layout. Unknown compatibility
 or missing recovery assets means stop. Do not guess offsets, write an app-only binary at `0x0` or use
-`erase-flash` as troubleshooting. Then use the guide's flash/monitor commands with **`head`** as the project name.
+`erase-flash` as troubleshooting. Use the official ESP-IDF flash/monitor workflow for this project after completing the checks.
 
 先核实 ESP32 端口、兼容配套固件、备份与完整官方恢复包；完整自定义烧录会覆盖官方配置，
 只刷应用无法恢复官方分区。条件不明时停止，不猜偏移、不从 `0x0` 写应用单文件、不用整片擦除排障。
-完成检查后，使用指南中的烧录、监视命令，工程名改为 **`head`**。
+完成检查后，按乐鑫官方烧录与监视流程对本工程操作。
 
 This example does not drive body motion. If you add motion yourself, first read the
 [movement safety guide](../../docs/servo-open-loop.md).
@@ -55,7 +55,7 @@ Untested is not passed. / 需要逐项验收请使用硬件体检；未测不算
 
 Edit [`main/app_main.c`](main/app_main.c) and rebuild. Keep [`sdkconfig.defaults`](sdkconfig.defaults),
 [`partitions.csv`](partitions.csv) and [`main/idf_component.yml`](main/idf_component.yml) together.
-For supported versions and configuration, see [dependencies](../../docs/dependencies.md).
+For supported versions and configuration, see [dependencies](../../docs/development.md#dependencies).
 修改应用入口后重新构建，配套保留配置、分区与依赖清单，不随意替换依赖版本。
 
 ## If something fails / 故障处理
@@ -68,8 +68,8 @@ Save the error log; do not repeatedly start another instance controlling the sam
 This simple demo does not automatically retry or support shutdown while running.
 保存错误日志，不要重复启动另一个实例控制相同硬件；简单示例不自动重试，也不支持运行中关闭。
 
-To return to official firmware, follow the setup guide's **full official recovery** procedure and
-verify startup/pairing afterward. / 返回官方固件须按上手指南完整恢复，再检查启动与配对。
+To return to official firmware, follow the [full official recovery procedure](https://wiki.orulink.ai/docs/flashing#full) and
+verify startup/pairing afterward. / 返回官方固件须按 [Wiki 完整恢复](https://wiki.orulink.ai/docs/flashing#full)，再检查启动与配对。
 
 ### When modifying the example / 修改示例时注意
 
@@ -79,4 +79,4 @@ access. Follow the ownership and shutdown rules in the [camera](../../docs/api/c
 音频操作交给同一任务；需要留用摄像头回调图片时先复制，访问 LVGL 时加锁。
 设备由谁管理、如何关闭，以相机、音频和屏幕 API 的完整使用规则为准。
 
-[Examples / 示例](../README.md) · [API guides](../../docs/README.md) · [Tests and evidence](../../docs/testing.md)
+[Examples / 示例](../README.md) · [API guides](../../docs/README.md) · [Tests and evidence](../../docs/development.md#testing)

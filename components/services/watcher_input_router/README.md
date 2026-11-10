@@ -11,7 +11,7 @@
 场景与 owner 表示这次输入应该由谁处理，不是硬件资源转让。例如按下后切换界面，松开时不能不加判断地当作新界面的点击。维护时保留作用域校验和取消事件逻辑；这只是输入辅助层，不是新的机器人应用或公开屏幕按键订阅接口。
 
 - 底层接口：[`watcher_input_router.h`](include/watcher_input_router.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

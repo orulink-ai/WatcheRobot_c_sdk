@@ -8,7 +8,7 @@ English | [简体中文](getting-started_zh.md)
 ## Overview
 
 Find a feature, initialize its hardware, then perform the operation. No knowledge of internal components or communication protocols is needed first.
-For tools, compilation, flashing, backups and recovery, use [build, flash and restore](build-and-flash.md).
+To run the code, see [examples](../examples/README.md). Install the environment using the [official ESP-IDF guide](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html).
 
 The C blocks below are application functions, not terminal commands. Use the [combined example](../examples/robot/README.md) for project configuration and call the functions from an application task.
 Do not initialize the same hardware alongside the existing demo. Sections are independent usage patterns, not a program to run in order.
@@ -28,24 +28,36 @@ Initialization prepares the screen, touch and LVGL. Lock before changing the int
 
 ```c
 #include "watcher_hw_display.h"
+#include "esp_log.h"
 
 esp_err_t show_message(void) {
     esp_err_t err = watcher_hw_display_init();
-    if (err != ESP_OK) return err;
-    if (!watcher_hw_display_lock(1000)) return ESP_ERR_TIMEOUT;
+    if (err != ESP_OK) goto cleanup;
+    if (!watcher_hw_display_lock(1000)) {
+        err = ESP_ERR_TIMEOUT;
+        goto cleanup;
+    }
     lv_obj_t *label = lv_label_create(lv_scr_act());
     if (label) {
         lv_label_set_text(label, "Hello, WatcheRobot!");
         lv_obj_center(label);
     }
     watcher_hw_display_unlock();
-    return label ? ESP_OK : ESP_ERR_NO_MEM;
+    if (label) return ESP_OK;
+    err = ESP_ERR_NO_MEM;
+
+cleanup: {
+    esp_err_t closed = watcher_hw_display_close();
+    if (closed != ESP_OK)
+        ESP_LOGE("guide", "Display cleanup failed: %s", esp_err_to_name(closed));
+    return err;
+}
 }
 ```
 
 The text should be visible after success; the display stays open. Use LVGL buttons and events for screen touch.
 Stop other screen users before `watcher_hw_display_close()` and **do not hold the lock while closing**.
-If initialization or another operation fails, check cleanup results and retry failed cleanup instead of assuming resources were released.
+On failure, the example releases any acquired lock before attempting cleanup and preserves the original error. If cleanup fails, the application task responsible for the hardware lifecycle must continue cleanup; do not reinitialize or hand the display to another task until cleanup succeeds.
 See [display details](api/display.md#english-draw-text-buttons-and-screens).
 
 ## Audio
@@ -208,7 +220,7 @@ When finished, call `watcher_hw_body_close()` and check its result. Handle faile
 ## Complete examples and further reading
 
 - [Touch-controlled lights](../examples/body/README.md) · [Screen, camera and audio](../examples/head/README.md) · [Combined application](../examples/robot/README.md).
-- [Build, flash and restore](build-and-flash.md): tools, ports, backups, running and recovery.
+- [Examples](../examples/README.md): project configuration, builds and device precautions; [official restoration](https://wiki.orulink.ai/docs/flashing#full).
 - [Complete API guides](api/README.md#english-choose-a-task): parameters, tasks, error recovery and cleanup.
 - [Manual hardware checks](hardware-check.md) · [Verification results](verification.md).
 

@@ -23,8 +23,8 @@ STM32 body firmware and matching Himax PTL camera firmware; a build cannot verif
 
 ## Safety before flashing or movement / 烧录或运动前的安全检查
 
-Follow [English setup, safety and recovery](../../docs/build-and-flash.md) /
-[中文上手、安全检查与恢复](../../docs/build-and-flash_zh.md), using **hardware_check** as the project name.
+Follow [English setup, safety and recovery](../README.md) /
+[中文上手、安全检查与恢复](../README.md), using **hardware_check** as the project name.
 Verify the ESP32 port, compatible firmware, backups and a complete official recovery bundle.
 Full custom flash overwrites official configuration; app-only restoration is insufficient.
 Unknown compatibility or recovery assets means stop. Never guess flash offsets or write an app-only binary at `0x0`.
@@ -34,7 +34,7 @@ unknown starting point. Clear the entire travel and keep manual power disconnect
 ACK/DONE, command coordinates and software STOP do not prove actual position or physical stopping.
 Do not rely on disconnected ESP32 software to deliver a stop.
 
-按上手指南完成检查，工程名使用 **hardware_check**：核实 ESP32 端口、兼容固件、备份与完整官方恢复包。
+按[示例注意事项](../README.md)完成检查，工程名使用 **hardware_check**：核实 ESP32 端口、兼容固件、备份与完整官方恢复包。
 完整自定义烧录会覆盖官方配置，只刷应用不足以恢复；条件不明时停止，不猜偏移、不从 `0x0` 写应用单文件。
 舵机无物理位置反馈，确认 X90/Y120 可能大行程；清空整个行程，保留人工断电。
 软件完成状态不证明机械停止，断连后不能依靠 ESP32 保证停止命令送达。
@@ -52,8 +52,8 @@ progress are not passes. Keep failure logs and board/source/paired-firmware vers
 烧录后应看到 **Hardware check**，日志包含上述版本文字。按提示观察真实运动、灯光、触摸、照片和声音。
 结果仅保存在 RAM、重启清空，应另行记录。禁用、未运行或仅进度完成不能算通过，故障时保留日志和软硬件版本。
 
-For errors and official restoration, use the setup guide above; keep operator confirmation enabled.
+For official restoration, use the [Wiki recovery procedure](https://wiki.orulink.ai/docs/flashing#full); keep operator confirmation enabled.
 For computer-only screen regression, see [host tests](test_support/host/README.md): these are not LCD
-hardware evidence. / 排障与恢复见上手指南，不能取消人工确认；电脑端界面测试不证明实机屏幕效果。
+hardware evidence. / 恢复见 [Wiki](https://wiki.orulink.ai/docs/flashing#full)，不能取消人工确认；电脑端界面测试不证明实机屏幕效果。
 
-[Tests and evidence / 测试与证据](../../docs/testing.md)
+[Tests and evidence / 测试与证据](../../docs/development.md#testing)

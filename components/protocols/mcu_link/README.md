@@ -11,7 +11,7 @@
 MCU 指机身控制芯片。通信协议规定消息的格式；分帧用于区分一条条消息，CRC 用于检测传输损坏，COBS 用于避免消息内容与分隔符混淆。公开机身接口已经负责读取消息，不要再启动第二个初始化或轮询者。维护升级使用的 UART 串口与运行通信共享；begin_ota 成功后的 finish/abort 必须由获得升级使用权的同一任务执行，不能从其他任务结束别人的升级。
 
 - 底层接口：[`mcu_link.h`](include/mcu_link.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

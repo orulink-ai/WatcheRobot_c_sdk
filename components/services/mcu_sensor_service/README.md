@@ -11,7 +11,7 @@
 最新状态可能被后续消息覆盖；处理触摸事件时要在下一次轮询前复制当前状态。公开机身接口只承诺其头文件中的事件，不因这里存在磁场/惯性结构体就自动增加公开订阅功能。这些传感器数据也不是舵机角度实测反馈。
 
 - 底层接口：[`mcu_sensor_service.h`](include/mcu_sensor_service.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

@@ -11,7 +11,7 @@
 公开摄像头接口要求配套 Himax 固件，且启用 PTL：这是主芯片与摄像头芯片约定的图像传输规则。源码中的其他实现不构成公开接口兼容承诺。不要在公开接口打开时另外启动读图任务；图像数据的有效期与停止/关闭要求见使用指南。
 
 - 底层接口：[`hal_camera.h`](include/hal_camera.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

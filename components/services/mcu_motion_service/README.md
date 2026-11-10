@@ -11,7 +11,7 @@
 ACK/DONE 是对端的指令应答，不是实际角度或物理停止测量；当前硬件无法实测舵机位置，旧位置查询返回 ESP_ERR_NOT_SUPPORTED。观察令牌用于关联一条动作或停止请求：检查状态并释放令牌后再提交下一条，未收到 DONE 不能当作完成。停止观察完成仅表示匹配的成功 ACK，不是实际停稳。底层动作回调在通信任务中执行，必须不阻塞，且不能在回调内注册/注销自身。始终保留人工断电手段。
 
 - 底层接口：[`mcu_motion_service.h`](include/mcu_motion_service.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

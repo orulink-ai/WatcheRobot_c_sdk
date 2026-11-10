@@ -12,6 +12,6 @@
 - 使用完整源码示例及其实际 flash/PSRAM 配置；示例基于 ESP-IDF 6.0.2 / ESP32-S3 和 LVGL 8.4.0。
 - CMake 通过 `patches.cmake` 启用源码内的 SPD2010 触摸驱动 IDF6 适配。没有回归验证，不要删除它或仅因名称相同就替换成上游库。
 - 公开接口打开期间由 SDK 管理共享硬件，不能另行初始化、轮询或并行直接绘图；先停止使用并正确关闭后再交接。
-- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
+- [架构与资源配合](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies)
 
 此页仅为已有支持层提供导航，不是新增板型、应用或独立组件仓库发布承诺。原有署名和第三方许可证不变。

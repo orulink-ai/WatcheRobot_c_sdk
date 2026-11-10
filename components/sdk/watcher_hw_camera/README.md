@@ -38,14 +38,14 @@ esp_err_t capture_once(void) {
 
 由一个应用任务顺序管理打开、拍照、连续取图、停止和关闭。图像是临时借用的数据，只在回调内有效，要保存就先复制；回调中不能启动、停止或关闭摄像头。连续取图先成功停止再关闭。摄像头独立固件必须匹配；双方使用的图像传输规则称为 PTL，需启用对应配置。
 
-完整参数、错误恢复与限制见[使用指南](../../../docs/api/camera.md)，公开符号见[`watcher_hw_camera.h`](include/watcher_hw_camera.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/testing.md)。
+完整参数、错误恢复与限制见[使用指南](../../../docs/api/camera.md)，公开符号见[`watcher_hw_camera.h`](include/watcher_hw_camera.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/development.md#testing)。
 
 ## 接入项目
 
 当前为开发预览。使用完整源码和 `examples/sdk.cmake`，不要假定可从组件仓库独立安装。示例使用 ESP-IDF 6.0.2 / ESP32-S3；显示示例使用 LVGL 8.4.0。配置、分区和依赖清单要与示例匹配。
 
 - [可运行的 head 示例](../../../examples/head/README.md)
-- [依赖与本地适配](../../../docs/dependencies.md)
+- [依赖与本地适配](../../../docs/development.md#dependencies)
 
 第一方代码遵循仓库[许可证](../../../LICENSE)；依赖保留各自许可证。
 

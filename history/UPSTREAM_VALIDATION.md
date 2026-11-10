@@ -1,6 +1,6 @@
 # Development-preview acceptance / 开发预览验收
 
-> Archived upstream evidence; original names, hashes, test counts and commands are historical, not instructions or new validation for this repository. Only relative navigation links are repaired. Current operations: [getting started](../docs/getting-started.md). / 归档上游证据，名称、哈希、测试数量及命令均保留历史语境，不作为本仓库操作步骤或新验收；仅修复相对导航。
+> Archived upstream evidence; original names, hashes, test counts and commands are historical, not instructions or new validation for this repository. Only relative navigation links are repaired. Current operations: [getting started](../examples/README.md). / 归档上游证据，名称、哈希、测试数量及命令均保留历史语境，不作为本仓库操作步骤或新验收；仅修复相对导航。
 
 No stable release or fully validated firmware pairing is claimed.
 本页仅记录实际执行结果；构建成功不等于整机安全验证完成。

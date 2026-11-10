@@ -11,6 +11,6 @@
 - 底层头文件：[`esp_lvgl_port.h`](include/esp_lvgl_port.h)。
 - SDK 管理共享显示资源；取得屏幕对象的引用不表示可以释放它或绕过公开接口并行使用。
 - 使用完整源码与示例匹配的配置、依赖清单和 ESP-IDF 6.0.2。这个说明不承诺独立组件仓库安装、依赖自动齐备，或与未经修改的上游版本完全兼容。
-- [架构](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md) · [测试范围](../../docs/testing.md)
+- [架构](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies) · [测试范围](../../docs/development.md#testing)
 
 此页仅为已有供应商库提供接入导航，不声明新的作者身份。原有署名与依赖许可证不变。

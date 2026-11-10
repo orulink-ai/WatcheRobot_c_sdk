@@ -61,7 +61,7 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 | ✓ | 侧边与底座灯光 | WS2812B2020 | [灯光接口](docs/api/body.md) | 随本仓库源码提供 |
 
 ✓ 表示当前源码提供相应接口，不代表完成了整机实测。表内仓库组件尚未正式发布到乐鑫组件平台。
-配套固件与完整依赖说明见[构建要求](docs/dependencies.md)。
+配套固件与完整依赖说明见[构建要求](docs/development.md#dependencies)。
 
 ## 示例
 
@@ -77,12 +77,11 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 开发环境为 **ESP-IDF 6.0.2 / ESP32-S3**，屏幕界面使用 **LVGL 8.4.0**。
 
 - [接口使用指南](docs/getting-started_zh.md)：按功能查看初始化与调用示例。
-- [编译、烧录与恢复](docs/build-and-flash_zh.md)：安装环境、连接设备与运行示例。
 - [按功能查接口](docs/api/README.md)：运动、灯光、触摸、拍照、声音与屏幕。
 - [硬件体检](docs/hardware-check_zh.md)：按步骤观察并记录实际结果。
-- [构建要求与依赖](docs/dependencies.md) · [贡献指南](docs/contributing.md) · [全部文档](docs/README.md)。
+- [开发与贡献](docs/development.md)：供修改 SDK、测试和打包的维护者参考。
 
-当前为开发预览。烧录会改写设备软件，开始前请按编译与烧录指南准备备份和官方恢复包；运动前请阅读
+当前为开发预览。烧录会改写设备软件，开始前请按[示例注意事项](examples/README.md#before-flash-or-movement--烧录或运动前)准备备份和官方恢复包；运动前请阅读
 [运动注意事项](docs/servo-open-loop_zh.md)。[验证记录](docs/verification.md)区分了软件检查和未完成的实机验收。
 
 ## 许可

@@ -18,6 +18,6 @@ Original dates, names, commit IDs, hashes, counts and conclusions are preserved;
 local Markdown paths were adjusted when records moved.
 原日期、名称、提交、哈希、数量及结论保留，移动时仅调整本地 Markdown 链接。
 
-For a new change, follow [testing](../docs/testing.md) and save new results against
+For a new change, follow [testing](../docs/development.md#testing) and save new results against
 its actual revision. For source and import hashes, see [provenance](../docs/provenance.md).
 验证新修改请按测试指南记录新结果；来源与导入哈希的含义见来源说明。

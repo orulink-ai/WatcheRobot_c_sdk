@@ -36,14 +36,14 @@ esp_err_t play_silence(void) {
 
 所有读写、等待播放送出、调音量与关闭都由同一应用任务顺序执行；不能在中断、硬件回调或持有界面锁时调用。使用可修改的 16 位单声道 PCM 数据，采样率为 16000 或 24000 Hz。报告播放完成、改音量或关闭前先 drain。打开后独占声音芯片和总线，清理失败可能仍未释放。
 
-完整参数、错误恢复与限制见[使用指南](../../../docs/api/audio.md)，公开符号见[`watcher_hw_audio.h`](include/watcher_hw_audio.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/testing.md)。
+完整参数、错误恢复与限制见[使用指南](../../../docs/api/audio.md)，公开符号见[`watcher_hw_audio.h`](include/watcher_hw_audio.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/development.md#testing)。
 
 ## 接入项目
 
 当前为开发预览。使用完整源码和 `examples/sdk.cmake`，不要假定可从组件仓库独立安装。示例使用 ESP-IDF 6.0.2 / ESP32-S3；显示示例使用 LVGL 8.4.0。配置、分区和依赖清单要与示例匹配。
 
 - [可运行的 head 示例](../../../examples/head/README.md)
-- [依赖与本地适配](../../../docs/dependencies.md)
+- [依赖与本地适配](../../../docs/development.md#dependencies)
 
 第一方代码遵循仓库[许可证](../../../LICENSE)；依赖保留各自许可证。
 

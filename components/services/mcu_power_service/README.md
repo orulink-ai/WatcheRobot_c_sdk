@@ -11,7 +11,7 @@
 这是底层接口；公开机身接口没有对应的 5V 开关函数，不能据此推断可直接在公开接口上调用。消息发送成功不等于电路已物理断开，更不能替代操作人员可立即执行的人工断电。不要与公开机身接口争用底层连接。
 
 - 底层接口：[`mcu_power_service.h`](include/mcu_power_service.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

@@ -11,7 +11,7 @@
 底层还提供 PCM（声音采样）和 Opus（压缩声音）支持；公开录放音接口仍按自己的 PCM 格式工作。声音芯片与总线一次只交给一套使用者，不能在公开音频接口打开时另行初始化或操作。失败清理仍可能保留使用权，必须检查释放结果。
 
 - 底层接口：[`hal_audio.h`](include/hal_audio.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

@@ -11,7 +11,7 @@
 应用通过公开机身接口提交灯光请求，区域、模式、效果的真实枚举与字段在下方头文件。不要为灯光另外初始化或轮询通信连接。请求成功不代替实际观察灯光效果。
 
 - 底层接口：[`mcu_led_service.h`](include/mcu_led_service.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

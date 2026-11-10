@@ -1,32 +1,22 @@
-# Documentation / 文档索引
+# Documentation / 文档
 
-Start by building an example; read the API guide when you want to change its behavior.
-从构建示例开始，需要扩展功能时再查 API。当前为开发预览，完整配对实机与恢复验收仍未完成。
+## Use the SDK / 使用 SDK
 
-| I want to… / 我想…… | Guide / 入口 |
-| --- | --- |
-| Use hardware APIs by feature / 按功能学习接口用法 | [English](getting-started.md) · [中文](getting-started_zh.md) |
-| Build, flash safely and restore / 构建、安全烧录与恢复 | [English](build-and-flash.md) · [中文](build-and-flash_zh.md) |
-| Choose an example / 选择示例 | [Examples / 示例](../examples/README.md) |
-| Move the body / 控制身体运动 | [Movement API](api/body.md) · [安全说明 / Safety](servo-open-loop_zh.md) · [English safety](servo-open-loop.md) |
-| Control lights and respond to touch / 控制灯光与响应触摸 | [Lights and touch API](api/body.md) |
-| Take pictures / 拍照与连续画面 | [Camera API](api/camera.md) |
-| Record and play sound / 录音与播放 | [Audio API](api/audio.md) |
-| Draw a screen interface / 显示界面与屏幕触摸 | [Display API](api/display.md) |
-| Check hardware one item at a time / 逐项人工体检 | [English](hardware-check.md) · [中文](hardware-check_zh.md) |
+- [API usage / 功能用法](getting-started.md) · [中文](getting-started_zh.md)：初始化与简短调用示例。
+- [API reference / 接口参考](api/README.md)：参数、数据有效期、关闭与错误恢复。
+- [Examples / 示例](../examples/README.md)：选择工程、构建命令、设备要求与运行结果。
+- [Hardware check / 硬件体检](hardware-check.md) · [中文](hardware-check_zh.md)：人工逐项确认。
 
-## Development reference / 开发参考
+环境安装与通用烧录按 [ESP-IDF 6.0.2 官方文档](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)；
+恢复官方固件按 [Wiki](https://wiki.orulink.ai/docs/flashing#full)。设备特有要求见各示例，运动前读[安全说明](servo-open-loop_zh.md)。
+Install and flash using the [official ESP-IDF guide](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html);
+use the Wiki for complete official restoration and read [movement precautions](servo-open-loop.md) before motion.
 
-- [Status and events / 状态与事件](api/core.md)
-- [Architecture and component mapping / 架构与组件映射](architecture.md) · [Dependencies / 依赖](dependencies.md)
-- [Migration / 旧接口迁移](migration.md)
-- [Contributing / 贡献](contributing.md) · [Tests and evidence / 测试与证据](testing.md)
-- [Source and licenses / 来源与许可](provenance.md)
-- [Packaging status / 打包状态](registry-publishing.md): no verified published Registry installation; use source builds.
-- [Original designs / 原始设计](design/README.md) · [Historical records / 历史记录](../history/README.md)
+## Develop the SDK / 开发 SDK
 
-Before flashing or movement, use the build-and-flash safety checklist: verify compatible firmware,
-backups and a complete restore bundle; clear the full travel and keep manual power disconnection
-available. Servos have no physical position feedback; command completion does not prove physical stopping.
-烧录或运动前按编译与烧录指南完成安全检查：确认配套、备份与完整恢复包，清空整个行程并保持人工断电可用；
-舵机没有物理位置反馈，命令完成不等于机械停止。
+- [Development and contributing / 开发与贡献](development.md)：架构、依赖、验证与本地打包。
+- [Migration / 旧接口迁移](migration.md) · [Source and licenses / 来源与许可](provenance.md)。
+- [Verification record / 验证记录](verification.md)：软件检查与尚未完成的实机验收。
+
+历史记录与原始设计保留在仓库中作为证据，不是当前使用步骤。
+Historical records and original designs remain archived, not current operating instructions.

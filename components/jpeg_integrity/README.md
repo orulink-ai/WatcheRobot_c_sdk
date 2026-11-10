@@ -11,7 +11,7 @@
 normalize 返回检查结果与可用长度，不表示重新拍摄或修复图像内容。结构、尺寸检查通过，也不能证明画面正常、清晰或曝光合适；仍需实际查看照片。
 
 - 底层接口：[`hal_camera_jpeg_integrity.h`](include/hal_camera_jpeg_integrity.h)
-- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
-- [测试与实际验证范围](../../docs/testing.md)
+- [架构与资源配合](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

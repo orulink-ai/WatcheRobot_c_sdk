@@ -42,14 +42,14 @@ esp_err_t inspect_body(void) {
 
 一个应用任务负责事件消费和订阅变化；主动取事件与回调分发二选一。SDK 独占与机身控制芯片的连接。事件丢失后取消旧动作，在回调外 close/init 并重新订阅，等新的 READY 和用户新指令。ACK/DONE 不能证明实际停稳；留出整个运动空间并保留人工断电手段。
 
-完整参数、错误恢复与限制见[使用指南](../../../docs/api/body.md)，公开符号见[`watcher_hw_body.h`](include/watcher_hw_body.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/testing.md)。
+完整参数、错误恢复与限制见[使用指南](../../../docs/api/body.md)，公开符号见[`watcher_hw_body.h`](include/watcher_hw_body.h)。代码用于说明使用顺序，不是硬件验收记录；实际验证范围见[测试说明](../../../docs/development.md#testing)。
 
 ## 接入项目
 
 当前为开发预览。使用完整源码和 `examples/sdk.cmake`，不要假定可从组件仓库独立安装。示例使用 ESP-IDF 6.0.2 / ESP32-S3；显示示例使用 LVGL 8.4.0。配置、分区和依赖清单要与示例匹配。
 
 - [可运行的 body 示例](../../../examples/body/README.md)
-- [依赖与本地适配](../../../docs/dependencies.md)
+- [依赖与本地适配](../../../docs/development.md#dependencies)
 
 第一方代码遵循仓库[许可证](../../../LICENSE)；依赖保留各自许可证。
 

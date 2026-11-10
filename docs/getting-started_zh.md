@@ -8,7 +8,7 @@
 ## 概述
 
 本页按功能介绍接口：先初始化硬件，再调用需要的操作。不需要先了解内部组件或通信协议。
-首次使用请先完成[环境准备与编译](build-and-flash_zh.md)；烧录、备份和恢复也在该页说明。
+运行代码请参考[示例](../examples/README.md)；环境安装见[乐鑫官方指南](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)。
 
 下面的 C 代码是应用函数，不是终端命令，可参考[组合示例](../examples/robot/README.md)的工程配置接入。
 由应用任务调用，不要与原有演示同时初始化同一硬件。各节是独立用法，不要求全部运行。
@@ -28,24 +28,36 @@
 
 ```c
 #include "watcher_hw_display.h"
+#include "esp_log.h"
 
 esp_err_t show_message(void) {
     esp_err_t err = watcher_hw_display_init();
-    if (err != ESP_OK) return err;
-    if (!watcher_hw_display_lock(1000)) return ESP_ERR_TIMEOUT;
+    if (err != ESP_OK) goto cleanup;
+    if (!watcher_hw_display_lock(1000)) {
+        err = ESP_ERR_TIMEOUT;
+        goto cleanup;
+    }
     lv_obj_t *label = lv_label_create(lv_scr_act());
     if (label) {
         lv_label_set_text(label, "Hello, WatcheRobot!");
         lv_obj_center(label);
     }
     watcher_hw_display_unlock();
-    return label ? ESP_OK : ESP_ERR_NO_MEM;
+    if (label) return ESP_OK;
+    err = ESP_ERR_NO_MEM;
+
+cleanup: {
+    esp_err_t closed = watcher_hw_display_close();
+    if (closed != ESP_OK)
+        ESP_LOGE("guide", "Display cleanup failed: %s", esp_err_to_name(closed));
+    return err;
+}
 }
 ```
 
 调用成功后应显示文字，屏幕保持打开；可用 LVGL 的按钮和事件处理屏幕触摸。
 不再使用时先停止其他任务访问界面，再在**没有持锁**的地方调用 `watcher_hw_display_close()`。
-初始化或后续操作失败也要检查关闭结果，清理失败时重试，不能直接假定资源已释放。
+示例在失败时先解锁（如果已加锁），再尝试关闭，并保留原始错误。若记录了关闭失败，负责硬件生命周期的应用任务必须继续清理，成功前不要重新初始化或交给其他任务使用。
 [完整显示接口与注意事项](api/display.md)。
 
 ## 录音与播放
@@ -206,7 +218,7 @@ esp_err_t request_move(int x_degrees, int y_degrees, uint32_t duration_ms) {
 ## 完整示例与进一步阅读
 
 - [触摸控制灯光](../examples/body/README.md) · [屏幕、拍照与声音](../examples/head/README.md) · [组合应用](../examples/robot/README.md)。
-- [编译、烧录与恢复](build-and-flash_zh.md)：工具安装、端口、备份、运行与恢复。
+- [示例](../examples/README.md)：工程配置、构建与设备注意事项；[官方固件恢复](https://wiki.orulink.ai/docs/flashing#full)。
 - [完整 API 指南](api/README.md)：参数、任务配合、错误恢复和关闭规则。
 - [人工硬件体检](hardware-check_zh.md) · [已有验证结果](verification.md)。
 

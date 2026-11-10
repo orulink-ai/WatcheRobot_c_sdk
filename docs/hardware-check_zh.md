@@ -8,7 +8,7 @@
 
 ## 1. 做好安全准备
 
-烧录前完成[上手、备份与官方恢复准备](build-and-flash_zh.md)。核实配套 STM32/Himax
+烧录前完成[上手、备份与官方恢复准备](../examples/README.md)。核实配套 STM32/Himax
 兼容性及完整恢复包；任一不明确就停止。此示例运行于 ESP32，不是 Himax 或 STM32 端口。
 
 选择运动项前阅读[运动安全](servo-open-loop_zh.md)：应用**不能读取舵机实际转到的角度**。
@@ -119,4 +119,4 @@ X 轴运动｜未测｜未能清空整个运动行程
 不代表设备当前安装的固件；这些标识不是简单观察记录的必填项。
 
 主机测试及[历史结果](../history/VALIDATION.md)不代替本次观察。恢复按
-[公开上手指南](build-and-flash_zh.md)，不猜烧录地址，不用私有工作区脚本。
+[Wiki 完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)，不猜烧录地址，不用私有工作区脚本。

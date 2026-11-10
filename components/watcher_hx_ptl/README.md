@@ -11,7 +11,7 @@
 摄像头独立固件必须另外配套；这里不包含 Himax 芯片端固件。PTL 是两端的图像传输规则。本层读取返回的 JPEG 引用只保持到下次读取或关闭，公开摄像头回调则要求返回前复制。与 SSCMA 摄像头通路不能同时使用；控制串口 UART1 与维护烧录互斥，切换模式前先停止读图。控制停止失败时仍可能保留清理责任，不能直接转交使用权。
 
 - 底层接口：[`watcher_hx_ptl.h`](include/watcher_hx_ptl.h)
-- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
-- [测试与实际验证范围](../../docs/testing.md)
+- [架构与资源配合](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

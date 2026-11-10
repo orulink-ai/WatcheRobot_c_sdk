@@ -50,17 +50,17 @@ esp_err_t play_silence(void) {
 
 `watcher_hw_audio_drain(timeout_ms)` 等待已提交的采样离开硬件传输缓冲区（DMA）。必须在同一音频任务中调用，超时必须大于 0。报告播放完成、改音量或关闭前先 drain，并检查返回值；write 成功时仍可能有数据未送出。drain 成功只说明数据送出，不保证声音质量，也不释放音频使用权。
 
-初始化或关闭失败后，先重试 `watcher_hw_audio_close()` 并记录清理错误，再把硬件交给别的使用者。清理失败可能仍保留独占使用权，不能只凭原操作的错误返回认定硬件已经释放。使用示例配套的音频依赖与配置；替换声音芯片库前，核对[依赖与本地适配](../dependencies.md)。
+初始化或关闭失败后，先重试 `watcher_hw_audio_close()` 并记录清理错误，再把硬件交给别的使用者。清理失败可能仍保留独占使用权，不能只凭原操作的错误返回认定硬件已经释放。使用示例配套的音频依赖与配置；替换声音芯片库前，核对[依赖与本地适配](../development.md#dependencies)。
 
 ## 接入与完整示例
 
 - 公开头文件：[`watcher_hw_audio.h`](../../components/sdk/watcher_hw_audio/include/watcher_hw_audio.h)。接口名称和参数以此为准。
 - 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
-- 直接 CMake 依赖：watcher_hw_core、hal_audio；私有依赖 freertos。详见[依赖与本地适配](../dependencies.md)。
+- 直接 CMake 依赖：watcher_hw_core、hal_audio；私有依赖 freertos。详见[依赖与本地适配](../development.md#dependencies)。
 - [可运行的 head 示例](../../examples/head/README.md) · [组合示例](../../examples/robot/README.md)
-- [构建、配套固件、备份与恢复](../build-and-flash.md) · [文档导航](../README.md)
+- [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](../README.md)
 
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../testing.md)。
+代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../development.md#testing)。
 
 ## English: Record and play sound
 

@@ -11,7 +11,7 @@
 这里的 owner（使用者）只是软件约定的当前控制方。获得控制权不表示电机已经停止，也不提供角度测量；释放控制权不是物理急停。公开机身接口打开时不要另行夺取底层控制。实际安全仍依赖运动空间隔离和人工断电。
 
 - 底层接口：[`motion_arbiter.h`](include/motion_arbiter.h)
-- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
-- [测试与实际验证范围](../../../docs/testing.md)
+- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
+- [测试与实际验证范围](../../../docs/development.md#testing)
 
 使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
