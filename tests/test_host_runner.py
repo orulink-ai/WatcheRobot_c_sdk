@@ -41,7 +41,7 @@ def test_zero_suites_is_failure_with_json_report(tmp_path):
     report = tmp_path / 'result.json'
     result = run(tmp_path, '--report', str(report))
     assert result.returncode == 1
-    data = json.loads(report.read_text())
+    data = json.loads(report.read_text(encoding='utf-8'))
     assert data['status'] == 'failed'
     assert 'No host suites' in data['error']
 
@@ -66,7 +66,7 @@ def test_real_suites_debug_release_and_versions(tmp_path):
         report = tmp_path / f'{config}.json'
         result = run(tmp_path, '--config', config, '--report', str(report))
         assert result.returncode == 0, result.stdout + result.stderr
-        data = json.loads(report.read_text())
+        data = json.loads(report.read_text(encoding='utf-8'))
         assert data['status'] == 'passed'
         assert len(data['suites']) == 2
         assert data['versions']['cmake'].startswith('cmake version ')
@@ -84,7 +84,7 @@ def test_ctest_zero_tests_is_a_failure(tmp_path):
     report = tmp_path / 'report.json'
     result = run(tmp_path, '--report', str(report))
     assert result.returncode == 1
-    data = json.loads(report.read_text())
+    data = json.loads(report.read_text(encoding='utf-8'))
     assert data['suites'][0]['status'] == 'failed'
     assert 'zero tests' in data['suites'][0]['error']
 
@@ -94,7 +94,7 @@ def test_failing_test_is_reported_and_remaining_suites_run(tmp_path):
     make_suite(tmp_path, 'examples/a/host')
     report = tmp_path / 'report.json'
     assert run(tmp_path, '--report', str(report)).returncode == 1
-    data = json.loads(report.read_text())
+    data = json.loads(report.read_text(encoding='utf-8'))
     assert [suite['status'] for suite in data['suites']] == ['failed', 'passed']
 
 
@@ -104,6 +104,6 @@ def test_missing_real_dependency_is_explicit(tmp_path):
         stream.write('\nset(LVGL_SOURCE_DIR "" CACHE PATH "real LVGL source")\n')
     report = tmp_path / 'report.json'
     assert run(tmp_path, '--report', str(report)).returncode == 1
-    data = json.loads(report.read_text())
+    data = json.loads(report.read_text(encoding='utf-8'))
     assert 'LVGL_SOURCE_DIR' in data['error']
     assert 'missing' in data['error'].lower()

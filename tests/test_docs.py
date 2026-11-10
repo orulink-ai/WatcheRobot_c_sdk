@@ -86,7 +86,7 @@ def test_bsp_component_readmes_require_descriptive_body(tmp_path):
     (component / 'README.md').write_text('# Core\n')
     result = check(tmp_path)
     assert result.returncode == 1
-    assert 'bsp/watche_robot/watcher_hw_core: missing or empty description' in result.stdout
+    assert f"{Path('bsp/watche_robot/watcher_hw_core')}: missing or empty description" in result.stdout
     (component / 'README.md').write_text('# Core\nHardware lifecycle component.\n')
     assert check(tmp_path).returncode == 0
 

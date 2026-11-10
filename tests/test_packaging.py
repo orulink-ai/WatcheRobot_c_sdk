@@ -46,7 +46,7 @@ def test_migrated_component_roots_preserve_release_contract(tmp_path):
         header = f'include/{name}.h'
         original = subprocess.check_output(['git', '-C', str(ROOT), 'show', f'HEAD:{module.LOCAL[name][0]}/{header}'])
         assert (output / 'components' / name / header).read_bytes() == original
-        assert f'#include "{name}.h"' in (output / 'consumer/main/main.c').read_text()
+        assert f'#include "{name}.h"' in (output / 'consumer/main/main.c').read_text(encoding='utf-8')
 
 
 def test_release_tree_has_closed_real_components(tmp_path):
@@ -58,7 +58,7 @@ def test_release_tree_has_closed_real_components(tmp_path):
     assert "watcher_hw_body" in names and "esp_codec_dev" in names
     for component in components.iterdir():
         assert (component / "CMakeLists.txt").is_file()
-        manifest = yaml.safe_load((component / "idf_component.yml").read_text())
+        manifest = yaml.safe_load((component / "idf_component.yml").read_text(encoding='utf-8'))
         assert manifest["version"] == "0.1.0-preview.1"
         assert manifest["targets"] == ["esp32s3"]
         for name, requirement in manifest["dependencies"].items():
@@ -66,13 +66,13 @@ def test_release_tree_has_closed_real_components(tmp_path):
             if name.startswith("preview_test/"):
                 assert name.split("/")[1] in names
                 assert requirement["version"] == "==0.1.0-preview.1"
-    report = json.loads((output / "release.json").read_text())
+    report = json.loads((output / "release.json").read_text(encoding='utf-8'))
     assert report["source_repository"] == "https://github.com/orulink-ai/WatcheRobot_c_sdk"
     assert report["files"]
     assert not list(components.rglob("test_support"))
     codec = components / "esp_codec_dev"
     assert (codec / "device/zl38063/LICENSE.txt").is_file()
-    assert "espressif__esp_codec_dev" not in (components / "hal_audio/CMakeLists.txt").read_text()
+    assert "espressif__esp_codec_dev" not in (components / "hal_audio/CMakeLists.txt").read_text(encoding='utf-8')
     assert (output / "consumer/main/main.c").is_file()
 
 
@@ -97,17 +97,105 @@ def test_real_compote_packages_and_consumer_are_closed(tmp_path):
     assert len(list((output / "consumer/components").iterdir())) == len(archives)
 
 
+@pytest.mark.parametrize("windows_paths", [False, True], ids=["native", "windows-paths"])
+def test_every_component_provenance_is_complete_and_matches_real_archive(tmp_path, windows_paths):
+    import hashlib
+    import importlib.util
+    from pathlib import PureWindowsPath
+
+    spec = importlib.util.spec_from_file_location('provenance_packager', SCRIPT)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    class WindowsSerializationPath(type(tmp_path)):
+        """Use real host I/O but Windows semantics at the serialization boundary.
+
+        relative_to() supplies genuine PureWindowsPath objects, whose str()
+        uses backslashes. Joining persisted strings accepts backslashes just
+        as Windows does, so Linux reaches provenance filtering, not an I/O error.
+        """
+        def relative_to(self, *args):
+            return PureWindowsPath(super().relative_to(*args).as_posix())
+
+        def __truediv__(self, other):
+            if isinstance(other, str):
+                other = other.replace('\\', '/')
+            return super().__truediv__(other)
+
+    output = tmp_path / 'provenance'
+    prepare_output = WindowsSerializationPath(output) if windows_paths else output
+    report = module.prepare(prepare_output, 'preview_test', module.VERSION, 'HEAD')
+    persisted = json.loads((output / 'release.json').read_text(encoding='utf-8'))
+    assert persisted == report
+    tracked = subprocess.check_output(
+        ['git', '-C', str(ROOT), 'ls-tree', '-r', '--name-only', report['source_commit']],
+        text=True,
+    ).splitlines()
+    all_records = []
+    for name, (prefix, _) in module.LOCAL.items():
+        provenance = json.loads((output / 'components' / name / 'RELEASE_PROVENANCE.json').read_text(encoding='utf-8'))
+        records = provenance['files']
+        assert records, f'{name}: component provenance must not be empty'
+        expected_sources = set()
+        for source in tracked:
+            if not source.startswith(prefix + '/'):
+                continue
+            relative = Path(source[len(prefix) + 1:])
+            if (module.BLOCKED.intersection(relative.parts)
+                    or relative.suffix.lower() in module.BAD_SUFFIXES
+                    or relative.name.startswith('.env')
+                    or relative.as_posix() == 'idf_component.yml'):
+                continue
+            expected_sources.add(source)
+        assert {r['source'] for r in records} == expected_sources, name
+        assert len(records) == len(expected_sources), name
+        for record in records:
+            assert record['destination'] == f"components/{name}/" + record['source'][len(prefix) + 1:]
+            assert '\\' not in record['destination']
+        all_records.extend(records)
+    assert sorted(all_records, key=lambda r: r['source']) == sorted(report['files'], key=lambda r: r['source'])
+    expected_hashes = {
+        p.relative_to(output).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in output.rglob('*') if p.is_file() and p != output / 'release.json'
+    }
+    assert report['output_hashes'] == expected_hashes
+
+    compote = shutil.which('compote')
+    assert compote, 'compote required: install tools/packaging/requirements.txt'
+    module.pack(output, 'preview_test', compote)
+    archives = list((output / 'archives').glob('*.tgz'))
+    assert len(archives) == len(module.LOCAL) == 25
+    for name in module.LOCAL:
+        archive = output / 'archives' / f'{name}_{module.VERSION}.tgz'
+        with tarfile.open(archive) as tf:
+            members = {Path(member.name).as_posix(): member for member in tf.getmembers() if member.isfile()}
+            provenance_stream = tf.extractfile(members['RELEASE_PROVENANCE.json'])
+            assert provenance_stream is not None
+            archived = json.load(provenance_stream)
+            staged = json.loads((output / 'components' / name / 'RELEASE_PROVENANCE.json').read_text(encoding='utf-8'))
+            assert archived == staged
+            for record in archived['files']:
+                relative = record['destination'].removeprefix(f'components/{name}/')
+                stream = tf.extractfile(members[relative])
+                assert stream is not None
+                data = stream.read()
+                assert hashlib.sha256(data).hexdigest() == record['sha256']
+                assert data == (output / record['destination']).read_bytes()
+                assert data == (output / 'consumer/components' / f'preview_test__{name}' / relative).read_bytes()
+
+
 def test_release_patch_is_self_contained_and_final_hashes_match(tmp_path):
     import hashlib
     output = tmp_path / "release"
     run = generate(output)
     assert run.returncode == 0, run.stdout + run.stderr
     component = output / "components/sensecap-watcher"
-    patch = (component / "patches.cmake").read_text()
+    patch = (component / "patches.cmake").read_text(encoding='utf-8')
     assert "../../scripts" not in patch
     assert "_official_project" not in patch
     assert "esp_lcd_panel_io_rx_param(tp->io, -1, data_p, len)" in patch
-    report = json.loads((output / "release.json").read_text())
+    report = json.loads((output / "release.json").read_text(encoding='utf-8'))
     for record in report["files"]:
         path = output / record["destination"]
         assert hashlib.sha256(path.read_bytes()).hexdigest() == record["sha256"]
@@ -128,4 +216,4 @@ def test_refuses_existing_output(tmp_path):
     marker.write_text("keep")
     run = generate(output)
     assert run.returncode != 0
-    assert marker.read_text() == "keep"
+    assert marker.read_text(encoding='utf-8') == "keep"

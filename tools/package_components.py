@@ -159,7 +159,7 @@ def prepare(output: Path, namespace: str, version: str, revision: str) -> dict:
             if relative.suffix.lower() == '.md':
                 data = release_documentation(data, source, prefix, commit)
             write(target, data)
-            records.append({"source": source, "destination": str(target.relative_to(output)),
+            records.append({"source": source, "destination": target.relative_to(output).as_posix(),
                             "source_sha256": digest(git("show", f"{commit}:{source}")), "sha256": digest(data)})
         if not (component / "CMakeLists.txt").is_file():
             raise ValueError(f"missing component at public revision: {prefix}")
@@ -200,7 +200,7 @@ def prepare(output: Path, namespace: str, version: str, revision: str) -> dict:
               "components": {n: {"source": p, "local_dependencies": d, "external_dependencies": EXTERNAL.get(n, [])} for n, (p, d) in LOCAL.items()},
               "external_pins": PINS}
     # Hash the final generated tree too, including manifests, bridges, consumer.
-    report["output_hashes"] = {str(p.relative_to(output)): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file()}
+    report["output_hashes"] = {p.relative_to(output).as_posix(): digest(p.read_bytes()) for p in sorted(output.rglob("*")) if p.is_file()}
     write(output / "release.json", json.dumps(report, indent=2) + "\n")
     return report
 
