@@ -1,16 +1,17 @@
-# sensecap-watcher board support
+# 连接开发板上的屏幕、声音和摄像头
 
-Checked-in board support used by the head/display/audio/camera dependency graph. This is not a new
-board family, an application or a claim of independent Registry consumption.
+这是随源码提供的板级支持层，负责接入开发板上的具体硬件。普通应用先用公开接口显示界面、录放音或拍照；只有维护引脚、驱动初始化和板级适配时，才需要直接阅读这里。
 
-- Public low-level header: [`include/sensecap-watcher.h`](include/sensecap-watcher.h)
-- Application-facing display guide: [watcher_hw_display](../../docs/api/display.md)
-- [Architecture and ownership](../../docs/architecture.md) · [Dependencies/local adaptations](../../docs/dependencies.md)
+## 最短接入路径
 
-Use the complete pinned source examples with ESP-IDF 6.0.2 / ESP32-S3, LVGL 8.4.0 and their actual
-flash/PSRAM defaults. Existing CMake invokes the checked-in SPD2010 IDF6 touch adaptation through
-`patches.cmake`; do not remove it or substitute same-named upstream libraries without regression evidence.
-Public SDK wrappers own shared resources: do not initialize/poll/draw independently while they are open.
+按[屏幕显示](../../docs/api/display.md)、[录音与播放](../../docs/api/audio.md)或[拍照与取图](../../docs/api/camera.md)指南打开对应功能、执行操作并检查清理结果。不需要再单独初始化这一层。
 
-This page adds navigation only. Existing source attribution and third-party license terms are unchanged.
-中文：这里是现有板级支持层，不是新增板型或独立发布承诺；应用优先使用 watcher_hw_*，避免资源冲突。
+## 维护硬件适配时
+
+- 底层头文件：[`sensecap-watcher.h`](include/sensecap-watcher.h)。
+- 使用完整源码示例及其实际 flash/PSRAM 配置；示例基于 ESP-IDF 6.0.2 / ESP32-S3 和 LVGL 8.4.0。
+- CMake 通过 `patches.cmake` 启用源码内的 SPD2010 触摸驱动 IDF6 适配。没有回归验证，不要删除它或仅因名称相同就替换成上游库。
+- 公开接口打开期间由 SDK 管理共享硬件，不能另行初始化、轮询或并行直接绘图；先停止使用并正确关闭后再交接。
+- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
+
+此页仅为已有支持层提供导航，不是新增板型、应用或独立组件仓库发布承诺。原有署名和第三方许可证不变。

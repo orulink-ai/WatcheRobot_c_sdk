@@ -1,15 +1,17 @@
-# mcu_link
+# 与机身控制芯片收发消息
 
-MCU framing/CRC/COBS, wire transport, UART, bootstrap and link state-machine support. The public body runtime owns polling; do not create a competing link owner.
+负责让主芯片与机身控制芯片建立连接、发送命令并接收应答。只有维护底层通信或排查连接问题时才需要直接使用。
 
-- Low-level header: [`include/mcu_link.h`](include/mcu_link.h)
-- Application entry: [public SDK usage](../../../docs/api/body.md)
-- [Architecture](../../../docs/architecture.md) · [Dependencies and local adaptations](../../../docs/dependencies.md)
-- [Testing/evidence](../../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[机身控制使用指南](../../../docs/api/body.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+MCU 指机身控制芯片。通信协议规定消息的格式；分帧用于区分一条条消息，CRC 用于检测传输损坏，COBS 用于避免消息内容与分隔符混淆。公开机身接口已经负责读取消息，不要再启动第二个初始化或轮询者。维护升级使用的 UART 串口与运行通信共享；begin_ota 成功后的 finish/abort 必须由获得升级使用权的同一任务执行，不能从其他任务结束别人的升级。
+
+- 底层接口：[`mcu_link.h`](include/mcu_link.h)
+- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
+- [测试与实际验证范围](../../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

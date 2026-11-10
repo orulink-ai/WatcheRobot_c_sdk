@@ -33,8 +33,8 @@
       "source": "examples/hardware_sdk/MIGRATION.md",
       "destination": "docs/migration.md",
       "source_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "sha256": "5fb953d8f16630d8a79779fe92bd2b952f7318efd37aed1388ef221ce8d1758b",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "sha256": "0553dcd17e27c6df11eb233eccf732c001d75f64ea1ef25dfff2b236b638f736",
+      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
       "imported_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
       "imported_transform": null,
       "imported_destination": "MIGRATION.md"
@@ -115,8 +115,10 @@
       "source": "examples/hardware_sdk/common/assets/README.md",
       "destination": "examples/common/assets/README.md",
       "source_sha256": "2f422d18859794890f78e32fd8dced13a9089fa2385d47ca18159bcded2ac724",
-      "sha256": "2f422d18859794890f78e32fd8dced13a9089fa2385d47ca18159bcded2ac724",
-      "transform": null
+      "sha256": "e5161be212621997210dc2bc72871d0b1a41893c839e5afabf067e40915adaa1",
+      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
+      "imported_sha256": "2f422d18859794890f78e32fd8dced13a9089fa2385d47ca18159bcded2ac724",
+      "imported_transform": null
     },
     {
       "source": "examples/hardware_sdk/common/assets/speaker_pcm.inc",
@@ -346,8 +348,8 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "d102b744847f2ed103cc61696e0fe7437fc0722abb8af9350ff599c9ef4922e5",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "sha256": "d732cc9db5252238b440d6ce83af52051352f8058edc0ba32d2a2eccdc7c442c",
+      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
       "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
       "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
       "imported_destination": "examples/hardware_check/README.md"
@@ -461,8 +463,8 @@
       "source": "examples/hardware_sdk/hardware_check/test_support/host/README.md",
       "destination": "examples/hardware_check/test_support/host/README.md",
       "source_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "sha256": "7486bdd86497ea77f2c3f0e50cbc4c1969776da4b6b50c238d3b7edb2d224838",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "sha256": "2d6b39afdc7969eb88d60daf5da8d7bf96be970ad027ff9c1fbd78ae6e7e3555",
+      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
       "imported_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
       "imported_transform": null,
       "imported_destination": "examples/hardware_check/test_support/host/README.md"
@@ -2402,8 +2404,8 @@
       "source": "firmware/s3/components/sensecap-watcher/README.md",
       "destination": "components/sensecap-watcher/README.md",
       "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "sha256": "c3330a074faa954e2c2239bb3f92667af3deec2120f55b5d7eae477a226d2a5a",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "sha256": "f45bb56355d77f4e180202838b09e614b10a6576c5fecfeb69edbce6b4ce4ced",
+      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
       "imported_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "imported_transform": null,
       "imported_destination": "components/sensecap-watcher/README.md"

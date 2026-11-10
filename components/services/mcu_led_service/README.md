@@ -1,15 +1,17 @@
-# mcu_led_service
+# 向机身灯光发送设置
 
-MCU LED request service and zone/effect types exposed through the public body wrapper.
+把灯区、颜色、亮度和闪烁等效果转换成机身控制芯片可接收的请求。维护灯光行为或查看请求字段时阅读。
 
-- Low-level header: [`include/mcu_led_service.h`](include/mcu_led_service.h)
-- Application entry: [public SDK usage](../../../docs/api/body.md)
-- [Architecture](../../../docs/architecture.md) · [Dependencies and local adaptations](../../../docs/dependencies.md)
-- [Testing/evidence](../../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[机身控制使用指南](../../../docs/api/body.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+应用通过公开机身接口提交灯光请求，区域、模式、效果的真实枚举与字段在下方头文件。不要为灯光另外初始化或轮询通信连接。请求成功不代替实际观察灯光效果。
+
+- 底层接口：[`mcu_led_service.h`](include/mcu_led_service.h)
+- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
+- [测试与实际验证范围](../../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

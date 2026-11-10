@@ -1,41 +1,69 @@
 English | [简体中文](servo-open-loop_zh.md)
 
-# Public hardware contract: open-loop servos
+# Move the body safely: you cannot read the angle a servo actually reaches
 
-Current supported servos have **no physical position feedback**. This describes
-hardware behavior, not a claim that this public snapshot has passed bench acceptance.
+For anyone writing motion controls or running the hardware check. The application
+can request an angle but cannot read where the servo actually ends up. For example,
+after requesting **90 degrees**, it cannot confirm that the servo reached 90 degrees,
+is not stuck, or has stopped. Read this page before enabling motion.
 
-## Commands are not measurements
+## Before flashing or moving: clear the space
 
-- `watcher_hw_body_request_position()` and non-null position subscriptions return
-  `ESP_ERR_NOT_SUPPORTED`; unregistering a null callback remains idempotent.
-- Historical POSITION frames and reserved protocol identifiers are not current
-  measurements. Do not use them to gate motion, infer pose or recover limits.
-- PWM, command limits, explicit lock/release, STOP, ACK/NACK and DONE/FAULT remain.
-  ACK/DONE, requested coordinates and PWM-derived angles cannot establish actual
-  position, absence of a stall or physical stopping. STOP is not an emergency stop.
+- Verify paired STM32 firmware compatibility. This SDK does not update STM32 or
+  Himax firmware. Unknown compatibility or a missing complete official restore
+  bundle is a **do-not-flash** blocker. Prepare [backups and official recovery](getting-started.md).
+- Before **every** motion, clear the **entire possible travel**, not just the expected
+  small move. Keep operator-controlled power disconnection available.
+- The hardware check first commands **X90/Y120**, then **X93/Y120** or **X90/Y123**.
+  The actual starting position is unknown: even a reference move can travel far
+  from the other end. This is not homing, calibration or a measured three-degree
+  move. The example does not automatically return to center when you exit.
 
-## Clear the entire movement envelope
+## Stopping: a software report is not a physical stop
 
-Before **every** motion, provide human clearance of the whole possible travel,
-keep operator-controlled power disconnection available and verify paired STM32
-firmware compatibility. The check first requests **X90/Y120**, then X93/Y120 or
-X90/Y123. The starting position is unknown: the reference move may be large.
-This is not homing, calibration or a measured three-degree displacement. The
-example does not automatically return to center on exit.
+Software STOP is not an emergency-stop device; a disconnected ESP32 cannot guarantee
+stop delivery. ACK means the command was received; DONE reports command completion.
+Neither proves that the servo reached the angle, is not stuck, or physically stopped.
+**Observe the body stop. If motion is unsafe or the stop command cannot arrive,
+use operator-controlled power disconnection.** Do not wait for a software message
+as proof of safety. Paired STM32 safety and an operator power cut remain necessary.
 
-A disconnected ESP32 cannot deliver STOP. Protocol completion, reconnect and FIFO
-drain do not establish mechanical safety; fault recovery requires explicit
-reinitialization and new user intent, never automatic motion replay.
+## When something goes wrong: stop operating, then investigate
 
-## Acceptance boundary
+1. Stop operating the controls; disconnect power manually if unsafe. Keep error
+   logs and check power, connections and paired firmware.
+2. Cancel pending motion. Do not keep touching to unlock controls, and **never
+   replay old motion automatically**. Reconnecting, command completion or clearing
+   queued events does not clear the fault or establish mechanical safety.
+3. If you write recovery logic, follow the complete [body API recovery procedure](api/body.md).
+   Movement afterward requires a **new user action**; a restored connection must
+   not resume an old action.
 
-Host tests establish software state/sequence behavior only. A human or an
-independent future fixture must observe motion direction, full limits and actual
-stop. Record paired firmware versions, public source/build hashes and each result.
-Historical feedback calibration is not a current prerequisite and cannot replace
-physical evidence. This SDK does not update STM32/Himax firmware. A pair lacking
-verified compatibility or complete official recovery assets is a **do-not-flash** blocker.
+## Check the physical result
 
-See [safe setup and recovery](getting-started.md), [26-item check](hardware-check.md)
-and [historical public-sync evidence](../history/SYNC_VALIDATION.md).
+A human or independent future test fixture must observe direction, the entire
+range of movement and actual stop. Record paired-firmware versions, public
+source/build hashes and each result. Host tests only check software state and
+sequencing; historical position measurement/calibration is not a current
+prerequisite or a replacement for physical observation.
+
+Continue with the [manual hardware check](hardware-check.md).
+For older context see [historical public-sync evidence](../history/SYNC_VALIDATION.md).
+
+## Developer interface notes: compatibility does not provide angle measurements
+
+Use this section when changing the application. Exact calls and recovery order
+belong in the [body API](api/body.md).
+
+| Result / interface | What you can conclude |
+| --- | --- |
+| `watcher_hw_body_request_position()` | Returns `ESP_ERR_NOT_SUPPORTED`; it cannot measure the actual angle |
+| Registering a non-null position callback | Returns `ESP_ERR_NOT_SUPPORTED`; cancelling the subscription with a null callback is still safe to repeat |
+| Historical `POSITION` frames or reserved identifiers | Retained for compatibility, not current measurements of actual angles |
+| ACK/NACK | Command received/rejected, not proof of physical movement |
+| DONE/FAULT | Command completion/fault report, not proof of actual angle, lack of stall or physical stopping |
+| Requested coordinates or PWM-derived angles | Command values, not measured angles; PWM is the electrical pulse signal sent to a servo |
+
+Command angle limits, explicit lock/release and STOP remain available. Never use
+old position messages, acknowledgements or requested angles to decide that travel
+is clear, limits have been recovered or the body has stopped.

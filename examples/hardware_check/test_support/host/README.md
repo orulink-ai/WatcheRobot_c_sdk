@@ -1,21 +1,10 @@
-# 真实 LVGL 主机视图回归
+# 在电脑上测试体检界面
 
-独立 CMake/CTest 工程，直接编译 `main/check_view.c`、`main/check_layout.c` 和真实 LVGL 的非 ESP 库。只 mock ESP 内存、显示锁、FreeRTOS 输入队列、已解码图像的释放；图像缩放链接现有 `common/demo_state.c`。无假 LVGL、SDL、硬件连接或 framebuffer 驱动。
+运行这些测试可以检查体检界面的布局、触摸操作和软件绘制结果，不需要连接机器人或安装 ESP-IDF。
+输出是电脑渲染的图片，**不能证明实机屏幕、触摸或其他硬件通过**。
 
-## 历史回归结果（不是本次独立仓库验证）
-
-2026-10-08，Windows x64 / MSVC 19.40，真实 LVGL **8.4.0**，guard 与显式 image attempt 接口落地后：
-
-| 配置 | 结果 | CTest 用时 |
-| --- | --- | --- |
-| Release | 21/21 通过，0 失败 | 0.47s |
-| Debug | 21/21 通过，0 失败 | 0.91s |
-
-`release_outside` 与 `release_disabled` 均由真实运行红转绿；弧外直接 release、setting_pending/cancelling/stopping 下直接 release 都不入队。第 3 个 Screen 触点移至 y198 后，running 内容不再与 status 重叠。显式 `check_view_image(image, attempt)` 的事件先于 model render 到达用例通过，图像不会绑定到过期 shown attempt。
-
-新增测试与 mock 在 MSVC `/W4 /WX` 下成功编译，Debug/Release 均保持断言有效。只改本 host 目录，没有修改主代码、CI、common，没有提交或操作硬件。
-
-软件截图目录：`build/snapshots/`（相对此主机工程目录）。21 个场景各有一个 PPM，包括 `nav_pixels.ppm`、`detail_tail.ppm`、`stopping.ppm`、`photo.ppm`、`live_image.ppm`、`release_outside.ppm`、`release_disabled.ppm`。Debug/Release 共用输出目录，最后执行的配置会覆盖同名截图和 `build/Testing/Temporary/LastTest.log`。全部是软件渲染数据，不是 LCD 实机证明。
+测试使用真实 LVGL 8.4.0，编译当前界面代码；仅替代电脑上不存在的 ESP 内存、显示锁、输入队列和图片释放接口。
+它不是完整机器人模拟器，也不使用 SDL 或真实屏幕驱动。
 
 ## 在独立 C SDK 仓库运行
 
@@ -54,6 +43,21 @@ Debug 验证使用单独的 `../WatcheRobot-c-sdk-host-build-debug` 目录，并
 本页其余带日期的红／绿结果描述原上游迭代，保留历史测试数量，不宣称当前已重跑。
 
 `lv_conf.h` 开启 RGB565、snapshot 和 Montserrat 14/16/18/20/24/48。所有测试源通过 `#ifdef NDEBUG / #error` 防止断言失效；MSVC 用 `/UNDEBUG`，其他编译器用 `-UNDEBUG`，Release 同样执行断言。新增测试和 mock 目标使用 `/W4 /WX`（其他编译器 `-Wall -Wextra -Werror`）；生产代码与 LVGL 是独立依赖目标，保留警告而不要求上游库零警告。注意字体名的 px 大小不等于其 `line_height`（18px 的行高实际为 21）。
+
+## 历史回归结果（不是本次独立仓库验证）
+
+2026-10-08，Windows x64 / MSVC 19.40，真实 LVGL **8.4.0**，guard 与显式 image attempt 接口落地后：
+
+| 配置 | 结果 | CTest 用时 |
+| --- | --- | --- |
+| Release | 21/21 通过，0 失败 | 0.47s |
+| Debug | 21/21 通过，0 失败 | 0.91s |
+
+`release_outside` 与 `release_disabled` 均由真实运行红转绿；弧外直接 release、setting_pending/cancelling/stopping 下直接 release 都不入队。第 3 个 Screen 触点移至 y198 后，running 内容不再与 status 重叠。显式 `check_view_image(image, attempt)` 的事件先于 model render 到达用例通过，图像不会绑定到过期 shown attempt。
+
+新增测试与 mock 在 MSVC `/W4 /WX` 下成功编译，Debug/Release 均保持断言有效。只改本 host 目录，没有修改主代码、CI、common，没有提交或操作硬件。
+
+软件截图目录：`build/snapshots/`（相对此主机工程目录）。21 个场景各有一个 PPM，包括 `nav_pixels.ppm`、`detail_tail.ppm`、`stopping.ppm`、`photo.ppm`、`live_image.ppm`、`release_outside.ppm`、`release_disabled.ppm`。Debug/Release 共用输出目录，最后执行的配置会覆盖同名截图和 `build/Testing/Temporary/LastTest.log`。全部是软件渲染数据，不是 LCD 实机证明。
 
 ## 验证合同
 

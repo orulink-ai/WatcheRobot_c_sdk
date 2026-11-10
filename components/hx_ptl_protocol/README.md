@@ -1,15 +1,17 @@
-# hx_ptl_protocol
+# 识别并检查传来的图像消息
 
-PTL base-header/JPEG packet validation, resynchronization and control-codec helpers used by the paired-camera path. Protocol validation is not a physical image-quality test.
+从摄像头传来的数据中识别一张图像的边界，检查消息和 JPEG，并在边界丢失时重新寻找下一条消息的开头。排查传输格式问题时使用。
 
-- Low-level header: [`include/hx_ptl_protocol.h`](include/hx_ptl_protocol.h)
-- Application entry: [public SDK usage](../../docs/api/camera.md)
-- [Architecture](../../docs/architecture.md) · [Dependencies and local adaptations](../../docs/dependencies.md)
-- [Testing/evidence](../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[拍照与取图使用指南](../../docs/api/camera.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+PTL 是两颗芯片共同遵守的图像传输规则，不是图像识别功能。这里包含基础消息头、JPEG 数据包检查、重新寻找消息边界和控制消息解析工具。检查消息合法不能证明照片清晰或实际摄像头已经验收。解析得到的图像指针引用输入数据，使用期间必须保留输入内存。
+
+- 底层接口：[`hx_ptl_protocol.h`](include/hx_ptl_protocol.h)
+- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
+- [测试与实际验证范围](../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

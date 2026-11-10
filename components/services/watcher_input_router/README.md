@@ -1,15 +1,17 @@
-# watcher_input_router
+# 决定旋钮和按键交给哪个界面或功能
 
-Input context/owner arbitration for knob/button events. This is a supporting layer, not an additional robot application.
+根据当前使用场景，把旋转、按下、短按和长按交给界面、应用或系统，避免一个操作被多个功能同时解释。维护按键与界面切换时阅读。
 
-- Low-level header: [`include/watcher_input_router.h`](include/watcher_input_router.h)
-- Application entry: [public SDK usage](../../../docs/api/display.md)
-- [Architecture](../../../docs/architecture.md) · [Dependencies and local adaptations](../../../docs/dependencies.md)
-- [Testing/evidence](../../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[屏幕界面使用指南](../../../docs/api/display.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+场景与 owner 表示这次输入应该由谁处理，不是硬件资源转让。例如按下后切换界面，松开时不能不加判断地当作新界面的点击。维护时保留作用域校验和取消事件逻辑；这只是输入辅助层，不是新的机器人应用或公开屏幕按键订阅接口。
+
+- 底层接口：[`watcher_input_router.h`](include/watcher_input_router.h)
+- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
+- [测试与实际验证范围](../../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

@@ -1,22 +1,24 @@
-# Body: motion, lights and touch
+# 控制转动、灯光与读取触摸事件
 
-One process-wide MCU runtime exposes motion commands, LED requests and queued link/touch/motion events. Physical servo position feedback is not available.
+需要发送转动指令、设置机身灯光，或接收触摸和连接变化时，使用这一组接口。SDK 统一负责与机身控制芯片通信，应用不必自己收发消息。
 
-Public contract: [`watcher_hw_body.h`](../../components/sdk/watcher_hw_body/include/watcher_hw_body.h).
-This guide uses the checked-in header, not an invented convenience API. Use the complete source checkout;
-no published Registry install command is offered. Snippets illustrate ownership/lifecycle and are compile-checked in an isolated ESP-IDF consumer;
-they are not executed on a robot or physical acceptance tests. See [verification](../testing.md).
+**当前硬件无法实测舵机角度。** 软件收到“已接收”或“已完成”，也不能证明机器人已经到位或停稳。
 
-## Minimal lifecycle / 最小生命周期
+最短流程：初始化 → 检查是否就绪 → 根据当前用户操作处理事件、设置灯光或发送运动指令 → 关闭。下面只查看状态，不演示转动；初始化返回后可能仍在连接中。
+
+## 示例：检查初始化与关闭
 
 ```c
 #include "watcher_hw_body.h"
+#include "esp_log.h"
 
 /* Run on an application owner task, not in a hardware callback. */
 esp_err_t inspect_body(void) {
     esp_err_t err = watcher_hw_body_init();
     if (err != ESP_OK) {
-        (void)watcher_hw_body_close(); /* Report/retry cleanup failure in real app. */
+        esp_err_t cleanup = watcher_hw_body_close();
+        ESP_LOGE("sdk_example", "init failed: %s; cleanup: %s",
+                 esp_err_to_name(err), esp_err_to_name(cleanup));
         return err;
     }
     watcher_hw_status_t status;
@@ -25,51 +27,72 @@ esp_err_t inspect_body(void) {
         err = status.last_error != ESP_OK ? status.last_error : ESP_ERR_INVALID_STATE;
     /* Deliberately no move/light request in this lifecycle sample. */
     esp_err_t closed = watcher_hw_body_close();
+    if (err != ESP_OK || closed != ESP_OK)
+        ESP_LOGE("sdk_example", "operation: %s; close: %s",
+                 esp_err_to_name(err), esp_err_to_name(closed));
     return err != ESP_OK ? err : closed;
 }
 ```
 
-Check every return value in the application. A first-operation error and a cleanup error are distinct;
-log both in production and do not assume failed cleanup released hardware.
+刚初始化时可能还在连接中，因此本片段返回 `ESP_ERR_INVALID_STATE` 不一定表示设备故障。若想观察实际效果，请运行下方链接的触摸灯光示例，查看触摸日志及灯光变化；本片段不会自动转动机器人。
 
-## Control and event contract
+示例记录操作和清理两个结果，返回值优先保留操作错误。真实应用还必须处理清理失败（例如重试关闭），不能记录后就把资源交给别的使用者。
 
-`watcher_hw_body_move(x_degrees, y_degrees, duration_ms, &sequence)` accepts X 0–180°, Y 100–140°,
-and duration 1–65535 ms. These are command bounds, not guaranteed physical limits. The returned sequence
-identifies submission, not completion. Never send a demonstration move just to check initialization.
-`watcher_hw_body_request_position()` always returns `ESP_ERR_NOT_SUPPORTED` and emits no query/event.
-Reference X90/Y120 can be a large move from an unknown actual position. ACK/DONE and reported final
-angles are protocol evidence, not measured position or physical stopping. Clear the whole travel and
-keep manual power disconnection available; a disconnected peer cannot receive a software stop.
+## 发送指令前：不要把指令角度当作实测角度
 
-`watcher_hw_body_light(const mcu_led_request_t *)` uses the existing LED zone/effect enums; RGB and
-brightness are 0–255. Inspect [the service header](../../components/services/mcu_led_service/include/mcu_led_service.h)
-for the request fields. It is not a separate link owner.
+`watcher_hw_body_move(x_degrees, y_degrees, duration_ms, &sequence)` 接受 X 0–180°、Y 100–140°、时长 1–65535 ms。这些是接口允许发送的范围，不是机器人实际位置的测量结果，也不保证整个行程都没有障碍。返回的 `sequence` 只用于关联这条指令，不代表动作已经完成。
 
-Use `next_event()` polling **or** `subscribe()` + `dispatch_events()`, not both: they consume the same
-FIFO. One application task owns subscription changes/dispatch; up to four subscribers are supported.
-Callbacks run synchronously on the dispatch caller, outside the MCU mutex. The event is borrowed until
-callback return. Copy payloads after checking type/size, keep context alive until dispatch returns even
-after unsubscribe, and do not recursively dispatch, block on audio or close the runtime from callbacks.
-No other code may initialize/poll the MCU link while this runtime is open.
+- `watcher_hw_body_request_position()` 始终返回 `ESP_ERR_NOT_SUPPORTED`，不会发送查询，也不会生成位置事件。
+- 例如 X90/Y120 只是一个目标：机器人如果正停在另一端，移到这里仍可能走很远，不能把它当作无风险“回中”。不要为了验证初始化就发送演示动作。
+- `ACK` 表示对端对指令的应答，`DONE` 表示对端报告这条指令结束；两者以及报告中的最终角度都不是角度传感器实测，**不证明已经到位或停止**。运动事件里的角度字段以 0.1° 为单位。
+- 确保整个可能运动的区域内没有人手、线缆或障碍，并始终保留人工断电手段。与控制芯片断连后，软件停止指令无法送到；`watcher_hw_body_stop()` 成功也不等于物理急停验收。
 
-`WATCHER_HW_EVENT_OVERFLOW` precedes retained FIFO events. Its payload is
-`watcher_hw_body_event_loss_t` with cumulative `dropped` and best-effort `stop_result`; this is **not** a
-physical-stop acknowledgment. A loss latches FAULT/ESP_ERR_NO_MEM and rejects moves/lights; stop remains
-available on a ready link. Cancel pending application actions, close/init outside callbacks, resubscribe,
-wait for fresh READY and obtain new user intent. Draining FIFO or receiving another HELLO does not clear
-the latch. Init/close clear subscriptions. Check `dropped_events()` as a diagnostic.
+`watcher_hw_body_light(const mcu_led_request_t *)` 设置灯光；颜色分量与亮度是 0–255。区域、模式、效果及请求字段见[灯光接口头文件](../../components/services/mcu_led_service/include/mcu_led_service.h)。这些请求仍经过同一个机身连接，不要另外启动底层通信。
 
-中文：身体模块独占 MCU 链路，订阅分发与轮询二选一；无位置反馈，丢事件后必须显式恢复，
-不能重放旧动作。运动边界不等于物理测量，大行程和人工断电防护不可省略。
+## 接收触摸、连接与动作事件
 
+SDK 把事件按到达顺序暂存，应用选择一种方式取出：
 
-## Dependencies and examples
+1. 主动调用 `watcher_hw_body_next_event()`；没有事件时返回 `ESP_ERR_NOT_FOUND`。
+2. 注册 `watcher_hw_body_subscribe()`，再由应用调用 `watcher_hw_body_dispatch_events()` 执行回调；最多四个订阅者。
 
-Direct CMake dependencies: watcher_hw_core, mcu_runtime, mcu_motion_service, mcu_led_service, mcu_sensor_service; private freertos, esp_timer, motion_arbiter. Use the matching example defaults, partitions and manifest; headers
-alone do not supply the transitive dependency closure. [Dependency details](../dependencies.md).
+两种方式消耗的是同一个队列（FIFO，先到先取），不能混用。让一个应用任务负责取事件、订阅变化与分发；初始化、关闭、状态与控制调用由 SDK 内部串行化。SDK 打开期间，不允许其他代码初始化或轮询机身控制芯片（MCU）的连接。
 
-- [Runnable body example](../../examples/body/README.md)
-- [Combined robot](../../examples/robot/README.md)
-- [Build, paired firmware, backups and full recovery](../getting-started.md)
-- [API/documentation index](../README.md)
+分发回调直接在调用 dispatch 的应用任务上执行，不持有 MCU 互斥锁。事件内存只在回调返回前有效：要保留内容，先检查类型和长度，再复制数据。即使已取消订阅，上下文内存也必须保留到本次 dispatch 返回，因为它可能已被本次分发记录。回调中不要再次分发、阻塞等待音频，或初始化/关闭机身运行任务。
+
+`dispatch_events(max_events, &dispatched)` 的 `max_events` 必须大于 0，`dispatched` 必须非空；返回成功可以表示本次没有事件，实际数量看 `dispatched`。`status()` 成功只表示读取到状态，还要检查 `state == WATCHER_HW_READY`。`init()` 成功后通常先处于 STARTING，要等与对端完成连接确认。
+
+## 丢事件后必须重新确认操作意图
+
+例如“按下”事件收到、而“松手”事件丢失，应用就可能误以为用户还在要求转动。因此 SDK 不会在丢事件后照常接受新动作。
+
+`WATCHER_HW_EVENT_OVERFLOW` 会优先于队列里保留下来的事件送出，不占普通队列容量。其数据是 `watcher_hw_body_event_loss_t`：
+
+- `dropped`：本次初始化以来累计丢失数量；后续丢失会更新它。
+- `stop_result`：SDK 第一次丢事件后尝试发送一次停止请求的结果，**不是实际停稳确认**。断连或发送失败时，不会自动重放这次停止。
+- 事件的 `received_us` 是第一次丢失的时间，`sequence` 为 0。
+
+丢失会使对外状态锁定为 `WATCHER_HW_FAULT` / `ESP_ERR_NO_MEM`，拒绝转动和灯光请求；连接就绪时仍可请求 stop。处理步骤：取消应用积压的动作 → 在回调外 close 并检查结果 → init → 重新订阅 → 等待新的 READY → 获得用户新的明确操作意图。不要重放旧动作。
+
+仅仅清空队列，或者重新收到对端连接问候消息（HELLO），都不能解除这个故障锁定。重新初始化和关闭会清除订阅，诊断丢失数量可用 `watcher_hw_body_dropped_events()`。关闭超时要重试，不能当成后台任务已退出；关闭还可能报告停止请求或发送等待失败，即使资源已清理也不能据此宣称物理停止。
+
+## 接入与完整示例
+
+- 公开头文件：[`watcher_hw_body.h`](../../components/sdk/watcher_hw_body/include/watcher_hw_body.h)。接口名称和参数以此为准。
+- 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
+- 直接 CMake 依赖：watcher_hw_core、mcu_runtime、mcu_motion_service、mcu_led_service、mcu_sensor_service；私有依赖 freertos、esp_timer、motion_arbiter。详见[依赖与本地适配](../dependencies.md)。
+- [可运行的 body 示例](../../examples/body/README.md) · [组合示例](../../examples/robot/README.md)
+- [构建、配套固件、备份与恢复](../getting-started.md) · [文档导航](../README.md)
+
+代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../testing.md)。
+
+## English: Motion, lights and touch
+
+Send movement and light requests, and read touch or connection events. The SDK manages the connection to the body controller.
+Initialize, check READY, handle events or request an intended action, then close. Initialization may still be connecting when it returns.
+
+- The program cannot read the servos' actual angles. Command targets, ACK/DONE and reported final angles do not prove arrival or stopping. Clear the entire travel area and keep manual power disconnection available; a disconnected ESP32 cannot deliver Stop.
+- Use one application task to read events and change subscriptions. Choose queued reads or callback dispatch, not both; do not open or poll a second body connection.
+- Copy event data before its callback returns. Keep callback context alive until dispatch returns, even after unsubscribe. Do not dispatch recursively or initialize/close from a callback.
+- After lost events, cancel pending actions; close/init outside callbacks, resubscribe, wait for a new READY, and require a new user action. Reconnection or an empty queue must not replay old motion.
+- Check operation and cleanup results separately. Retry failed cleanup before treating resources as released.

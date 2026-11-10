@@ -1,15 +1,17 @@
-# mcu_power_service
+# 请求开关机身的 5V 供电
 
-MCU 5V power-control requests with source attribution. A successful protocol request is not an operator-controlled physical disconnect.
+向机身控制芯片发送 5V 开关请求，并标记请求来自哪一类使用者。只有维护底层供电控制时才直接使用。
 
-- Low-level header: [`include/mcu_power_service.h`](include/mcu_power_service.h)
-- Application entry: [public SDK usage](../../../docs/api/body.md)
-- [Architecture](../../../docs/architecture.md) · [Dependencies and local adaptations](../../../docs/dependencies.md)
-- [Testing/evidence](../../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用的转动、灯光和触摸走[机身控制接口](../../../docs/api/body.md)，但该公开接口没有 5V 开关功能。维护供电控制时，先阅读下方底层头文件并确定唯一的通信管理方，再设计请求、错误处理与清理流程；不要在运行中的公开机身接口旁直接另开一套连接。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+这是底层接口；公开机身接口没有对应的 5V 开关函数，不能据此推断可直接在公开接口上调用。消息发送成功不等于电路已物理断开，更不能替代操作人员可立即执行的人工断电。不要与公开机身接口争用底层连接。
+
+- 底层接口：[`mcu_power_service.h`](include/mcu_power_service.h)
+- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
+- [测试与实际验证范围](../../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

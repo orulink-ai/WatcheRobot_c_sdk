@@ -1,179 +1,149 @@
 English | [简体中文](getting-started_zh.md)
 
-# Embedded C SDK: get started safely (Preview)
+# Get started with the C SDK
 
-Write your own ESP32-S3 `app_main` using `watcher_hw_*`. The independent examples
-need no Python SDK, Daemon, official application, server, SD card or model.
-Python Applications on your computer are a [separate route](https://github.com/orulink-ai/WatcheRobot_python_sdk/blob/main/README.md).
-This snapshot is a development preview, not a stable or fully hardware-accepted release.
+Build an application for the robot's ESP32-S3, then try pictures, recording/playback and
+touch-controlled lights. No official application source, Python SDK, server, SD card or model is
+needed. For computer-side development on existing firmware, use the separate [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk).
+**This is a development preview; full paired-device and official-recovery acceptance is pending.**
 
-## Download the test firmware (development preview)
+## 1. Install the tools and build
 
-Existing test binaries remain hosted in the **external product-materials repository**;
-they have not moved to this repository and are not required for a source build.
-If needed, consult the [hardware-check development preview Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030),
-not the official stable product release. If assets are unavailable, stop and contact
-maintainers rather than substituting a similarly named binary. Follow that Release's source/provenance, hashes and exact asset instructions;
-do not assume its binary source equals this snapshot's upstream SHA. Download packages
-require **Python 3.10+** and the documented esptool dependency. An application-only
-`.bin` must **not** be flashed at `0x0` with a web flasher. Use the complete generated
-flash set and its exact offsets/verified package entry, never guessed offsets.
-
-## 1. Obtain and pin the public source
-
-Install Git and [ESP-IDF v6.0.2](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html)
-with ESP32-S3 tools. Activate its exported environment in **every new terminal**
-(Linux/macOS: `. /path/to/esp-idf/export.sh`; Windows: use the ESP-IDF PowerShell terminal).
-`idf.py --version` must report 6.0.2. Other versions are deliberately rejected.
+Install Git and [ESP-IDF 6.0.2 with ESP32-S3 tools](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html).
+Activate IDF in each new terminal: on Linux/macOS, source `export.sh` from your actual IDF installation;
+on Windows, use the ESP-IDF PowerShell terminal. `idf.py --version` must report 6.0.2; the build rejects other versions.
 
 ```sh
 git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
 cd WatcheRobot_c_sdk
-git checkout --detach <PUBLIC_COMMIT>
-idf.py -C examples/hardware_check build
+idf.py --version
+idf.py -C examples/robot build
 ```
 
-Replace `<PUBLIC_COMMIT>` with the full reviewed **public PR head/merge commit**
-from **this WatcheRobot_c_sdk repository**, not the private upstream SHA. Before merge, fetch the PR explicitly
-with `git fetch origin pull/<PR_NUMBER>/head` and use `git checkout --detach FETCH_HEAD`.
-PR numbers must also belong to this repository. Do not type placeholders literally.
-No old materials checkout, private-repository access or Python submodule is needed.
-The selected revision must include these standalone-path documentation changes;
-the initial historical import is not the documentation-adapted revision.
-Record `git rev-parse HEAD`, `idf.py --version` and `SOURCE.json`.
-The latter pins upstream source to `e23bee2a642f6c90753b370cb18c46815e0c8f58`
-and records individual file hashes and all recorded public export adaptations.
-The public commit identifies this documentation and export; the upstream SHA is provenance, not a public checkout command.
+All following commands run from **this repository root in the activated IDF terminal**.
+Dependencies download over the network. The build should produce
+`examples/robot/build/watcher_hw_robot.bin`, a bootloader, a partition table and flash arguments.
+It does not write to a device or prove hardware behavior. If the build fails, fix the reported error
+before continuing. When reporting a problem, include `git rev-parse HEAD`, `idf.py --version` and the error log.
 
-All remaining commands run from **WatcheRobot_c_sdk repository root**, in the
-activated IDF terminal. Expected build result: success and
-`examples/hardware_check/build/watcher_hw_hardware_check.bin` plus
-IDF-generated bootloader/partition/flash arguments. A successful build proves no physical behavior.
+## 2. Choose what to try
 
-## 2. Choose an example
-
-| Goal | Project | Application entry |
+| Goal | Project | File to edit |
 | --- | --- | --- |
-| Complete guided check | `hardware_check` | `examples/hardware_check/main/app_main.c` |
-| Body only | `body` | `examples/body/main/app_main.c` |
-| Camera/audio/display | `head` | `examples/head/main/app_main.c` |
-| Combined custom application | `robot` | `examples/robot/main/app_main.c` |
+| Touch-controlled body lights | `body` | `examples/body/main/app_main.c` |
+| Pictures, recording/playback and screen controls | `head` | `examples/head/main/app_main.c` |
+| Combine both | `robot` | `examples/robot/main/app_main.c` |
+| Guided hardware checks | `hardware_check` | `examples/hardware_check/main/app_main.c` |
 
-Replace the final project name in `idf.py -C examples/robot build` as needed.
-Target is ESP32-S3 with 16 MB flash; head projects need octal PSRAM. Each project
-has its own partitions, defaults and pinned component manifests. `sdk.cmake`
-selects only hardware dependencies; `media_lib_sal` is included for head audio,
-not for body-only use. Registry downloads still require network access.
+Replace `robot` in the commands with your chosen project. All examples select ESP32-S3, 16 MB flash and
+custom partitions. head/robot/hardware_check enable 80 MHz octal PSRAM and LVGL 8.4.0; body defaults do
+not enable PSRAM. Keep each project's configuration, partitions and dependency manifest together.
+See [example instructions](../examples/README.md) and [supported dependencies](dependencies.md).
 
-Edit application code, not the official firmware. A separate consumer project can
-include this checkout's `examples/sdk.cmake` before `project()`, set
-`HW_BODY`/`HW_HEAD`, call `watcher_hw_check_idf()` after `project()`, declare selected
-`watcher_hw_*` dependencies and reuse the matching manifest/defaults/partitions.
-Always keep the full SDK checkout pinned; copying headers alone is insufficient.
+Edit `app_main.c` and rebuild to change application behavior. The body and robot examples respond to
+touch with lights and a stop request on release; they do not automatically start servo movement.
 
-## 3. Prepare the paired device — before flashing ESP32
+## 3. Safety checklist — before any flash or movement
 
-Record board revision, STM32 firmware version/commit, Himax PTL image SHA256 and
-all recovery asset hashes. [Historical evidence](../history/VALIDATION.md) is not current
-pair acceptance. The STM32 must advertise motion/LED/touch capabilities; the camera
-requires matching **PTL** Himax firmware. Public product Releases are **not guaranteed**
-to contain a validated SDK-compatible pair. If a verified pair or recovery bundle is
-missing, **stop before flashing** and request the maintainer's pinned compatibility record.
-Do not infer compatibility from a successful HELLO, build, filename or Latest label.
+- **Compatible firmware:** body control needs compatible STM32 firmware supporting motion, lights and
+  touch; camera use needs matching Himax **PTL** firmware. Record board/firmware versions and image
+  hashes. Product Releases, filenames, a successful handshake or a successful build do not establish
+  compatibility. If the pair is unverified, stop and request a compatibility record from maintainers.
+- **Backup and recovery:** prepare a verified, complete official restore bundle and back up required
+  settings/data. First full custom flashing overwrites the official `agentcfg` region
+  **0x12000–0x20000**. Returning to official firmware needs a **full restore**, not an app-only flash.
+  A backup alone does not restore the partition layout. Missing recovery assets means stop.
+- **Correct port:** the ESP32 connector is **SERIAL-B**; verify the actual port in Device Manager or
+  `/dev/serial/by-id/`. Do not use the STM32/Himax port. Close other serial monitors.
+- **Movement:** the application **cannot read the angle a servo actually reaches**. Even a reference move to X90/Y120 can
+  travel a large distance from an unknown starting position. Clear the whole travel and keep manual
+  power disconnection available. ACK/DONE and software STOP do not prove actual position or physical
+  stopping. A disconnected ESP32 cannot guarantee delivery of a stop; STM32 safety and an operator
+  power cut remain necessary. Read [movement safety](servo-open-loop.md) before motion checks.
 
-Use the public [official flashing guide](https://wiki.orulink.ai/en/docs/flashing) only for
-first preparation or restoration with an explicitly verified complete bundle.
-It is not the everyday custom-app flash path. Never run an internal workspace or
-private-source command. The preview does not supply an unverified replacement STM32/Himax image.
+Use the [official flashing guide](https://wiki.orulink.ai/en/docs/flashing) for initial preparation or
+restoration with a verified complete bundle, not for everyday custom application updates. This SDK
+supplies no unverified STM32/Himax replacement image.
 
-## Official storage overwrite warning
+## 4. Flash and observe
 
-The ESP32 connector is **SERIAL-B** (verify the actual enumerated port).
-The first full custom `flash` overwrites the official `agentcfg` region
-**0x12000–0x20000**, not merely a hypothetical data-loss risk. Back up required
-configuration/data before proceeding. Returning to official firmware requires the
-**complete official restore**, not just an application bin or `app-flash`; verify
-startup and pairing again. A backup alone does not restore the official partition layout.
-
-## 4. Flash the custom ESP32 application
-
-Back up required data first, clear the full mechanism travel and keep manual power
-disconnection available. Identify the **ESP32** serial port in Device Manager or
-`/dev/serial/by-id/`; do not use the STM32/Himax port. Close other serial monitors.
-Replace `<PORT>` explicitly (for example `COM7` or `/dev/ttyACM0`, only if verified on your machine).
+Only after completing the checklist, replace `<PORT>` below with the **verified ESP32 port** on your
+machine (for example `COM7` or `/dev/ttyACM0`, if actually identified there):
 
 ```sh
-idf.py -C examples/hardware_check -p <PORT> flash
-idf.py -C examples/hardware_check -p <PORT> monitor
+idf.py -C examples/robot -p <PORT> flash
+idf.py -C examples/robot -p <PORT> monitor
 ```
 
-Expected: esptool verifies writes; the display shows **Hardware check**, and the log
-identifies `Hardware check v2 | curved zones`. Exit monitor with **Ctrl+]**.
-These commands write the custom ESP32 bootloader, partition table and application,
-not STM32/Himax and not the official app. Different partitions can destroy official
-storage even without erasing the whole chip. Do **not** run `erase-flash`.
-Use `idf.py -C examples/hardware_check -p <PORT> app-flash` only after
-confirming that the **connected device** already has the same custom partition layout;
-local files alone cannot establish that. Unknown layout or intervening official firmware requires a full custom `flash`.
+`flash` writes the custom ESP32 bootloader, partition table and application; it does not flash
+STM32/Himax. Do **not** run `erase-flash`, guess offsets, or write an application-only `.bin` at `0x0`.
+Expected: esptool verifies writes, then the robot example shows photo/audio controls and logs body
+initialization and touch events. Try Photo, then Record and Play; check the picture and sound yourself.
+Touching the body requests green lights; release requests stop. Disabled controls are not a pass.
+Exit the monitor with **Ctrl+]**.
 
-Equivalent convenience entries (same root and IDF environment):
+For `hardware_check`, the screen should show **Hardware check** and the log
+`Hardware check v2 | curved zones`. Follow the [26-item operator guide](hardware-check.md).
+Results are RAM-only and reset on reboot; save observations externally. Untested items are not passed.
+
+For later app-only updates, use `idf.py -C examples/robot -p <PORT> app-flash` **only if the connected
+device already has the same custom partition layout**. Matching local files alone do not prove this.
+After official firmware or an unknown device layout, use full custom `flash` after the checklist.
+
+Optional wrappers provide the same build/flash/monitor actions:
 
 ```sh
-bash examples/hardware-sdk.sh hardware_check build
-bash examples/hardware-sdk.sh hardware_check flash <PORT>
+bash examples/hardware-sdk.sh robot build
 ```
 
 ```powershell
-./examples/hardware-sdk.ps1 hardware_check build
-./examples/hardware-sdk.ps1 hardware_check flash <PORT>
+./examples/hardware-sdk.ps1 robot build
 ```
 
-Both accept body/head/robot/hardware_check, build/flash/monitor and an explicit port
-for flash/monitor; bad input/environment returns 2, otherwise IDF's exit code is retained.
-No port scanning, paired flashing or erase action is hidden in these entries.
+They accept body/head/robot/hardware_check and build/flash/monitor; flash/monitor require the explicit
+port as the third argument. They do not scan ports, flash paired chips or erase the device.
 
-## 5. Observe, recover and migrate
+## 5. Restore official firmware
 
-Follow the [26-item hardware check](hardware-check.md). Current servos have **no
-physical position feedback**. Command coordinates and ACK/DONE are software evidence,
-not measured position or physical stopping. `watcher_hw_body_request_position()`
-returns `ESP_ERR_NOT_SUPPORTED`; old feedback-relative examples are disabled.
-A safety confirmation may command X90/Y120 from an unknown actual position: this
-can be a large movement, not merely a three-degree nudge. See [open-loop contract](servo-open-loop.md).
+Stop the custom application and close serial monitors. Select a verified complete **official** bundle
+and follow the [full restore procedure](https://wiki.orulink.ai/en/docs/flashing#full), using that bundle's
+exact ports and images. Restoration replaces the custom ESP32 application and may replace storage and
+paired firmware. Verify official startup and pairing afterward. To resume SDK work, build and flash the
+custom project again. If recovery assets or their source are unknown, stop rather than guessing offsets.
 
-Disconnected ESP32 cannot guarantee stop delivery. STM32 watchdog/safety and an
-operator-controlled power cut remain necessary. Body-event overflow latches FAULT:
-cancel pending work, dispatch outside callbacks, then explicitly close/init and
-resubscribe; wait for a fresh READY and new user intent. FIFO drain or reconnect
-alone does not unlock controls. Audio read/write/drain belongs to one owner task,
-not ISR, MCU/camera callbacks or an LVGL lock. Copy borrowed JPEGs and lock LVGL.
+## Troubleshooting
 
-For official recovery, stop the custom application, disconnect monitors, select a
-known complete **official** Release bundle and follow the public [full restore procedure](https://wiki.orulink.ai/en/docs/flashing#full)
-for its exact ports/images. This replaces your custom ESP32 app and may replace
-storage and paired firmware. Verify official startup and pairing afterward;
-rebuild/reflash the custom project if you return to SDK work. Missing recovery
-assets or unknown image provenance is a blocker, not a reason to guess offsets.
+- Wrong IDF version: activate 6.0.2 in this terminal; do not bypass the check.
+- Missing dependency: check the full checkout, network and project manifest; do not add official application sources.
+- Body not ready or event loss reported: stop operating the controls and check power, cables and
+  compatible firmware. Do not keep touching to unlock controls or automatically retry old actions.
+  Reconnecting or clearing queued events does not clear this fault. If you write recovery code,
+  cancel pending actions and follow the complete [body API recovery procedure](api/body.md);
+  movement afterward requires a **new user action**.
+- No picture: verify the matching PTL camera firmware and keep timeout/error logs; no image is not a pass.
+- No sound: try Test speaker voice/tone. Default output is 90, capped at 95; playback progress does not
+  prove audibility. The simple head demo has no automatic retry or dynamic shutdown; do not create a
+  second task controlling the same audio/camera devices to recover.
 
-From the previous namespace, migrate includes/functions/types/CMake dependencies
-from `watche_hw_*` to `watcher_hw_*`, constants to `WATCHER_HW_*` and the IDF check to
-`watcher_hw_check_idf()`; there are no aliases. Build fresh with
-`idf.py -C examples/robot -B build-watcher build`.
-Never relabel an old binary. [Migration](migration.md) also covers event-loss changes.
-Historical names/hashes in validation records are retained intentionally, not newly accepted.
+## When you extend the application
 
-## Troubleshooting and acceptance boundary
+Keep audio operations in one task; do not call blocking audio functions inside hardware callbacks,
+interrupts or while holding the display lock. Copy camera callback images before retaining them and
+lock LVGL access. See the [API guides](README.md) for exact interfaces and ownership rules.
+For a separate ESP-IDF project, follow the existing example CMake/configuration and
+[dependency guide](dependencies.md); copying headers alone is insufficient. Keep a known SDK revision
+for reproducible builds. [Migration](migration.md) covers older `watche_hw_*` applications.
 
-- IDF version error: activate 6.0.2 in this terminal; do not bypass the check.
-- Missing component: verify complete pinned checkout, network registry access and manifest; do not include official `firmware/s3`.
-- Body not READY: check power, cable, version/capability negotiation and quiet-link timeout; do not force movement.
-- Camera fails: verify PTL pair, then retry/observe timeout; no image means no pass.
-- No sound: use Test speaker → voice/tone, start at output 90 (cap 95); progress completion is not audibility.
-- Check results are RAM-only and reset on reboot. Save operator observations externally.
+## Optional: prebuilt test firmware and evidence
 
-Software/host/site tests do not certify motion limits, stop timing, edge touch,
-JPEG quality, acoustic quality, repeated teardown or long-duration combined operation.
-Full paired-device and official-restore acceptance remains pending; see [validation](../history/VALIDATION.md).
-Documentation edits do not establish a new build, device flash, hardware acceptance
-or stable Release. Create a branch and use a reviewed PR for changes; see the
-[repository workflow](repository-workflow.md).
+The external [hardware-check preview Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030)
+is not an official stable product release and is not required for source builds. Follow its exact
+asset, source/hash and installation instructions; its binaries need not match this checkout.
+Download packages require Python 3.10+ and their documented esptool dependency. Use the complete flash
+set at its documented offsets, never an app-only binary at `0x0`. Missing assets mean contact maintainers,
+not substitute a similarly named file. The safety checklist still applies.
+
+Software tests do not certify motion limits, stop timing, touch edges, image/sound quality, repeated
+shutdown or long-duration combined operation. See [tests and evidence](testing.md),
+[historical validation](../history/VALIDATION.md) and [source provenance](provenance.md).
+Documentation is not a new build, flash or hardware acceptance result.

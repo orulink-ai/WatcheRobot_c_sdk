@@ -1,15 +1,17 @@
-# hx_media_protocol
+# 检查图像的编号、时间和完整性
 
-Watcher metadata encoding/validation for the 16-byte media user header carried over Himax PTL. Multi-byte fields are little-endian; the PTL base header owns media type and payload length.
+为传来的图像附上编号、时间和校验信息，并检查收到的数据是否符合约定。需要排查丢帧、重复帧或损坏数据时，阅读这一层。
 
-- Low-level header: [`include/hx_media_protocol.h`](include/hx_media_protocol.h)
-- Application entry: [public SDK usage](../../docs/api/camera.md)
-- [Architecture](../../docs/architecture.md) · [Dependencies and local adaptations](../../docs/dependencies.md)
-- [Testing/evidence](../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[拍照与取图使用指南](../../docs/api/camera.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+协议是两端对消息格式的约定。这里处理随图像发送的 16 字节附加头；多字节数字按低字节在前的顺序存放。图像类型与长度仍由 PTL 的基础消息头负责。校验和可用于发现传输损坏，不是图像清晰度验收。
+
+- 底层接口：[`hx_media_protocol.h`](include/hx_media_protocol.h)
+- [架构与资源配合](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md)
+- [测试与实际验证范围](../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

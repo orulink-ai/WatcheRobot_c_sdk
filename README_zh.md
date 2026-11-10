@@ -2,74 +2,88 @@
 
 # WatcheRobot C SDK
 
-在 ESP32-S3 上使用 `watcher_hw_*` 编写自己的机器人应用，控制身体、灯光、摄像头、音频与显示。
-无需 Python SDK 或官方应用源码。**开发预览：配对实机与完整恢复验收仍未完成。**
+WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器人。C SDK 用于在机器人上编写自己的应用，
+将屏幕、摄像头、麦克风、扬声器、身体运动和灯光组合成新的交互体验。
 
-## 从源码开始
+## 产品概述
 
-安装 Git 与 [ESP-IDF 6.0.2（ESP32-S3）](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html)，
-在已激活 IDF 的终端检查 `idf.py --version`。首次安装或报错先看[上手指南](docs/getting-started_zh.md)。
-在准备存放工程的目录执行：
+<table>
+<tr>
+<td width="65%">
+<p>WatcheRobot 由头部、身体和充电底座组成：</p>
+<ul>
+<li><b>头部</b>：ESP32-S3 主控、1.45 英寸触摸屏、摄像头、麦克风、扬声器和滚轮。</li>
+<li><b>身体</b>：左右转动与上下俯仰、身体触摸、侧边灯光。</li>
+<li><b>充电底座</b>：磁吸供电和环形氛围灯。</li>
+</ul>
+<p>你可以为它制作屏幕界面、拍照工具、声音交互或触摸灯光应用，也可以在此基础上设计自己的机器人动作。</p>
+<p>本仓库提供设备端 C 接口和示例。若希望在电脑上通过 Python 控制现有机器人固件，请使用 <a href="https://github.com/orulink-ai/WatcheRobot_python_sdk">Python SDK</a>。</p>
+</td>
+<td width="35%" align="center">
+<img src="docs/images/product/watche-robot-front.jpg" alt="WatcheRobot 产品正面渲染图" width="260" />
+</td>
+</tr>
+</table>
 
-```sh
-git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
-cd WatcheRobot_c_sdk
-idf.py -C examples/robot build
-```
+## 硬件概览
 
-预期生成 `examples/robot/build/watcher_hw_robot.bin` 与配套烧录文件。组件下载需要网络；此命令只构建，不写入设备。
-修改 [`examples/robot/main/app_main.c`](examples/robot/main/app_main.c) 后重复构建。
-复现或反馈时记录 `git rev-parse HEAD`，按[指南](docs/getting-started_zh.md)固定经过审阅的公开提交。
-构建与测试证据及实机验收边界见[测试说明](docs/testing.md)。
-
-**烧录前必须确认：**ESP32 端口、配套 STM32/Himax 固件及完整官方恢复包。
-首次完整自定义烧录会覆盖官方配置，先备份所需数据；配套或恢复资料不明时停止。
-舵机**没有物理位置反馈**，参考动作可能是大行程；ACK/DONE 不证明真实位置或停止。
-清空整个行程，保持人工断电可用，遵循[安全烧录与恢复指南](docs/getting-started_zh.md)。
-
-## 兼容与实际配置
-
-| 项目 | 当前源码合同 |
-| --- | --- |
-| 目标 | ESP32-S3 |
-| ESP-IDF | 精确 6.0.2，其他版本由构建入口拒绝 |
-| LVGL | 头部/显示示例固定 8.4.0；不承诺 LVGL 9 |
-| Flash | 四个示例均配置 16 MB 和自定义分区；不是测得的最小容量 |
-| PSRAM | head/robot/hardware_check 启用 80 MHz 八线 PSRAM；body 默认不启用 |
-| 配套 | 身体需兼容 STM32；摄像头需匹配 Himax PTL，须单独核验 |
-
-## 能力
-
-| 模块 | 提供什么 | 使用说明 |
+| 部分 | 主要硬件 | 用途 |
 | --- | --- | --- |
-| body | 运动命令、灯光、触摸/链路事件；无物理位置反馈 | [Body API](docs/api/body.md) |
-| camera | 配套 PTL JPEG 拍照/流；无模型或网络策略 | [Camera API](docs/api/camera.md) |
-| audio | 16/24 kHz、16 位单声道 PCM 录放音 | [Audio API](docs/api/audio.md) |
-| display | LVGL 显示、面板/触控借用句柄及锁 | [Display API](docs/api/display.md) |
-| core | 生命周期状态类型、事件与调用者持有的有界 FIFO | [Core API](docs/api/core.md) |
+| 主控 | ESP32-S3，240 MHz，8 MB PSRAM | 运行你的 C 应用，连接屏幕、声音和相机 |
+| 屏幕 | 1.45 英寸，412 × 412，电容触摸 | 显示文字、按钮和界面，响应屏幕操作 |
+| 摄像头 | OV5647，Himax HX6538 视觉处理器 | 拍照和获取连续画面 |
+| 声音 | 单麦克风、1 W 扬声器 | 录音与播放声音 |
+| 身体 | CKS32F103C8T6、两个 SG90 舵机 | 左右转动、上下俯仰 |
+| 触摸与灯光 | 身体触摸感应、侧边 RGB 灯、底座环形 RGB 灯 | 触摸互动、状态提示和氛围效果 |
+| 接口 | USB-C、头部与身体连接口、底座磁吸接口 | 供电、开发连接及头部与身体通信 |
 
-## 选择示例
+<table>
+<tr>
+<td align="center"><img src="docs/images/product/watche-robot-side.jpg" alt="WatcheRobot 侧面渲染图，可见扬声器与存储卡槽" width="250" /><br/>侧面</td>
+<td align="center"><img src="docs/images/product/watche-robot-back.jpg" alt="WatcheRobot 背面渲染图，可见身体供电接口" width="250" /><br/>背面</td>
+</tr>
+</table>
 
-每个目录都是独立 ESP-IDF 工程，在上述命令中替换 `robot` 即可。
+产品图片与硬件信息摘自产品手册；[图片来源](docs/images/product/README.md)。硬件具有的能力不等于本 SDK 已提供对应接口，当前支持范围见下表。
 
-| 目标 | 工程 |
-| --- | --- |
-| 身体灯光与触摸事件 | [body](examples/body/README.md) |
-| 摄像头、音频与显示 | [head](examples/head/README.md) |
-| 身体与头部组合 | [robot](examples/robot/README.md) |
-| 逐项人工硬件体检 | [hardware_check](examples/hardware_check/README.md) · [操作指南](docs/hardware-check_zh.md) |
+## 功能与依赖
 
-`hardware_check` 需人工观察；未测不算通过，不是自动通过的单元测试。
-[common](examples/common/README.md) 是示例内部共享代码，不是第五个应用。
+| 支持 | 功能 | 控制芯片或驱动 | 组件 | 版本 |
+| --- | --- | --- | --- | --- |
+| ✓ | 屏幕显示 | SPD2010 | [显示驱动](https://components.espressif.com/components/espressif/esp_lcd_spd2010/versions/1.0.1/readme) | 1.0.1 |
+| ✓ | 屏幕触摸 | SPD2010 | [触摸驱动](https://components.espressif.com/components/espressif/esp_lcd_touch_spd2010/versions/0.0.1/readme) | 0.0.1，含本地适配 |
+| ✓ | 界面绘制 | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [界面适配](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
+| ✓ | 扬声器播放 | ES8311 | [音频组件](components/esp_codec_dev/README.md) · [使用指南](docs/api/audio.md) | 1.2.0，含本地适配 |
+| ✓ | 麦克风录音 | ES7243 / ES7243E | [音频组件](components/esp_codec_dev/README.md) · [使用指南](docs/api/audio.md) | 1.2.0，含本地适配 |
+| ✓ | 拍照与连续画面 | OV5647 / Himax HX6538 | [摄像接口](components/sdk/watcher_hw_camera/README.md) | 随本仓库源码提供 |
+| ✓ | 身体转动 | 双舵机、机身控制芯片 | [运动接口](docs/api/body.md) | 随本仓库源码提供 |
+| ✓ | 身体触摸 | TTP223 | [触摸事件](docs/api/body.md) | 随本仓库源码提供 |
+| ✓ | 侧边与底座灯光 | WS2812B2020 | [灯光接口](docs/api/body.md) | 随本仓库源码提供 |
 
-## 开发导航
+✓ 表示当前源码提供相应接口，不代表完成了整机实测。表内仓库组件尚未正式发布到乐鑫组件平台。
+配套固件与完整依赖说明见[构建要求](docs/dependencies.md)。
 
-- [文档索引](docs/README.md) · [架构](docs/architecture.md) · [依赖](docs/dependencies.md)
-- [无反馈运动安全](docs/servo-open-loop_zh.md) · [旧 API 迁移](docs/migration.md)
-- [贡献](docs/contributing.md) · [测试与报告](docs/testing.md) · [来源](docs/provenance.md)
-- [组件打包状态](docs/registry-publishing.md)：尚无已验证正式发布的 Registry 安装入口，当前使用源码流程。
-- 在电脑上基于现有固件开发？使用独立的 [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk)。
+## 示例
+
+| 示例 | 可以体验什么 | 使用说明 |
+| --- | --- | --- |
+| 触摸灯光 | 触摸身体亮绿灯，松手后熄灭；记录触摸事件 | [body](examples/body/README.md) |
+| 拍照、录音与屏幕 | 拍照、录音回放、扬声器测试和屏幕操作 | [head](examples/head/README.md) |
+| 组合应用 | 将触摸灯光与拍照、声音、屏幕操作组合 | [robot](examples/robot/README.md) |
+| 硬件体检 | 按屏幕提示逐项检查屏幕、声音、触摸、灯光和运动 | [hardware_check](examples/hardware_check/README.md) |
+
+## 开发文档
+
+开发环境为 **ESP-IDF 6.0.2 / ESP32-S3**，屏幕界面使用 **LVGL 8.4.0**。
+
+- [开始开发](docs/getting-started_zh.md)：安装环境、编译、连接设备与运行示例。
+- [按功能查接口](docs/api/README.md)：运动、灯光、触摸、拍照、声音与屏幕。
+- [硬件体检](docs/hardware-check_zh.md)：按步骤观察并记录实际结果。
+- [构建要求与依赖](docs/dependencies.md) · [贡献指南](docs/contributing.md) · [全部文档](docs/README.md)。
+
+当前为开发预览。烧录会改写设备软件，开始前请按上手指南准备备份和官方恢复包；运动前请阅读
+[运动注意事项](docs/servo-open-loop_zh.md)。[验证记录](docs/verification.md)区分了软件检查和未完成的实机验收。
 
 ## 许可
 
-第一方代码采用 [Apache-2.0](LICENSE)。第三方组件和资源保留各自的许可证与署名。
+第一方代码采用 [Apache-2.0](LICENSE)。第三方组件和素材保留各自的许可证与署名。

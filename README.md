@@ -2,78 +2,91 @@ English | [简体中文](README_zh.md)
 
 # WatcheRobot C SDK
 
-Build your own ESP32-S3 robot application with `watcher_hw_*` for body motion, lights, camera,
-audio and display. No Python SDK or official application source is required.
-**Development preview: complete paired-device and restoration acceptance remains pending.**
+WatcheRobot is an AI desktop robot for developers and creators. Use the C SDK to build
+applications on the robot, combining its screen, camera, microphone, speaker, body movement
+and lights into your own interactions.
 
-## Quick start from source
+## Product overview
 
-Install Git and [ESP-IDF 6.0.2 for ESP32-S3](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html),
-then activate its environment in this terminal; check `idf.py --version`.
-For first-time setup or errors, use the [setup guide](docs/getting-started.md).
-Run in the directory where you want to keep the project:
+<table>
+<tr>
+<td width="65%">
+<p>WatcheRobot consists of a head, body and charging dock:</p>
+<ul>
+<li><b>Head</b>: ESP32-S3 processor, 1.45-inch touchscreen, camera, microphone, speaker and scroll wheel.</li>
+<li><b>Body</b>: pan and tilt movement, body touch sensing and side lights.</li>
+<li><b>Charging dock</b>: magnetic power connection and an ambient light ring.</li>
+</ul>
+<p>Build a screen interface, photo tool, sound interaction or touch-controlled light application, then combine these features with your own robot movements.</p>
+<p>This repository provides device-side C interfaces and examples. To control existing robot firmware from a computer, use the <a href="https://github.com/orulink-ai/WatcheRobot_python_sdk">Python SDK</a>.</p>
+</td>
+<td width="35%" align="center">
+<img src="docs/images/product/watche-robot-front.jpg" alt="Front product render of WatcheRobot" width="260" />
+</td>
+</tr>
+</table>
 
-```sh
-git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
-cd WatcheRobot_c_sdk
-idf.py -C examples/robot build
-```
+## Hardware overview
 
-Expected output: `examples/robot/build/watcher_hw_robot.bin` and associated flash files.
-Component downloads need network access. This builds only; it does not write to a device.
-Next, edit [`examples/robot/main/app_main.c`](examples/robot/main/app_main.c) and repeat the build.
-Record `git rev-parse HEAD` and pin a reviewed public revision as explained in the setup guide.
-These are source workflow instructions, not a claim that this documentation task built the firmware;
-see [testing and evidence](docs/testing.md).
-
-**Before flashing:** verify the ESP32 port, paired STM32/Himax firmware and a complete official recovery
-bundle. A full custom flash overwrites official configuration; back up required data and stop if the
-pair or recovery bundle is unverified. Servos have **no physical position feedback**, reference moves
-can be large, and ACK/DONE does not establish measured position or physical stopping. Clear the full
-travel, keep manual power disconnection available and follow the [safe recovery guide](docs/getting-started.md).
-
-## Compatibility and actual configuration
-
-| Item | Checked-in contract |
-| --- | --- |
-| Target | ESP32-S3 |
-| ESP-IDF | Exactly 6.0.2; other versions are rejected by the build entry |
-| LVGL | 8.4.0 in head/display examples; no LVGL 9 compatibility claim |
-| Flash | All four examples select 16 MB and custom partitions; not a measured minimum |
-| PSRAM | head/robot/hardware_check enable octal PSRAM at 80 MHz; body defaults do not enable it |
-| Paired firmware | Body needs compatible STM32; camera needs matching Himax PTL, verified separately |
-
-## Capabilities
-
-| Module | Provides | Usage |
+| Part | Main hardware | Purpose |
 | --- | --- | --- |
-| body | Motion commands, lights, touch/link events; no physical position feedback | [Body API](docs/api/body.md) |
-| camera | Paired PTL JPEG capture/stream; no model or network policy | [Camera API](docs/api/camera.md) |
-| audio | 16/24 kHz signed 16-bit mono PCM record/playback | [Audio API](docs/api/audio.md) |
-| display | LVGL display, borrowed panel/touch handles and locking | [Display API](docs/api/display.md) |
-| core | Lifecycle status types, events and caller-owned bounded FIFO | [Core API](docs/api/core.md) |
+| Main processor | ESP32-S3, 240 MHz, 8 MB PSRAM | Runs your C application and connects the screen, audio and camera |
+| Screen | 1.45-inch, 412 × 412, capacitive touch | Displays text, buttons and interfaces; accepts screen input |
+| Camera | OV5647, Himax HX6538 vision processor | Takes photos and supplies a sequence of images |
+| Audio | Single microphone, 1 W speaker | Records and plays sound |
+| Body | CKS32F103C8T6, two SG90 servos | Provides pan and tilt movement |
+| Touch and lights | Body touch sensing, side RGB lights, dock RGB light ring | Touch interaction, status indication and ambient effects |
+| Connections | USB-C, head-to-body connector, magnetic dock connector | Power, development connection and head-to-body communication |
 
-## Choose an example
+<table>
+<tr>
+<td align="center"><img src="docs/images/product/watche-robot-side.jpg" alt="Side product render showing the speaker and memory-card slot" width="250" /><br/>Side</td>
+<td align="center"><img src="docs/images/product/watche-robot-back.jpg" alt="Rear product render showing the body power connector" width="250" /><br/>Rear</td>
+</tr>
+</table>
 
-Each is an independent ESP-IDF project. Replace `robot` in the build command with its project name.
+Product images and hardware details come from the product manual; see [image attribution](docs/images/product/README.md).
+Hardware features do not automatically imply SDK interfaces. Current SDK support is listed below.
 
-| Goal | Project |
-| --- | --- |
-| Body lights and touch events | [body](examples/body/README.md) |
-| Camera, audio and display | [head](examples/head/README.md) |
-| Combine body and head | [robot](examples/robot/README.md) |
-| Check hardware one item at a time | [hardware_check](examples/hardware_check/README.md) · [operator guide](docs/hardware-check.md) |
+## Capabilities and dependencies
 
-`hardware_check` requires human observation; untested does not mean passed, and it is not an automatic
-unit test. [common](examples/common/README.md) contains example-internal code, not a fifth application.
+| Available | Capability | Controller / driver | Component | Version |
+| --- | --- | --- | --- | --- |
+| ✓ | Display | SPD2010 | [Display driver](https://components.espressif.com/components/espressif/esp_lcd_spd2010/versions/1.0.1/readme) | 1.0.1 |
+| ✓ | Screen touch | SPD2010 | [Touch driver](https://components.espressif.com/components/espressif/esp_lcd_touch_spd2010/versions/0.0.1/readme) | 0.0.1, locally adapted |
+| ✓ | UI drawing | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [UI port](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
+| ✓ | Speaker playback | ES8311 | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
+| ✓ | Microphone recording | ES7243 / ES7243E | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
+| ✓ | Photos and image stream | OV5647 / Himax HX6538 | [Camera interface](components/sdk/watcher_hw_camera/README.md) | Included in this source repository |
+| ✓ | Body movement | Two servos, body controller | [Movement interface](docs/api/body.md) | Included in this source repository |
+| ✓ | Body touch | TTP223 | [Touch events](docs/api/body.md) | Included in this source repository |
+| ✓ | Side and dock lights | WS2812B2020 | [Light interface](docs/api/body.md) | Included in this source repository |
 
-## Developer documentation
+✓ indicates an interface provided by the source, not completed whole-device testing.
+Repository components have not been formally published to Espressif's Component Registry.
+See [build requirements](docs/dependencies.md) for paired firmware and dependency details.
 
-- [Documentation index](docs/README.md) · [Architecture](docs/architecture.md) · [Dependencies](docs/dependencies.md)
-- [Open-loop motion safety](docs/servo-open-loop.md) · [Old API migration](docs/migration.md)
-- [Contributing](docs/contributing.md) · [Testing/reports](docs/testing.md) · [Provenance](docs/provenance.md)
-- [Component packaging status](docs/registry-publishing.md): no verified published Registry installation yet; use source builds.
-- Building a computer-side application on existing firmware? Use the separate [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk).
+## Examples
+
+| Example | What you can try | Guide |
+| --- | --- | --- |
+| Touch-controlled lights | Touch the body to turn green lights on, release to clear them, and log touch events | [body](examples/body/README.md) |
+| Camera, audio and screen | Take photos, record and replay sound, test the speaker and use screen controls | [head](examples/head/README.md) |
+| Combined application | Combine touch-controlled lights with camera, sound and screen controls | [robot](examples/robot/README.md) |
+| Hardware check | Follow screen prompts to inspect the screen, sound, touch, lights and movement | [hardware_check](examples/hardware_check/README.md) |
+
+## Development documentation
+
+Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
+
+- [Getting started](docs/getting-started.md): install tools, build, connect the device and run an example.
+- [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
+- [Hardware check](docs/hardware-check.md): observe and record actual device behavior.
+- [Build requirements and dependencies](docs/dependencies.md) · [Contributing](docs/contributing.md) · [All documentation](docs/README.md).
+
+This is a development preview. Flashing replaces device software: prepare backups and a complete official
+recovery bundle using the setup guide. Read [movement precautions](docs/servo-open-loop.md) before enabling
+movement. [Verification results](docs/verification.md) distinguish software checks from pending hardware acceptance.
 
 ## License
 

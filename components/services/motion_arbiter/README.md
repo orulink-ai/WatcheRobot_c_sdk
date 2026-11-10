@@ -1,15 +1,17 @@
-# motion_arbiter
+# 避免多个功能同时发出动作
 
-Logical motion-source ownership arbitration. It does not replace physical safety, servo feedback or manual power disconnection.
+在不同动作来源之间决定当前由谁发指令，例如人工控制与自动跟随不能同时争抢控制。维护多来源动作协调时使用。
 
-- Low-level header: [`include/motion_arbiter.h`](include/motion_arbiter.h)
-- Application entry: [public SDK usage](../../../docs/api/body.md)
-- [Architecture](../../../docs/architecture.md) · [Dependencies and local adaptations](../../../docs/dependencies.md)
-- [Testing/evidence](../../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[机身控制使用指南](../../../docs/api/body.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+这里的 owner（使用者）只是软件约定的当前控制方。获得控制权不表示电机已经停止，也不提供角度测量；释放控制权不是物理急停。公开机身接口打开时不要另行夺取底层控制。实际安全仍依赖运动空间隔离和人工断电。
+
+- 底层接口：[`motion_arbiter.h`](include/motion_arbiter.h)
+- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
+- [测试与实际验证范围](../../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

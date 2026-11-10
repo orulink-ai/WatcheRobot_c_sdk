@@ -1,4 +1,10 @@
-# Speaker-test asset
+# Speaker-test sample / 扬声器测试样本
+
+Use **Test speaker → Test voice** in the head/robot screen or follow the hardware-check speaker prompts.
+Listen for the sentence below; seeing playback finish is not enough. The sample is bundled with the
+example, so you do not need to generate or download audio yourself.
+在 head/robot 的 **Test speaker → Test voice** 或体检扬声器提示中试听，亲自确认能听到下列语句；
+播放进度结束不能代替听音。样本已随示例提供，不需要自行生成或下载。
 
 `speaker_pcm.inc` contains a synthetic English voice saying:
 
@@ -29,7 +35,8 @@ Generation uses eSpeak as an offline tool. Its GPL-3.0 engine/data and FFmpeg
 are not linked into or distributed with this example. The formant synthesis
 converts our own test text, not a third-party audio recording. See the
 [GNU output FAQ](https://www.gnu.org/licenses/gpl-faq.html#GPLOutput).
-Building or running the example requires neither tool, a network, nor a model.
+Using this bundled sample requires neither synthesis tool, a model, nor a network connection.
+Initial project builds may still download dependencies.
 
 The asset stays read-only in flash. The media owner copies each block into
 writable scratch before SDK playback; repeated tests cannot compound codec

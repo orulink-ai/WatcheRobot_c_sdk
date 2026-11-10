@@ -1,63 +1,75 @@
-# Hardware SDK namespace migration / 硬件 SDK 命名迁移
+# Update an application using the old API names / 更新使用旧接口名的应用
 
-The development preview now uses `watcher_hw_*` consistently. This is a source
-API rename, not a change to the MCU protocol, hardware behavior or board branding.
-No compatibility aliases or second implementation are maintained.
-This statement describes the rename itself. The separate event-loss/status
-corrections in [AUDIT.md](../history/AUDIT.md) do change runtime behavior as described below.
+For applications written against `watche_hw_*`. Current development-preview APIs
+use `watcher_hw_*`; old aliases are not provided. The rename does not change the
+MCU (paired microcontroller) protocol or board branding. Event-loss and status
+handling have separate behavior changes, described below.
 
-开发预览统一使用 `watcher_hw_*`。这是源码接口改名，不改变 MCU 协议、硬件行为
-或 `WatcheRobot` 项目名称。不保留两套实现或旧名称别名。
+本页面向仍使用 `watche_hw_*` 的应用。当前开发预览统一使用 `watcher_hw_*`，不保留旧名别名。
+改名本身不改变配套微控制器通信协议或产品名称；丢事件及状态处理另有行为变化，必须同时检查。
+
+## 1. Update names and rebuild / 改名并重新构建
 
 | Before / 原名称 | Now / 新名称 |
 | --- | --- |
-| `watche_hw_{core,body,camera,audio,display}` component | `watcher_hw_{core,body,camera,audio,display}` |
-| `watche_hw_body.h` and other hardware headers | `watcher_hw_body.h` and matching module headers |
-| `watche_hw_*` functions and types | `watcher_hw_*` functions and types |
-| `WATCHE_HW_*` constants | `WATCHER_HW_*` constants |
+| `watche_hw_{core,body,camera,audio,display}` components | `watcher_hw_{core,body,camera,audio,display}` |
+| `watche_hw_body.h` and other hardware headers / 硬件头文件 | `watcher_hw_body.h` and matching headers / 对应新头文件 |
+| `watche_hw_*` functions/types / 函数与类型 | `watcher_hw_*` |
+| `WATCHE_HW_*` constants / 常量 | `WATCHER_HW_*` |
 | `watche_hw_check_idf()` | `watcher_hw_check_idf()` |
-| `watche_hw_{body,head,robot}.bin` example output | `watcher_hw_{body,head,robot}.bin` |
+| `watche_hw_{body,head,robot}.bin` outputs / 输出文件 | `watcher_hw_{body,head,robot}.bin` |
 
-## Existing applications / 已有自定义工程
+1. Pin the updated SDK revision with its matching examples. Update includes,
+   functions, types, constants, CMake component dependencies and the top-level
+   IDF-version check. Use ESP-IDF 6.0.2.
+2. From **your application's project directory**, use a new build directory:
 
-1. Pin and obtain the updated SDK Git revision together with its matching examples.
-   Update your `#include`, API/type/constant names and `main/CMakeLists.txt`
-   component dependencies; update the top-level IDF-version check too.
-2. Use a new build directory for the first build after migration, such as
-   `idf.py -B build-watcher build` from your own project directory.
-   Rebuild the application; do not rename an old binary or hand-edit generated
-   CMake/flash files.
-3. Use IDF-generated flashing arguments or the example's regular flash command.
-   The example paths remain `body`, `head` and `robot`, and the developer
-   scripts retain their existing names and parameters.
+先固定新版 SDK 与对应示例，修改头文件引用、函数、类型、常量、CMake 依赖及顶层版本检查。
+激活 ESP-IDF 6.0.2，在**你自己的应用工程目录**用新目录构建：
 
-中文操作：更新并固定 SDK 版本，同时修改应用中的头文件、函数、类型、常量、
-CMake 组件依赖及版本检查函数。首次改名后在自己的工程目录执行
-`idf.py -B build-watcher build`，使用新的构建目录避开旧缓存。
-不要给旧二进制改文件名冒充新固件，也不要手改生成的烧录参数。
-三个示例目录、脚本名称和操作参数不变。现有 `watcher_sdk` 是依赖官方服务的
-另一套接口，不属于本次硬件 SDK 改名。
+```sh
+idf.py -B build-watcher build
+```
 
-## Event-loss contract update / 丢事件合同更新
+Expected: the application compiles with the new names and produces a new binary.
+Do not rename an old binary or hand-edit generated CMake/flash files.
+Example directories `body`, `head`, `robot` and existing developer-script names/
+parameters remain unchanged. `watcher_sdk`, an interface requiring official
+services, is separate from this hardware API rename.
 
-Handle `WATCHER_HW_EVENT_OVERFLOW` and cancel every pending application action.
-Its payload is `watcher_hw_body_event_loss_t`. Body controls remain locked after
-loss, even across HELLO recovery. Do not resume from cached LINK READY or FIFO
-drain; query status. Recover explicitly with close/init outside dispatch, then
-resubscribe, wait for fresh READY and obtain new user intent. A best-effort stop
-is not physical-stop confirmation. See the public body header and README.
+预期应用使用新名称编译并生成新固件，不能给旧固件改名或手改生成文件。示例目录与开发脚本
+名称、参数不变；依赖官方服务的另一套 `watcher_sdk` 接口不属于本次改名。
 
-已有应用还需处理新 OVERFLOW 事件，取消所有待执行业务动作。丢事件后控制保持锁定，
-重新握手或排空队列不能恢复；需在分发／回调外显式关闭、初始化、重新订阅，并等新的
-READY 和用户操作。不能相信旧 LINK READY，也不能把停止命令提交成功当成机械停止确认。
-摄像头状态现在也报告连通设备的故障；`status()` 返回 ESP_OK 不表示设备 READY。
+## 2. Handle lost events and status / 处理丢事件与状态
 
-## Evidence boundary / 验收边界
+An overflow means the event queue lost information. On `WATCHER_HW_EVENT_OVERFLOW`
+(payload: `watcher_hw_body_event_loss_t`), cancel **all pending application actions**.
+Body controls stay locked even after HELLO (the connection handshake).
+Do not resume from a cached LINK READY or a drained FIFO (arrival-order event queue).
+Query status, then recover outside event dispatch/callbacks: close/init, resubscribe,
+wait for a fresh READY and obtain a new user action. A best-effort stop submission
+is not physical-stop confirmation.
 
-Historical entries in [VALIDATION.md](../history/VALIDATION.md) retain the names and hashes
-of the firmware that was actually tested. They do not establish hardware
-acceptance of this renamed source. Namespace checks and rebuilt examples prove
-source/build consistency, not audible, visible or mechanical correctness.
+溢出表示事件队列丢失信息。收到上述事件后取消**全部待执行动作**；重新握手或读空队列都
+不会解除故障，不能使用缓存的 LINK READY。查询状态，在事件分发与回调外显式关闭并初始化、
+重新订阅，等待新的 READY 与用户操作。提交停止命令不证明机械已停。
 
-[VALIDATION.md](../history/VALIDATION.md) 的旧条目保留当时实际测试固件的名称和校验值。
-改名测试、重新构建不等于重新完成声音、图像或机械运动的实机验收。
+Camera status now also reports faults from the connected device. For every API,
+`status()` returning `ESP_OK` means the query succeeded, not that the device is READY;
+inspect `state` and `last_error`. See the [API guides](README.md) and
+[original correction record](../history/AUDIT.md).
+
+相机状态也会报告连接设备的故障；`status()` 成功不等于就绪，仍需检查 `state` 和 `last_error`。
+具体见接口指南和原修正记录。
+
+## 3. Verify before using hardware / 使用硬件前验证
+
+Run [software tests](testing.md), then follow [setup, backups and recovery](getting-started.md)
+before any flashing. Use generated flash arguments or the documented example flash command.
+Read [servo safety](servo-open-loop.md) before moving the body.
+Successful builds establish source consistency, not physical sound, image or motion quality.
+[Historical results](../history/VALIDATION.md) retain the old tested names and hashes.
+
+先运行[软件测试](testing.md)，烧录前完成[上手、备份与恢复准备](getting-started_zh.md)，
+使用构建生成的参数或示例规定命令；运动前阅读[舵机安全](servo-open-loop_zh.md)。
+构建通过不等于声音、画面或机械验收，历史记录保留当时的固件名称和哈希。

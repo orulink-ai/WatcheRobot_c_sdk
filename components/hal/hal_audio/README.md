@@ -1,15 +1,17 @@
-# hal_audio
+# 连接麦克风和扬声器
 
-Hardware audio adaptation used by watcher_hw_audio: codec/bus lease, PCM and Opus implementation support.
+把录音、播放等操作接到板上的声音芯片，并协调它们共用的硬件。只有排查声音硬件或维护底层驱动时，才需要直接阅读这一层。
 
-- Low-level header: [`include/hal_audio.h`](include/hal_audio.h)
-- Application entry: [public SDK usage](../../../docs/api/audio.md)
-- [Architecture](../../../docs/architecture.md) · [Dependencies and local adaptations](../../../docs/dependencies.md)
-- [Testing/evidence](../../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+普通应用先使用[录音与播放使用指南](../../../docs/api/audio.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护时的约定与限制
+
+底层还提供 PCM（声音采样）和 Opus（压缩声音）支持；公开录放音接口仍按自己的 PCM 格式工作。声音芯片与总线一次只交给一套使用者，不能在公开音频接口打开时另行初始化或操作。失败清理仍可能保留使用权，必须检查释放结果。
+
+- 底层接口：[`hal_audio.h`](include/hal_audio.h)
+- [架构与资源配合](../../../docs/architecture.md) · [依赖与本地适配](../../../docs/dependencies.md)
+- [测试与实际验证范围](../../../docs/testing.md)
+
+使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。

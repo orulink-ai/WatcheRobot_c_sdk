@@ -1,15 +1,16 @@
-# esp_lvgl_port
+# 让图形界面显示到屏幕上
 
-Checked-in LVGL/ESP display-port integration used by the SDK display wrapper. This is navigation for the existing vendor library, not a claim of new authorship or unchanged upstream compatibility.
+这是源码随附的 LVGL 图形库适配层，帮助图形库在 ESP 芯片上刷新屏幕。应用要显示文字或按钮，先使用公开屏幕接口，不必直接管理这层适配。
 
-- Low-level header: [`include/esp_lvgl_port.h`](include/esp_lvgl_port.h)
-- Application entry: [public SDK usage](../../docs/api/display.md)
-- [Architecture](../../docs/architecture.md) · [Dependencies and local adaptations](../../docs/dependencies.md)
-- [Testing/evidence](../../docs/testing.md)
+## 最短接入路径
 
-Use the full pinned source checkout and the matching example defaults/manifests with ESP-IDF 6.0.2.
-This description does not assert independent Registry availability or package dependency closure.
-Do not bypass the public wrapper's shared-resource ownership when integrating these lower layers.
-Existing source attribution and all dependency license terms remain unchanged.
+按照[屏幕显示指南](../../docs/api/display.md)初始化、加锁操作界面、解锁，最后关闭。不要同时另行初始化屏幕或启动另一套绘制逻辑。
 
-中文：现有支持层导航，应用优先使用 watcher_hw_*；不承诺独立发布，不改变已有署名、许可证和硬件安全限制。
+## 维护底层适配时
+
+- 底层头文件：[`esp_lvgl_port.h`](include/esp_lvgl_port.h)。
+- SDK 管理共享显示资源；取得屏幕对象的引用不表示可以释放它或绕过公开接口并行使用。
+- 使用完整源码与示例匹配的配置、依赖清单和 ESP-IDF 6.0.2。这个说明不承诺独立组件仓库安装、依赖自动齐备，或与未经修改的上游版本完全兼容。
+- [架构](../../docs/architecture.md) · [依赖与本地适配](../../docs/dependencies.md) · [测试范围](../../docs/testing.md)
+
+此页仅为已有供应商库提供接入导航，不声明新的作者身份。原有署名与依赖许可证不变。

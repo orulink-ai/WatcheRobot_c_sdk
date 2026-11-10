@@ -1,153 +1,132 @@
 [English](getting-started.md) | 简体中文
 
-# 嵌入式 C SDK：安全上手（开发预览）
+# C SDK 上手指南
 
-自己编写 ESP32-S3 `app_main`，调用 `watcher_hw_*`。不需要官方应用、Python SDK、
-Daemon、服务端、SD 卡或模型；电脑上的 [Python Application 开发](https://github.com/orulink-ai/WatcheRobot_python_sdk/blob/main/README.zh-CN.md)
-是另一条路线。当前不是稳定发布，完整配对实机验收未完成。
+为机器人 ESP32-S3 编写应用，体验拍照、录音播放和触摸灯光。不需要官方应用源码、Python SDK、
+服务端、SD 卡或模型。在电脑上基于现有固件开发，请使用独立的 [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk)。
+**当前为开发预览，完整配对实机与官方恢复验收仍未完成。**
 
-## 下载测试固件（开发预览）
+## 1. 安装工具并构建
 
-已有测试固件仍由**外部产品资料仓库**托管，尚未迁入本仓库；源码构建不要求先下载该包。
-如需使用，查看[硬件体检开发预览 Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030)，
-不是官方整机稳定版。附件不可见或无法下载时，先联系维护者，不能替换成同名相似文件。
-二进制来源、源码提交、哈希和资产操作方式**跟随该 Release**，
-不能默认二进制来源等于本快照上游 SHA。下载包要求 **Python 3.10+** 与说明中的 esptool 依赖。
-应用单独 `.bin` **不能**交给网页烧录器从 `0x0` 写入；必须使用完整生成的烧录文件集、
-准确偏移及已验证的包入口，不能猜偏移。
-
-## 1. 获取并固定公开版本
-
-安装 Git 与 [ESP-IDF v6.0.2](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)
-及 ESP32-S3 工具。**每个新终端都要激活 IDF 环境**：Linux/macOS 执行
-`. /实际安装路径/esp-idf/export.sh`，Windows 使用 ESP-IDF PowerShell 终端。
-`idf.py --version` 应显示 6.0.2；其他版本会被主动拒绝。
+安装 Git 与 [ESP-IDF 6.0.2（含 ESP32-S3 工具）](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)。
+每个新终端都要激活 IDF：Linux/macOS 加载实际安装目录下的 `export.sh`，Windows 使用
+ESP-IDF PowerShell 终端。`idf.py --version` 必须显示 6.0.2，构建会拒绝其他版本。
 
 ```sh
 git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
 cd WatcheRobot_c_sdk
-git checkout --detach <PUBLIC_COMMIT>
-idf.py -C examples/hardware_check build
+idf.py --version
+idf.py -C examples/robot build
 ```
 
-把 `<PUBLIC_COMMIT>` 替换为 **WatcheRobot_c_sdk 本仓库**中已审查的公开提交完整 SHA，
-不是内部 ESP32 SHA。合并前先执行 `git fetch origin pull/<PR_NUMBER>/head`，再执行
-`git checkout --detach FETCH_HEAD`；所有占位符必须替换。PR 编号也必须属于本仓库。不需要旧资料仓库、私库权限或 Python 子模块。
-检出的版本还必须包含本指南的独立仓库路径适配；不要拿历史导入快照当成文档修正版。
-保存 `git rev-parse HEAD`、`idf.py --version` 和 `SOURCE.json`。
-该清单固定上游来源 `e23bee2a642f6c90753b370cb18c46815e0c8f58`，记录逐文件哈希及公开路径适配。
-公开提交才标识这份交付文档；内部 SHA 仅用于来源追溯，不是要求读者检出的公开版本。
+**后续命令均在本仓库根目录、已激活 IDF 的终端执行。**
+下载依赖需要网络。预期生成 `examples/robot/build/watcher_hw_robot.bin`、bootloader、分区表和烧录参数。
+构建不会写入设备，也不证明实机功能。失败时先解决报错，再继续。反馈问题请附上
+`git rev-parse HEAD`、`idf.py --version` 和错误日志。
 
-**后续命令统一在 WatcheRobot_c_sdk 仓库根目录、已激活 IDF 的终端执行。**
-预期 build 成功，生成 `examples/hardware_check/build/watcher_hw_hardware_check.bin`
-以及 IDF 烧录参数、bootloader、分区表。构建成功不代表任何机械／声学验收。
+## 2. 选择要体验的功能
 
-## 2. 选择示例与开发位置
-
-| 目标 | 工程名 | 应用入口 |
+| 目标 | 工程名 | 修改文件 |
 | --- | --- | --- |
-| 完整引导体检 | `hardware_check` | `examples/hardware_check/main/app_main.c` |
-| 仅身体 | `body` | `examples/body/main/app_main.c` |
-| 摄像头／音频／屏幕 | `head` | `examples/head/main/app_main.c` |
-| 自定义组合应用 | `robot` | `examples/robot/main/app_main.c` |
+| 触摸控制身体灯光 | `body` | `examples/body/main/app_main.c` |
+| 拍照、录音播放和屏幕操作 | `head` | `examples/head/main/app_main.c` |
+| 组合以上功能 | `robot` | `examples/robot/main/app_main.c` |
+| 引导式硬件体检 | `hardware_check` | `examples/hardware_check/main/app_main.c` |
 
-例如 `idf.py -C examples/robot build`，替换最后一个工程名即可。
-目标 ESP32-S3、16 MB flash；头部工程需要 octal PSRAM。每个工程独立维护分区、配置与
-精确版本组件清单，注册表下载仍需网络。共享 `sdk.cmake` 只选硬件依赖，头部音频包含
-本地 `media_lib_sal`，body 不引入它。修改应用代码，不启动官方固件顶层工程。
+将命令中的 `robot` 换成所选工程。全部示例选择 ESP32-S3、16 MB flash 和自定义分区。
+head/robot/hardware_check 启用 80 MHz 八线 PSRAM 与 LVGL 8.4.0，body 默认不启用 PSRAM。
+每个工程的配置、分区和依赖清单需配套保留，见[示例说明](../examples/README.md)和[依赖说明](dependencies.md)。
 
-独立消费工程可以在 `project()` 前设置 `HW_BODY`／`HW_HEAD` 并 include 固定公开 checkout
-中的 `examples/sdk.cmake`，在 `project()` 后调用 `watcher_hw_check_idf()`；
-main 声明所需 `watcher_hw_*`，沿用对应 manifest、defaults 和 partitions。
-必须保留完整固定 SDK，不能只复制头文件或跟随浮动 main。
+修改 `app_main.c` 后重新构建。body 和 robot 示例收到触摸时请求设置灯光、松手时请求停止，
+不会自动启动舵机运动。
 
-## 3. 首次准备配套固件：不确定就停在烧录之前
+## 3. 安全检查——任何烧录或运动之前
 
-记录板卡版本、STM32 固件版本／commit、Himax PTL 镜像 SHA256 和恢复包哈希。
-[历史验收](../history/VALIDATION.md)不等于当前源码配对验收。STM32 必须声明 motion／LED／touch
-能力；摄像头必须使用匹配的 **PTL** Himax 固件。公开产品 Releases **不保证**已有 SDK
-验证过的配对组合。缺少可信兼容记录或可用恢复包，先联系维护者，**不要烧录猜测的镜像**。
-HELLO、文件名、Latest 标签或 build 成功均不证明兼容。
+- **兼容固件：**身体控制需要支持运动、灯光、触摸的兼容 STM32 固件；摄像需要匹配的
+  Himax **PTL** 固件。记录板卡、固件版本与镜像哈希。产品 Release、文件名、握手成功或构建成功
+  都不能证明兼容。配套未经核实，先停止并向维护者索取兼容记录。
+- **备份与恢复：**准备已核实的完整官方恢复包，备份所需设置和数据。首次完整自定义烧录会覆盖
+  官方 `agentcfg` **0x12000–0x20000** 区域。回到官方固件必须**完整恢复**，不能只刷应用。
+  仅有备份无法恢复官方分区布局。缺少恢复包时停止。
+- **正确端口：**ESP32 接口为 **SERIAL-B**，仍须在设备管理器或 `/dev/serial/by-id/` 核实实际端口。
+  不要使用 STM32/Himax 端口；关闭其他串口监视器。
+- **运动：**应用**不能读取舵机实际转到的角度**。实际起点未知，即使要求转到 X90/Y120 参考位置，也可能从另一端移动很远。
+  清空整个行程，保持人工断电可用。ACK/DONE 和软件 STOP 不证明实际位置或机械停止。
+  断连后 ESP32 无法保证停止命令到达，仍需 STM32 安全机制和操作者断电。运动检查前阅读
+  [运动安全](servo-open-loop_zh.md)。
 
-首次准备和恢复只能依据[公开官方烧录指南](https://wiki.orulink.ai/docs/flashing)与确认过的整套镜像；
-它不是日常保留自定义应用的烧录入口。本预览没有提供未经验证的 STM32/Himax 替换镜像，
-也不要求运行内部 workspace 命令或访问私库。
+首次准备或恢复，使用已核实的整套镜像并遵循[官方烧录指南](https://wiki.orulink.ai/docs/flashing)；
+该指南不是日常更新自定义应用的入口。SDK 不提供未经验证的 STM32/Himax 替换镜像。
 
-## 官方存储覆盖警告
+## 4. 烧录并观察
 
-ESP32 接口是 **SERIAL-B**（仍须核对实际枚举端口）。首次完整自定义 `flash` 会覆盖
-官方 `agentcfg` **0x12000–0x20000** 区域，不只是可能丢数据。继续前必须备份所需配置／数据。
-返回官方固件必须执行**完整官方恢复**，不能只刷 app bin 或 `app-flash`；之后重新验证启动和配对。
-仅有备份并不等于已经恢复官方分区布局。
-
-## 4. 日常自定义 ESP32 烧录
-
-先备份所需数据、清空**完整行程**、确保操作者可随时人工断电。从设备管理器或
-`/dev/serial/by-id/` 核实 **ESP32** 端口，不要误用 STM32/Himax 端口；关闭其他串口监视器。
-将 `<PORT>` 替换为本机真实端口（如已确认的 `COM7` 或 `/dev/ttyACM0`）。
+完成上述检查后，将 `<PORT>` 替换为本机已核实的 **ESP32 端口**，如实际识别到的
+`COM7` 或 `/dev/ttyACM0`：
 
 ```sh
-idf.py -C examples/hardware_check -p <PORT> flash
-idf.py -C examples/hardware_check -p <PORT> monitor
+idf.py -C examples/robot -p <PORT> flash
+idf.py -C examples/robot -p <PORT> monitor
 ```
 
-预期 esptool 写入校验成功；屏幕显示 **Hardware check**，启动日志包含
-`Hardware check v2 | curved zones`。使用 **Ctrl+]** 退出 monitor。
-仅写自定义 ESP32 bootloader、分区表与应用，不刷 STM32/Himax、不构建官方 app。
-分区变化即使不整片擦除，也可能覆盖官方存储。**不要执行 erase-flash**。
-只有确认**连接设备**已有相同自定义分区布局时，才可用
-`idf.py -C examples/hardware_check -p <PORT> app-flash` 日常更新应用。
-本地分区文件相同不足以证明设备分区相同；布局未知或中途刷过官方固件，应使用完整自定义 `flash`。
+`flash` 写入自定义 ESP32 bootloader、分区表和应用，不刷 STM32/Himax。
+**不要执行 `erase-flash`，不要猜偏移，不要把应用单独 `.bin` 从 `0x0` 写入。**
+预期 esptool 写入校验成功，随后 robot 示例显示拍照、音频操作界面，并记录身体初始化和触摸事件。
+尝试 Photo，再 Record、Play，亲自检查照片和声音。触摸身体时请求绿灯，松手时请求停止。
+控件禁用不算通过。用 **Ctrl+]** 退出 monitor。
 
-两个便捷入口语义一致（仍在相同根目录和 IDF 环境）：
+若选 `hardware_check`，屏幕应显示 **Hardware check**，日志包含 `Hardware check v2 | curved zones`。
+按 [26 项操作指南](hardware-check_zh.md)检查。结果只保存在 RAM，重启清空，应另行记录；未测不算通过。
+
+后续仅更新应用时，**只有确认连接设备已经使用相同自定义分区布局**，才可执行
+`idf.py -C examples/robot -p <PORT> app-flash`。本地文件相同不能证明设备布局相同。
+设备布局未知或中途刷过官方固件时，重新完成安全检查，使用完整自定义 `flash`。
+
+可选便捷脚本提供同样的 build/flash/monitor 操作：
 
 ```sh
-bash examples/hardware-sdk.sh hardware_check build
-bash examples/hardware-sdk.sh hardware_check flash <PORT>
+bash examples/hardware-sdk.sh robot build
 ```
 
 ```powershell
-./examples/hardware-sdk.ps1 hardware_check build
-./examples/hardware-sdk.ps1 hardware_check flash <PORT>
+./examples/hardware-sdk.ps1 robot build
 ```
 
-参数为 body/head/robot/hardware_check、build/flash/monitor、端口；flash/monitor 必须显式端口。
-参数或环境错误退出 2，合法调用保留 IDF 退出码。不扫描端口、不暗中配对烧录或擦除。
+支持 body/head/robot/hardware_check 和 build/flash/monitor；flash/monitor 必须以第三个参数传入真实端口。
+脚本不会扫描端口、烧录配套芯片或擦除设备。
 
-## 5. 体检、安全、恢复与迁移
+## 5. 恢复官方固件
 
-按 [26 项体检指南](hardware-check_zh.md)操作。当前舵机**没有物理位置反馈**，
-命令坐标、ACK/DONE 都是软件证据；`watcher_hw_body_request_position()` 恒返回
-`ESP_ERR_NOT_SUPPORTED`。旧反馈相对运动逻辑已停用。安全确认后可能先命令 X90/Y120，
-实际起点未知，**参考移动也可能是大行程**，不能只为三度腾空间；详见[开环合同](servo-open-loop_zh.md)。
+停止自定义应用，关闭串口监视器。选择已核实的**完整官方**恢复包，按
+[完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)使用该包对应的准确端口和镜像。
+恢复会替换自定义 ESP32 应用，也可能替换存储和配套固件。之后检查官方启动和配对。
+返回 SDK 开发时重新构建、烧录自定义工程。恢复资产或来源不明时停止，不能猜偏移。
 
-断连后 ESP32 无法保证停止命令到达，必须依赖 STM32 安全机制及人工断电条件。
-身体事件溢出后 FAULT 锁定，取消待执行动作；回调／分发外显式 close/init、重新订阅，
-等待新的 READY 与新用户操作。重连或排空队列不能解锁。JPEG 回调数据要复制后留用；
-LVGL 访问需加锁；阻塞音频 read/write/drain 由同一 owner 任务执行，不可在 ISR、MCU／
-相机回调或 LVGL 锁内调用。
+## 常见问题
 
-恢复官方固件时关闭自定义程序及串口监视器，选定已确认的**完整官方 Release**，
-按[公开完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)核对实际端口和镜像。
-恢复会替换自定义 ESP32 app，也可能替换存储与配对固件。恢复后检查官方启动、配网／配对；
-返回 SDK 开发则重新 build／flash 自定义工程。恢复包缺失或来源未知时停止，不能猜偏移地址。
+- IDF 版本错误：在当前终端激活 6.0.2，不绕过版本检查。
+- 缺少依赖：检查完整仓库、网络和工程依赖清单，不要引入官方应用源码。
+- 身体未就绪或日志报告事件丢失：先停止操作，排查供电、线缆和兼容固件。不要反复触摸尝试解锁，
+  不要自动重试旧动作；重连或清空待处理事件也不能解除这一故障。自行编写恢复逻辑时，
+  取消待执行动作并按[身体 API 的完整恢复步骤](api/body.md)处理；重新动作必须由**新的用户操作**发起。
+- 没有照片：核实 PTL 摄像头固件配套，保留超时或错误日志；没有图片不能通过。
+- 没有声音：尝试 Test speaker 的 voice/tone。默认输出 90、上限 95；进度完成不证明可听。
+  简单头部示例没有自动重试或动态关闭流程，不能再创建一个控制同一音频、摄像头的任务来恢复。
 
-旧工程需将 `watche_hw_*` 头文件／函数／类型／CMake 依赖改为 `watcher_hw_*`，
-常量改为 `WATCHER_HW_*`，IDF 检查改为 `watcher_hw_check_idf()`；没有兼容别名。
-第一次执行 `idf.py -C examples/robot -B build-watcher build` 避开旧缓存，
-不要给旧固件改名冒充新版本。[迁移指南](migration.md)还包含丢事件合同变化。
-历史记录保留当时名称与哈希，不能当作改名后新验收。
+## 扩展应用时再看
 
-## 排障与验收边界
+音频操作交给同一任务；不要在硬件回调、中断或持有屏幕锁时调用阻塞音频函数。
+摄像头回调图片需复制后留用，访问 LVGL 要加锁。精确接口与使用规则见 [API 指南](README.md)。
+独立 ESP-IDF 工程可参考现有示例的 CMake、配置与[依赖说明](dependencies.md)，不能只复制头文件。
+保留已知 SDK 版本以便复现；旧 `watche_hw_*` 应用见[迁移指南](migration.md)。
 
-- IDF 版本错误：当前终端重新激活 6.0.2，不绕过版本检查。
-- 缺组件：确认完整固定 checkout、注册表网络与 manifest，不 include 官方 firmware/s3。
-- 身体非 READY：检查供电／连接／版本能力／静默超时，不强行运动。
-- 相机失败：先查 PTL 配套，再观察超时与重试；没有图片不能通过。
-- 无声：Test speaker 分别试 voice／tone，默认输出 90，上限 95；进度完成不等于可听。
-- 体检结果只在 RAM，重启清空；人工结论另行记录。
+## 可选：预编译测试固件与验证记录
 
-软件／host／站点构建不证明机械限位、停止时延、边缘触摸、图像／声音质量、资源反复释放
-或长期组合稳定性。完整配对实机与官方恢复验收仍未完成，见[验收边界](../history/VALIDATION.md)。
-文档修改不代表新完成构建、烧录或实机验收，也不代表已发布稳定 Release。
-提交修改前创建分支，通过 PR 审阅后合并；见[仓库开发流程](repository-workflow.md)。
+外部[硬件体检预览 Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030)
+不是官方整机稳定版，源码构建不需要先下载它。按照该 Release 的资产、来源/哈希和安装说明操作，
+不要默认其二进制来自当前仓库版本。下载包需要 Python 3.10+ 和说明中的 esptool 依赖。
+使用完整文件集及其文档指定偏移，不要把应用单独文件写入 `0x0`。资产缺失时联系维护者，不能找相似文件替代。
+前述安全检查仍然适用。
+
+软件测试不证明机械限位、停止时延、边缘触摸、图像/声音质量、反复关闭或长期组合运行稳定性。
+见[测试与证据](testing.md)、[历史验收](../history/VALIDATION.md)及[来源说明](provenance.md)。
+文档不是新完成的构建、烧录或实机验收结果。
