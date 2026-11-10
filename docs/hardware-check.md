@@ -6,13 +6,13 @@ This independent `hardware_check` ESP32 firmware checks one real item at a time.
 It is not factory certification or an emergency-stop device. Start with the
 [pinned public setup, build, flash and recovery guide](getting-started.md).
 No Python SDK, Daemon, server, SD card, model or private repository is needed.
-Build/flash from the public repository root, with ESP-IDF 6.0.2 activated and a
+Build/flash from the **WatcheRobot_c_sdk repository root**, with ESP-IDF 6.0.2 activated and a
 verified ESP32 `<PORT>` (not the Himax/STM32 port):
 
 ```sh
-idf.py -C firmware/sdk/examples/hardware_check build
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> flash
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> monitor
+idf.py -C examples/hardware_check build
+idf.py -C examples/hardware_check -p <PORT> flash
+idf.py -C examples/hardware_check -p <PORT> monitor
 ```
 
 Expected startup log: `Hardware check v2 | curved zones`; expected screen:
@@ -56,7 +56,7 @@ confirmation. Natural completion is an issue for the stop test. Errors conservat
 latch body controls until reboot. Disconnect cannot deliver Stop; STM32 safety is
 required. See the [current open-loop contract](servo-open-loop.md).
 
-![Software-rendered motion confirmation showing the reference pose, full-travel warning and lack of position sensor](../../../docs/images/embedded-sdk/hardware-check-motion-safety.png)
+![Software-rendered motion confirmation showing the reference pose, full-travel warning and lack of position sensor](images/hardware-check-motion-safety.png)
 
 This is a real LVGL host-rendered illustration, not a photograph of a robot. It does not establish physical display, touch or motion acceptance.
 
@@ -81,11 +81,11 @@ With nobody operating the screen, run one wrapper from the repository root after
 closing monitor (one process owns the verified port):
 
 ```sh
-bash firmware/sdk/examples/hardware_check/verify.sh --port <PORT>
+bash examples/hardware_check/verify.sh --port <PORT>
 ```
 
 ```powershell
-./firmware/sdk/examples/hardware_check/verify.ps1 --port <PORT>
+./examples/hardware_check/verify.ps1 --port <PORT>
 ```
 
 The active IDF Python needs `pyserial`; optional `--log <LOCAL_LOG_PATH>` stores

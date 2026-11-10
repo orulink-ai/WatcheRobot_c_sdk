@@ -1,5 +1,7 @@
 # Hardware example design
 
+> Historical example design rationale. References to browser prototypes describe upstream work not shipped here; use [hardware check](docs/hardware-check.md) for current operations. / 历史示例设计；网页原型不随本仓库交付，当前操作以上手与体检指南为准。
+
 ## Scene and theme
 
 A beginner touches a small round desktop screen in daylight while checking hardware. A warm light surface improves legibility; no decorative animation.
@@ -11,7 +13,8 @@ Warm surface #F4F1EC, muted preview #E6EAE5, dark text #293732, active green #24
 ## Layout
 
 The guided robot check follows the two-button design in
-`design/hardware-check/DESIGN.md`: progress, a short title, one central result,
+the historical upstream browser design (not distributed in this repository):
+progress, a short title, one central result,
 one short status and Back / Test (or Stop / Next). Its whitespace-first layout
 does not include persistent Details, Skip, Results or Audio buttons. Safety uses
 a separate deliberate preparation page. Review uses Not OK / Next in the same two

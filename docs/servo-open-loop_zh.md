@@ -28,4 +28,4 @@ host 测试只证明软件状态及序号行为。方向、完整边界和实际
 SDK 不更新 STM32/Himax 固件。配对兼容性未知或完整官方恢复资产缺失时，**禁止继续烧录**。
 
 参见[安全上手与恢复](getting-started_zh.md)、[26 项体检](hardware-check_zh.md)及
-[本次验证事实](../SYNC_VALIDATION.md)。
+[历史公开同步记录](../SYNC_VALIDATION.md)。

@@ -4,13 +4,13 @@
 
 `hardware_check` 是独立 ESP32 示例，不是工厂认证或急停设备。
 先完成[固定公开版本、构建、烧录和恢复准备](getting-started_zh.md)，不需要 Python SDK、
-Daemon、服务端、SD 卡、模型或私库。从公开仓库根目录、已激活 ESP-IDF 6.0.2 的终端运行；
+Daemon、服务端、SD 卡、模型或私库。从 **WatcheRobot_c_sdk 仓库根目录**、已激活 ESP-IDF 6.0.2 的终端运行；
 `<PORT>` 必须替换为确认过的 ESP32 端口，不是 Himax／STM32 端口：
 
 ```sh
-idf.py -C firmware/sdk/examples/hardware_check build
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> flash
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> monitor
+idf.py -C examples/hardware_check build
+idf.py -C examples/hardware_check -p <PORT> flash
+idf.py -C examples/hardware_check -p <PORT> monitor
 ```
 
 预期启动日志 `Hardware check v2 | curved zones`，屏幕显示 **Hardware check**。
@@ -48,7 +48,7 @@ Ctrl+] 退出 monitor。启动后不会自动开始任何测试。
 只证明软件生命周期，仍须确认实物停住。停止测试若自然完成应记录问题。
 运动错误保守锁定身体控制直到重启；断线无法送达 Stop，必须依赖 STM32 安全机制。
 
-![软件渲染示意：运动安全确认页显示参考姿态、完整行程及无位置传感器提示](../../../docs/images/embedded-sdk/hardware-check-motion-safety.png)
+![软件渲染示意：运动安全确认页显示参考姿态、完整行程及无位置传感器提示](images/hardware-check-motion-safety.png)
 
 上图为真实 LVGL 主机渲染的界面示意，不是机器人实拍；不能据此宣称实机显示、触摸或运动验收通过。
 
@@ -69,11 +69,11 @@ Speaker／Record／Replay 先进入 **Audio setup**：输出 0–95、默认 90�
 先退出 monitor，确认只有验证器占用端口，期间不要触屏。从仓库根目录任选一个入口：
 
 ```sh
-bash firmware/sdk/examples/hardware_check/verify.sh --port <PORT>
+bash examples/hardware_check/verify.sh --port <PORT>
 ```
 
 ```powershell
-./firmware/sdk/examples/hardware_check/verify.ps1 --port <PORT>
+./examples/hardware_check/verify.ps1 --port <PORT>
 ```
 
 当前 IDF Python 需有 `pyserial`。可加 `--log <LOCAL_LOG_PATH>` 留本地证据。

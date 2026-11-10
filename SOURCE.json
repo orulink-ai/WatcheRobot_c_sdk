@@ -13,15 +13,19 @@
       "source": "examples/hardware_sdk/AUDIT.md",
       "destination": "AUDIT.md",
       "source_sha256": "372f9f5dc0d19c5bbea430284356c653b9f6e6737c3b77981c6be62a990c03ca",
-      "sha256": "21b542933deda0ed357dd3c78f78764f53591efa73008989080525d105664c39",
-      "transform": "public component links"
+      "sha256": "d06ea36971e7c790b92fff02b324a927140b2063a6e3fb5d15e9431c67ea9257",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "21b542933deda0ed357dd3c78f78764f53591efa73008989080525d105664c39",
+      "imported_transform": "public component links"
     },
     {
       "source": "examples/hardware_sdk/DESIGN.md",
       "destination": "DESIGN.md",
       "source_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
-      "sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
-      "transform": null
+      "sha256": "eabb126e86fcd7cf437a24b5d878ac0bef1b86a6df8e79fdee50d350fa709f5b",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
+      "imported_transform": null
     },
     {
       "source": "examples/hardware_sdk/MIGRATION.md",
@@ -34,22 +38,28 @@
       "source": "examples/hardware_sdk/PRODUCT.md",
       "destination": "PRODUCT.md",
       "source_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
-      "sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
-      "transform": null
+      "sha256": "3349224f8d810d79bb15362ad6fcac491f327d44aadef988523a897045bc16bb",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
+      "imported_transform": null
     },
     {
       "source": "examples/hardware_sdk/UX_REVIEW.md",
       "destination": "UX_REVIEW.md",
       "source_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
-      "sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
-      "transform": null
+      "sha256": "f09a31adbd3b6fa11b3dd3204a3040b8b9976c0515e54d21ffd346a4b8fbcb6f",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
+      "imported_transform": null
     },
     {
       "source": "examples/hardware_sdk/VALIDATION.md",
       "destination": "history/UPSTREAM_VALIDATION.md",
       "source_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
-      "sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
-      "transform": null
+      "sha256": "c71f025aeb4ed508140978743268cd42b89384676e5ef0d9043def127b556a1c",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
+      "imported_transform": null
     },
     {
       "source": "examples/hardware_sdk/body/CMakeLists.txt",
@@ -440,8 +450,10 @@
       "source": "examples/hardware_sdk/hardware_check/test_support/host/README.md",
       "destination": "examples/hardware_check/test_support/host/README.md",
       "source_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "transform": null
+      "sha256": "f3d9173cbba7e21f928850d9097ca8e23c0f9fbba8b0b5e56176c650bd1390f9",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
+      "imported_transform": null
     },
     {
       "source": "examples/hardware_sdk/hardware_check/test_support/host/host_mocks.c",
@@ -629,8 +641,10 @@
       "source": "firmware/s3/components/esp_codec_dev/CHANGELOG.md",
       "destination": "components/esp_codec_dev/CHANGELOG.md",
       "source_sha256": "a6362f48b8d655df9b3a3fe2981dcce5f961cc09048b148ee9ad6e93208420de",
-      "sha256": "a6362f48b8d655df9b3a3fe2981dcce5f961cc09048b148ee9ad6e93208420de",
-      "transform": null
+      "sha256": "aeeb33bdca87ab0020983845647a55cf7b4086b543de3ae2450a3b3fb484d086",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "a6362f48b8d655df9b3a3fe2981dcce5f961cc09048b148ee9ad6e93208420de",
+      "imported_transform": null
     },
     {
       "source": "firmware/s3/components/esp_codec_dev/CMakeLists.txt",
@@ -657,15 +671,19 @@
       "source": "firmware/s3/components/esp_codec_dev/README.md",
       "destination": "components/esp_codec_dev/README.md",
       "source_sha256": "0705ad17f2cdd175105cfd6c7f96e945fea088b4de1df46447ba782c7266e35e",
-      "sha256": "0705ad17f2cdd175105cfd6c7f96e945fea088b4de1df46447ba782c7266e35e",
-      "transform": null
+      "sha256": "294455704eb9b32c8488ecd7ce21005a595f39d7ba04f07989fa91a3f98f715e",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "0705ad17f2cdd175105cfd6c7f96e945fea088b4de1df46447ba782c7266e35e",
+      "imported_transform": null
     },
     {
       "source": "firmware/s3/components/esp_codec_dev/README_CN.md",
       "destination": "components/esp_codec_dev/README_CN.md",
       "source_sha256": "85d1ade369492a349998adbd330697edd6594417634d69d7a268366e8e5bb03a",
-      "sha256": "85d1ade369492a349998adbd330697edd6594417634d69d7a268366e8e5bb03a",
-      "transform": null
+      "sha256": "b91f2d893137fa2612ef6268ad6edd90924ae9e6beeb8ebe34960c0cd66064f9",
+      "transform": "standalone C SDK documentation adaptation; upstream source and imported output provenance preserved",
+      "imported_sha256": "85d1ade369492a349998adbd330697edd6594417634d69d7a268366e8e5bb03a",
+      "imported_transform": null
     },
     {
       "source": "firmware/s3/components/esp_codec_dev/audio_codec_sw_vol.c",
@@ -3005,5 +3023,12 @@
       "sha256": "7628e44a9d2af0fe5407ab0e8d5ccbebb141e54058af96597849da73dba522b4",
       "transform": null
     }
-  ]
+  ],
+  "documentation_migration": {
+    "import_repository": "orulink-ai/WatcheRobot-public",
+    "import_commit": "eb78c212999374c9afd48de9c160c73991e646ae",
+    "import_path": "firmware/sdk",
+    "standalone_import_commit": "85c6af84c93db63db335d4b93f2a114ba66cd7f1",
+    "scope": "Documentation only; no source, license, dependency or hardware behavior change."
+  }
 }

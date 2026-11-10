@@ -1,5 +1,7 @@
 # Public SDK sync validation / 公开 SDK 同步验证
 
+> Historical public-snapshot validation before the standalone repository was created. Results below belong to the original delivery, not this repository or this documentation PR. / 独立仓库建立之前的公开快照验证；下列结果属于原交付，不是本仓库或本次文档 PR 的执行结果。
+
 ## Fixed delivery / 固定交付
 
 - Public repository: `orulink-ai/WatcheRobot-public`, PR #14. The PR head or the associated test-firmware Release tag identifies the public delivery; do not check out the private upstream SHA in this public repository.
@@ -7,7 +9,7 @@
 - `SOURCE.json` inventories 429 allowlisted upstream files, their original/output hashes and every public export adaptation. Public-only LCD tests and generated public dependency locks are preserved separately.
 - Excluded: official application/business services, models, credentials, generated builds, managed component trees, binary archives, codec test apps and unrelated audio privacy harnesses.
 
-## Actual validation / 本次真实验证
+## Historical validation / 原同步真实验证
 
 | Gate | Result |
 | --- | --- |
@@ -25,9 +27,13 @@
 
 The [independent hardware-check preview Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030) is a prerelease, not the official stable product upgrade. Availability and exact binary provenance follow that Release and its manifest. Publishing the test firmware does not merge this documentation PR or deploy the production Wiki.
 
-## Reproducible local commands / 本地复现
+## Archived commands — original materials repository only / 原资料仓库历史命令
 
-From the public repository root:
+The following commands were used in the original `WatcheRobot-public` checkout;
+`tools/tests`, Node/Wiki tooling and its CI are **not bundled in this standalone repository**.
+Do not run this block here. Current SDK build commands are in [getting started](docs/getting-started.md);
+local host-test instructions are in [the host guide](examples/hardware_check/test_support/host/README.md).
+以下命令仅保留原验证上下文，不适用于本独立仓库。
 
 ```sh
 python -m pytest tools/tests -q
@@ -36,11 +42,11 @@ npm test
 npm run docs:build
 ```
 
-For all host projects, configure Debug and Release separately, build, then run `ctest --output-on-failure --no-tests=error`. Set `LVGL_SOURCE_DIR` to LVGL commit `4495f428630cc1741bd8bfd977f080e8460e8e8d` and `CJSON_SOURCE_DIR` to cJSON 1.7.19 commit `c859b25da02955fef659d658b8f324b5cde87be3`. CI fetches these exact public commits and includes SSCMA; missing cJSON gives an explicit setup error rather than a hidden private dependency. Assertions remain active in Release.
+For all host projects, configure Debug and Release separately, build, then run `ctest --output-on-failure --no-tests=error`. Set `LVGL_SOURCE_DIR` to LVGL commit `4495f428630cc1741bd8bfd977f080e8460e8e8d` and `CJSON_SOURCE_DIR` to cJSON 1.7.19 commit `c859b25da02955fef659d658b8f324b5cde87be3`. The original repository CI fetched these exact public commits and includes SSCMA; missing cJSON gives an explicit setup error rather than a hidden private dependency. Assertions remain active in Release.
 
 For firmware, activate ESP-IDF 6.0.2 and run `idf.py -C firmware/sdk/examples/<EXAMPLE> build` for body, head, robot and hardware_check. These are build commands only, not flashing instructions. Use the bilingual getting-started guide before any device write.
 
-## Corrections found during verification / 本轮发现并修复
+## Corrections in the original sync / 原同步发现并修复
 
 - The public PTL camera build initially lacked `watcher_face_frame.h`. The shared protocol header is now exported with provenance; no private Himax implementation or include-tree access is required.
 - The preserved public LCD test harness predated the new panel mutex/helper split. It now exercises both actual production functions, mutex ownership/contention, timeout storage retention and partial final bands without changing production LCD code to satisfy a test.

@@ -1,5 +1,7 @@
 # SDK consistency audit / SDK 一致性排查（2026-10-07）
 
+> Historical upstream audit; file links are adapted to this repository. It is not a new audit of the standalone repository. / 上游历史审计，文件链接已适配本仓库；不代表独立仓库新审计。
+
 本轮区分“已修正的一致性与运行问题”和“仍待验证／后续处理的事项”。
 H1 丢事件与 M1 摄像头状态已完成独立修复和软件回归；不代表完成新的实机验收。
 
@@ -31,7 +33,7 @@ Unrelated user changes, board branding, wire protocols and the service-dependent
 
 **Location:** [body runtime](components/sdk/watcher_hw_body/watcher_hw_body.c),
 [public contract](components/sdk/watcher_hw_body/include/watcher_hw_body.h),
-[body example](./body/main/app_main.c) and robot's matching callback.
+[body example](examples/body/main/app_main.c) and robot's matching callback.
 
 The earlier characterization reproduced a lost release followed by a motion
 submission (dropped=1, moves=1), not physical robot movement. The original source
@@ -94,8 +96,8 @@ Not changed here.
 
 ### L2: Example startup failure retains resources / 示例失败重试边界（Low）
 
-**Location:** [head_demo_start](./common/head_demo.c#L673)
-lines 673–692; [example header](./common/head_demo.h#L3)
+**Location:** [head_demo_start](examples/common/head_demo.c#L673)
+lines 673–692; [example header](examples/common/head_demo.h#L3)
 lines 3–5.
 
 After media-task creation fails, UI objects remain but actions becomes NULL,

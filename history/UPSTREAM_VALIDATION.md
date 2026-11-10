@@ -1,5 +1,7 @@
 # Development-preview acceptance / 开发预览验收
 
+> Archived upstream evidence; original names, hashes, test counts and commands are historical, not instructions or new validation for this repository. Only relative navigation links are repaired. Current operations: [getting started](../docs/getting-started.md). / 归档上游证据，名称、哈希、测试数量及命令均保留历史语境，不作为本仓库操作步骤或新验收；仅修复相对导航。
+
 No stable release or fully validated firmware pairing is claimed.
 本页仅记录实际执行结果；构建成功不等于整机安全验证完成。
 
@@ -92,7 +94,7 @@ No stable release or fully validated firmware pairing is claimed.
 不再只是网页稿。当前没有刷进机器人，不能把软件截图当作实机效果。刷机后先验收
 显示与大区域点击，再验收拍照、喇叭、录音回放、身体触摸、分区灯光，最后在安全
 空间验收运动及停止。看、听、触碰和机械安全仍由操作者确认；未确认项不得算通过。
-操作步骤见 [hardware_check/README.md](hardware_check/README.md)。
+操作步骤见 [hardware_check/README.md](../examples/hardware_check/README.md)。
 
 ## 2026-10-08: curved touch-region revision (browser only, not flashed)
 
@@ -217,7 +219,7 @@ No stable release or fully validated firmware pairing is claimed.
 中文摘要：独立全硬件测试示例已烧入明确核验的目标设备，四个示例构建和静音实机
 自测通过，目前停在未验收的欢迎页。拍照、取帧、取消后复用和完整 PCM 采集有串口
 证据；看、听、触碰、灯效与运动安全仍需逐项人工确认。未上传、未提交、未合并。
-操作流程见 [hardware_check/README.md](hardware_check/README.md)。
+操作流程见 [hardware_check/README.md](../examples/hardware_check/README.md)。
 
 ## 2026-10-08: robot example flash, startup and one photo (partial HIL)
 
@@ -291,7 +293,7 @@ No stable release or fully validated firmware pairing is claimed.
 - Unified hardware component/header/API/type/constant names and the three
   example app targets under `watcher_hw_*` / `WATCHER_HW_*`. Task/host names,
   CI paths and active bilingual docs agree. This is a preview source-API break;
-  [MIGRATION.md](MIGRATION.md) explains consumer updates and fresh build directories.
+  [MIGRATION.md](../MIGRATION.md) explains consumer updates and fresh build directories.
   Earlier entries retain the actual names/checksums of the tested old firmware.
 - TDD namespace guards failed against the old source before the rename.
   Additional script regressions exposed blank-port and explicit-empty-argument
@@ -310,7 +312,7 @@ No stable release or fully validated firmware pairing is claimed.
   match between canonical/public copies after newline/trailing-end normalization.
   Nine Mermaid diagrams parsed; renamed first-party C/headers passed the
   canonical clang-format 18.1.8 check.
-- The audit also found unresolved non-naming risks; see [AUDIT.md](AUDIT.md).
+- The audit also found unresolved non-naming risks; see [AUDIT.md](../AUDIT.md).
   An isolated Debug/Release characterization compiled the real event FIFO and
   the exact current body-example callback, replacing every hardware API with
   a mock. Normal case: dropped=0, requests=1, stops=1, moves=0. Queue saturation:

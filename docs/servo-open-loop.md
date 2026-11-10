@@ -38,4 +38,4 @@ physical evidence. This SDK does not update STM32/Himax firmware. A pair lacking
 verified compatibility or complete official recovery assets is a **do-not-flash** blocker.
 
 See [safe setup and recovery](getting-started.md), [26-item check](hardware-check.md)
-and [current validation facts](../SYNC_VALIDATION.md).
+and [historical public-sync evidence](../SYNC_VALIDATION.md).

@@ -1,4 +1,6 @@
 # ESP Codec Device
+
+> 本页保留第三方组件参考说明；通用 ES8311 接线／API 示例不等于 WatcheRobot 硬件配置。上游 `test_apps/codec_dev_test` 未随本 SDK 导出，下面的 `ut_*` 是该测试应用辅助函数，不是可直接运行的 SDK 示例。WatcheRobot 开发请从[本仓库上手指南](../../docs/getting-started_zh.md)开始。
 - [![组件注册](https://components.espressif.com/components/espressif/esp_codec_dev/badge.svg)](https://components.espressif.com/components/espressif/esp_codec_dev)
 - [English version](./README.md)
 
@@ -158,7 +160,7 @@ audio_codec_data_if_t ..> esp_codec_dev
 ## 使用方法
 
 以 ES8311 为例，下面将演示播放和录音的具体步骤
-1. 为编解码器设备的控制和数据总线安装驱动，可参考[test_board.c](test_apps/codec_dev_test/main/test_board.c)   
+1. 为编解码器设备的控制和数据总线安装驱动，可参考`test_board.c`（仅上游示例，本仓库未附带）
    	```c
 	ut_i2c_init(0);
 	ut_i2s_init(0);
@@ -234,4 +236,4 @@ audio_codec_data_if_t ..> esp_codec_dev
 	const audio_codec_if_t *my_codec_new(my_codec_cfg_t *codec_cfg);
 	```
 
-更细节的实现可以参考测试代码 [my_codec.c](test_apps/codec_dev_test/main/my_codec.c)。
+更细节的实现可以参考测试代码 `my_codec.c`（仅上游示例，本仓库未附带）。

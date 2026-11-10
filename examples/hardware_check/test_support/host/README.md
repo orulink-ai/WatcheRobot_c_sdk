@@ -2,7 +2,7 @@
 
 独立 CMake/CTest 工程，直接编译 `main/check_view.c`、`main/check_layout.c` 和真实 LVGL 的非 ESP 库。只 mock ESP 内存、显示锁、FreeRTOS 输入队列、已解码图像的释放；图像缩放链接现有 `common/demo_state.c`。无假 LVGL、SDL、硬件连接或 framebuffer 驱动。
 
-## 最终回归结果
+## 历史回归结果（不是本次独立仓库验证）
 
 2026-10-08，Windows x64 / MSVC 19.40，真实 LVGL **8.4.0**，guard 与显式 image attempt 接口落地后：
 
@@ -17,29 +17,41 @@
 
 软件截图目录：`build/snapshots/`（相对此主机工程目录）。21 个场景各有一个 PPM，包括 `nav_pixels.ppm`、`detail_tail.ppm`、`stopping.ppm`、`photo.ppm`、`live_image.ppm`、`release_outside.ppm`、`release_disabled.ppm`。Debug/Release 共用输出目录，最后执行的配置会覆盖同名截图和 `build/Testing/Temporary/LastTest.log`。全部是软件渲染数据，不是 LCD 实机证明。
 
-## 运行
+## 在独立 C SDK 仓库运行
 
-在本目录运行（PowerShell 与 macOS/Linux Shell 使用相同 CMake 命令，无额外 shell 脚本）：
+先安装 Git、CMake 3.20+ 和可用 C/C++ 编译器（Windows 使用已配置 MSVC 的开发者终端）。
+以下仅运行电脑端软件测试，不需要 ESP-IDF、不连接设备。若已有真实 LVGL 8.4.0 源码，
+可在本目录执行下列命令；将占位符替换为源码绝对路径，含空格时保留引号：
 
 ```text
-cmake -S . -B build -DLVGL_SOURCE_DIR=<真实的managed_components/lvgl__lvgl绝对路径> -DHOST_WRITE_PPM=ON
+cmake -S . -B build "-DLVGL_SOURCE_DIR=<LVGL_SOURCE_ABSOLUTE_PATH>" -DCMAKE_BUILD_TYPE=Release -DHOST_WRITE_PPM=ON
 cmake --build build --config Release --target check_view_tests --parallel
-ctest --test-dir build -C Release --output-on-failure
+ctest --test-dir build -C Release --output-on-failure --no-tests=error
 ```
 
 单配置生成器还应在 configure 时传 `-DCMAKE_BUILD_TYPE=Release`；Windows 可显式传 `-G "Visual Studio 17 2022" -A x64`。
 
 固件 `main/idf_component.yml` / `dependencies.lock` 和本轮本地库均为 **LVGL 8.4.0**。根据最新合同，工程严格要求真实 8.4.0；配置时读取版本头，运行时也断言版本，提供其他版本会明确失败，不修改/伪造库版本。
 
-CI 从 ESP32 子仓库根目录运行以下三个命令；真实 LVGL 8.4.0 checkout 在 `.ci/lvgl`。`$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用：
+没有 LVGL 源码时，在 **WatcheRobot_c_sdk 仓库根目录**执行下列准备和回归命令。
+依赖放在相邻目录，避免混入提交；示例目标目录必须尚不存在，否则先检查原目录而非覆盖。
+`$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用。固定 SHA 是原验证的 LVGL 8.4.0，
+不是浮动分支。本仓库暂未迁入 CI，以下是本地执行方式，不代表远端 CI 已运行：
 
 ```text
-cmake -S examples/hardware_sdk/hardware_check/test_support/host -B examples/hardware_sdk/hardware_check/test_support/host/build-ci -DLVGL_SOURCE_DIR="$PWD/.ci/lvgl" -DCMAKE_BUILD_TYPE=Release -DHOST_WRITE_PPM=ON
-cmake --build examples/hardware_sdk/hardware_check/test_support/host/build-ci --config Release --target check_view_tests --parallel
-ctest --test-dir examples/hardware_sdk/hardware_check/test_support/host/build-ci -C Release --output-on-failure
+git clone --no-checkout https://github.com/lvgl/lvgl.git ../WatcheRobot-c-sdk-lvgl
+git -C ../WatcheRobot-c-sdk-lvgl checkout --detach 4495f428630cc1741bd8bfd977f080e8460e8e8d
+cmake -S examples/hardware_check/test_support/host -B ../WatcheRobot-c-sdk-host-build-release -DLVGL_SOURCE_DIR="$PWD/../WatcheRobot-c-sdk-lvgl" -DCMAKE_BUILD_TYPE=Release -DHOST_WRITE_PPM=ON
+cmake --build ../WatcheRobot-c-sdk-host-build-release --config Release --target check_view_tests --parallel
+ctest --test-dir ../WatcheRobot-c-sdk-host-build-release -C Release --output-on-failure --no-tests=error
 ```
 
-失败退出码由 build/CTest 原样返回；可归档 `build-ci/snapshots/*.ppm` 与 `build-ci/Testing/Temporary/LastTest.log`。不依赖 ESP-IDF，不运行 firmware build/flash，也不修改 CI。
+预期 configure 显示真实 LVGL 8.4.0，构建产生 `check_view_tests`，CTest 运行 22 项并报告
+0 失败；实际失败需保留，不以历史数字代替本次执行。每条命令成功后再执行下一条。
+可归档构建目录中的 `snapshots/*.ppm` 与 `Testing/Temporary/LastTest.log`。
+Debug 验证使用单独的 `../WatcheRobot-c-sdk-host-build-debug` 目录，并将配置值改为 Debug。
+不依赖 ESP-IDF、不运行固件 build/flash；输出为电脑软件渲染，不是实机证明。
+本页其余带日期的红／绿结果描述原上游迭代，保留历史测试数量，不宣称当前已重跑。
 
 `lv_conf.h` 开启 RGB565、snapshot 和 Montserrat 14/16/18/20/24/48。所有测试源通过 `#ifdef NDEBUG / #error` 防止断言失效；MSVC 用 `/UNDEBUG`，其他编译器用 `-UNDEBUG`，Release 同样执行断言。新增测试和 mock 目标使用 `/W4 /WX`（其他编译器 `-Wall -Wextra -Werror`）；生产代码与 LVGL 是独立依赖目标，保留警告而不要求上游库零警告。注意字体名的 px 大小不等于其 `line_height`（18px 的行高实际为 21）。
 

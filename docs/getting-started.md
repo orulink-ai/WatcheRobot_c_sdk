@@ -4,12 +4,14 @@ English | [简体中文](getting-started_zh.md)
 
 Write your own ESP32-S3 `app_main` using `watcher_hw_*`. The independent examples
 need no Python SDK, Daemon, official application, server, SD card or model.
-Python Applications on your computer are a [separate route](../../../docs/sdk.md).
+Python Applications on your computer are a [separate route](https://github.com/orulink-ai/WatcheRobot_python_sdk/blob/main/README.md).
 This snapshot is a development preview, not a stable or fully hardware-accepted release.
 
 ## Download the test firmware (development preview)
 
-Use the [hardware-check development preview Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030),
+Existing test binaries remain hosted in the **external product-materials repository**;
+they have not moved to this repository and are not required for a source build.
+If needed, consult the [hardware-check development preview Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030),
 not the official stable product release. If assets are unavailable, stop and contact
 maintainers rather than substituting a similarly named binary. Follow that Release's source/provenance, hashes and exact asset instructions;
 do not assume its binary source equals this snapshot's upstream SHA. Download packages
@@ -25,43 +27,46 @@ with ESP32-S3 tools. Activate its exported environment in **every new terminal**
 `idf.py --version` must report 6.0.2. Other versions are deliberately rejected.
 
 ```sh
-git clone https://github.com/orulink-ai/WatcheRobot-public.git
-cd WatcheRobot-public
+git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
+cd WatcheRobot_c_sdk
 git checkout --detach <PUBLIC_COMMIT>
-idf.py -C firmware/sdk/examples/hardware_check build
+idf.py -C examples/hardware_check build
 ```
 
 Replace `<PUBLIC_COMMIT>` with the full reviewed **public PR head/merge commit**
-from GitHub, not the private upstream SHA. Before merge, fetch the PR explicitly
+from **this WatcheRobot_c_sdk repository**, not the private upstream SHA. Before merge, fetch the PR explicitly
 with `git fetch origin pull/<PR_NUMBER>/head` and use `git checkout --detach FETCH_HEAD`.
-Do not type placeholders literally. No private-repository access or Python submodule is needed.
-Record `git rev-parse HEAD`, `idf.py --version` and `firmware/sdk/SOURCE.json`.
+PR numbers must also belong to this repository. Do not type placeholders literally.
+No old materials checkout, private-repository access or Python submodule is needed.
+The selected revision must include these standalone-path documentation changes;
+the initial historical import is not the documentation-adapted revision.
+Record `git rev-parse HEAD`, `idf.py --version` and `SOURCE.json`.
 The latter pins upstream source to `e23bee2a642f6c90753b370cb18c46815e0c8f58`
 and records individual file hashes and all recorded public export adaptations.
 The public commit identifies this documentation and export; the upstream SHA is provenance, not a public checkout command.
 
-All remaining commands run from **WatcheRobot-public repository root**, in the
+All remaining commands run from **WatcheRobot_c_sdk repository root**, in the
 activated IDF terminal. Expected build result: success and
-`firmware/sdk/examples/hardware_check/build/watcher_hw_hardware_check.bin` plus
+`examples/hardware_check/build/watcher_hw_hardware_check.bin` plus
 IDF-generated bootloader/partition/flash arguments. A successful build proves no physical behavior.
 
 ## 2. Choose an example
 
 | Goal | Project | Application entry |
 | --- | --- | --- |
-| Complete guided check | `hardware_check` | `firmware/sdk/examples/hardware_check/main/app_main.c` |
-| Body only | `body` | `firmware/sdk/examples/body/main/app_main.c` |
-| Camera/audio/display | `head` | `firmware/sdk/examples/head/main/app_main.c` |
-| Combined custom application | `robot` | `firmware/sdk/examples/robot/main/app_main.c` |
+| Complete guided check | `hardware_check` | `examples/hardware_check/main/app_main.c` |
+| Body only | `body` | `examples/body/main/app_main.c` |
+| Camera/audio/display | `head` | `examples/head/main/app_main.c` |
+| Combined custom application | `robot` | `examples/robot/main/app_main.c` |
 
-Replace the final project name in `idf.py -C firmware/sdk/examples/robot build` as needed.
+Replace the final project name in `idf.py -C examples/robot build` as needed.
 Target is ESP32-S3 with 16 MB flash; head projects need octal PSRAM. Each project
 has its own partitions, defaults and pinned component manifests. `sdk.cmake`
 selects only hardware dependencies; `media_lib_sal` is included for head audio,
 not for body-only use. Registry downloads still require network access.
 
 Edit application code, not the official firmware. A separate consumer project can
-include this checkout's `firmware/sdk/examples/sdk.cmake` before `project()`, set
+include this checkout's `examples/sdk.cmake` before `project()`, set
 `HW_BODY`/`HW_HEAD`, call `watcher_hw_check_idf()` after `project()`, declare selected
 `watcher_hw_*` dependencies and reuse the matching manifest/defaults/partitions.
 Always keep the full SDK checkout pinned; copying headers alone is insufficient.
@@ -76,7 +81,7 @@ to contain a validated SDK-compatible pair. If a verified pair or recovery bundl
 missing, **stop before flashing** and request the maintainer's pinned compatibility record.
 Do not infer compatibility from a successful HELLO, build, filename or Latest label.
 
-Use the public [official flashing guide](../../../docs/flashing.md) only for
+Use the public [official flashing guide](https://wiki.orulink.ai/en/docs/flashing) only for
 first preparation or restoration with an explicitly verified complete bundle.
 It is not the everyday custom-app flash path. Never run an internal workspace or
 private-source command. The preview does not supply an unverified replacement STM32/Himax image.
@@ -98,8 +103,8 @@ disconnection available. Identify the **ESP32** serial port in Device Manager or
 Replace `<PORT>` explicitly (for example `COM7` or `/dev/ttyACM0`, only if verified on your machine).
 
 ```sh
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> flash
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> monitor
+idf.py -C examples/hardware_check -p <PORT> flash
+idf.py -C examples/hardware_check -p <PORT> monitor
 ```
 
 Expected: esptool verifies writes; the display shows **Hardware check**, and the log
@@ -107,20 +112,20 @@ identifies `Hardware check v2 | curved zones`. Exit monitor with **Ctrl+]**.
 These commands write the custom ESP32 bootloader, partition table and application,
 not STM32/Himax and not the official app. Different partitions can destroy official
 storage even without erasing the whole chip. Do **not** run `erase-flash`.
-Use `idf.py -C firmware/sdk/examples/hardware_check -p <PORT> app-flash` only after
+Use `idf.py -C examples/hardware_check -p <PORT> app-flash` only after
 confirming that the **connected device** already has the same custom partition layout;
 local files alone cannot establish that. Unknown layout or intervening official firmware requires a full custom `flash`.
 
 Equivalent convenience entries (same root and IDF environment):
 
 ```sh
-bash firmware/sdk/examples/hardware-sdk.sh hardware_check build
-bash firmware/sdk/examples/hardware-sdk.sh hardware_check flash <PORT>
+bash examples/hardware-sdk.sh hardware_check build
+bash examples/hardware-sdk.sh hardware_check flash <PORT>
 ```
 
 ```powershell
-./firmware/sdk/examples/hardware-sdk.ps1 hardware_check build
-./firmware/sdk/examples/hardware-sdk.ps1 hardware_check flash <PORT>
+./examples/hardware-sdk.ps1 hardware_check build
+./examples/hardware-sdk.ps1 hardware_check flash <PORT>
 ```
 
 Both accept body/head/robot/hardware_check, build/flash/monitor and an explicit port
@@ -144,7 +149,7 @@ alone does not unlock controls. Audio read/write/drain belongs to one owner task
 not ISR, MCU/camera callbacks or an LVGL lock. Copy borrowed JPEGs and lock LVGL.
 
 For official recovery, stop the custom application, disconnect monitors, select a
-known complete **official** Release bundle and follow the public [full restore procedure](../../../docs/flashing.md#full)
+known complete **official** Release bundle and follow the public [full restore procedure](https://wiki.orulink.ai/en/docs/flashing#full)
 for its exact ports/images. This replaces your custom ESP32 app and may replace
 storage and paired firmware. Verify official startup and pairing afterward;
 rebuild/reflash the custom project if you return to SDK work. Missing recovery
@@ -153,7 +158,7 @@ assets or unknown image provenance is a blocker, not a reason to guess offsets.
 From the previous namespace, migrate includes/functions/types/CMake dependencies
 from `watche_hw_*` to `watcher_hw_*`, constants to `WATCHER_HW_*` and the IDF check to
 `watcher_hw_check_idf()`; there are no aliases. Build fresh with
-`idf.py -C firmware/sdk/examples/robot -B build-watcher build`.
+`idf.py -C examples/robot -B build-watcher build`.
 Never relabel an old binary. [Migration](../MIGRATION.md) also covers event-loss changes.
 Historical names/hashes in validation records are retained intentionally, not newly accepted.
 
@@ -169,4 +174,6 @@ Historical names/hashes in validation records are retained intentionally, not ne
 Software/host/site tests do not certify motion limits, stop timing, edge touch,
 JPEG quality, acoustic quality, repeated teardown or long-duration combined operation.
 Full paired-device and official-restore acceptance remains pending; see [validation](../VALIDATION.md).
-This work does not merge, deploy production, flash hardware or publish a stable Release.
+Documentation edits do not establish a new build, device flash, hardware acceptance
+or stable Release. Create a branch and use a reviewed PR for changes; see the
+[repository workflow](repository-workflow.md).

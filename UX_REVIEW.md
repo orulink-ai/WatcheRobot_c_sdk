@@ -1,5 +1,7 @@
 # Hardware example UX review
 
+> Historical design/UX review; dated device observations and prototypes describe their original revisions, not fresh acceptance of this repository. / 历史设计与体验审查；原日期的设备观察和原型不等于本仓库新验收。
+
 ## Documentation closeout: three perspectives (2026-10-07)
 
 - Beginner: "Does build success mean I can flash? Can I copy ESP32_PORT?"

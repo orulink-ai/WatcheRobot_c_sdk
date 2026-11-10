@@ -3,12 +3,13 @@
 # 嵌入式 C SDK：安全上手（开发预览）
 
 自己编写 ESP32-S3 `app_main`，调用 `watcher_hw_*`。不需要官方应用、Python SDK、
-Daemon、服务端、SD 卡或模型；电脑上的 [Python Application 开发](../../../docs/sdk_zh.md)
+Daemon、服务端、SD 卡或模型；电脑上的 [Python Application 开发](https://github.com/orulink-ai/WatcheRobot_python_sdk/blob/main/README.zh-CN.md)
 是另一条路线。当前不是稳定发布，完整配对实机验收未完成。
 
 ## 下载测试固件（开发预览）
 
-使用[硬件体检开发预览 Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030)，
+已有测试固件仍由**外部产品资料仓库**托管，尚未迁入本仓库；源码构建不要求先下载该包。
+如需使用，查看[硬件体检开发预览 Release](https://github.com/orulink-ai/WatcheRobot-public/releases/tag/hardware-check-preview-20261030)，
 不是官方整机稳定版。附件不可见或无法下载时，先联系维护者，不能替换成同名相似文件。
 二进制来源、源码提交、哈希和资产操作方式**跟随该 Release**，
 不能默认二进制来源等于本快照上游 SHA。下载包要求 **Python 3.10+** 与说明中的 esptool 依赖。
@@ -23,39 +24,40 @@ Daemon、服务端、SD 卡或模型；电脑上的 [Python Application 开发](
 `idf.py --version` 应显示 6.0.2；其他版本会被主动拒绝。
 
 ```sh
-git clone https://github.com/orulink-ai/WatcheRobot-public.git
-cd WatcheRobot-public
+git clone https://github.com/orulink-ai/WatcheRobot_c_sdk.git
+cd WatcheRobot_c_sdk
 git checkout --detach <PUBLIC_COMMIT>
-idf.py -C firmware/sdk/examples/hardware_check build
+idf.py -C examples/hardware_check build
 ```
 
-把 `<PUBLIC_COMMIT>` 替换为 GitHub 上已审查的**公开 PR head／合并提交完整 SHA**，
+把 `<PUBLIC_COMMIT>` 替换为 **WatcheRobot_c_sdk 本仓库**中已审查的公开提交完整 SHA，
 不是内部 ESP32 SHA。合并前先执行 `git fetch origin pull/<PR_NUMBER>/head`，再执行
-`git checkout --detach FETCH_HEAD`；所有占位符必须替换。不需要私库权限或 Python 子模块。
-保存 `git rev-parse HEAD`、`idf.py --version` 和 `firmware/sdk/SOURCE.json`。
+`git checkout --detach FETCH_HEAD`；所有占位符必须替换。PR 编号也必须属于本仓库。不需要旧资料仓库、私库权限或 Python 子模块。
+检出的版本还必须包含本指南的独立仓库路径适配；不要拿历史导入快照当成文档修正版。
+保存 `git rev-parse HEAD`、`idf.py --version` 和 `SOURCE.json`。
 该清单固定上游来源 `e23bee2a642f6c90753b370cb18c46815e0c8f58`，记录逐文件哈希及公开路径适配。
 公开提交才标识这份交付文档；内部 SHA 仅用于来源追溯，不是要求读者检出的公开版本。
 
-**后续命令统一在 WatcheRobot-public 仓库根目录、已激活 IDF 的终端执行。**
-预期 build 成功，生成 `firmware/sdk/examples/hardware_check/build/watcher_hw_hardware_check.bin`
+**后续命令统一在 WatcheRobot_c_sdk 仓库根目录、已激活 IDF 的终端执行。**
+预期 build 成功，生成 `examples/hardware_check/build/watcher_hw_hardware_check.bin`
 以及 IDF 烧录参数、bootloader、分区表。构建成功不代表任何机械／声学验收。
 
 ## 2. 选择示例与开发位置
 
 | 目标 | 工程名 | 应用入口 |
 | --- | --- | --- |
-| 完整引导体检 | `hardware_check` | `firmware/sdk/examples/hardware_check/main/app_main.c` |
-| 仅身体 | `body` | `firmware/sdk/examples/body/main/app_main.c` |
-| 摄像头／音频／屏幕 | `head` | `firmware/sdk/examples/head/main/app_main.c` |
-| 自定义组合应用 | `robot` | `firmware/sdk/examples/robot/main/app_main.c` |
+| 完整引导体检 | `hardware_check` | `examples/hardware_check/main/app_main.c` |
+| 仅身体 | `body` | `examples/body/main/app_main.c` |
+| 摄像头／音频／屏幕 | `head` | `examples/head/main/app_main.c` |
+| 自定义组合应用 | `robot` | `examples/robot/main/app_main.c` |
 
-例如 `idf.py -C firmware/sdk/examples/robot build`，替换最后一个工程名即可。
+例如 `idf.py -C examples/robot build`，替换最后一个工程名即可。
 目标 ESP32-S3、16 MB flash；头部工程需要 octal PSRAM。每个工程独立维护分区、配置与
 精确版本组件清单，注册表下载仍需网络。共享 `sdk.cmake` 只选硬件依赖，头部音频包含
 本地 `media_lib_sal`，body 不引入它。修改应用代码，不启动官方固件顶层工程。
 
 独立消费工程可以在 `project()` 前设置 `HW_BODY`／`HW_HEAD` 并 include 固定公开 checkout
-中的 `firmware/sdk/examples/sdk.cmake`，在 `project()` 后调用 `watcher_hw_check_idf()`；
+中的 `examples/sdk.cmake`，在 `project()` 后调用 `watcher_hw_check_idf()`；
 main 声明所需 `watcher_hw_*`，沿用对应 manifest、defaults 和 partitions。
 必须保留完整固定 SDK，不能只复制头文件或跟随浮动 main。
 
@@ -67,7 +69,7 @@ main 声明所需 `watcher_hw_*`，沿用对应 manifest、defaults 和 partitio
 验证过的配对组合。缺少可信兼容记录或可用恢复包，先联系维护者，**不要烧录猜测的镜像**。
 HELLO、文件名、Latest 标签或 build 成功均不证明兼容。
 
-首次准备和恢复只能依据[公开官方烧录指南](../../../docs/flashing_zh.md)与确认过的整套镜像；
+首次准备和恢复只能依据[公开官方烧录指南](https://wiki.orulink.ai/docs/flashing)与确认过的整套镜像；
 它不是日常保留自定义应用的烧录入口。本预览没有提供未经验证的 STM32/Himax 替换镜像，
 也不要求运行内部 workspace 命令或访问私库。
 
@@ -85,8 +87,8 @@ ESP32 接口是 **SERIAL-B**（仍须核对实际枚举端口）。首次完整�
 将 `<PORT>` 替换为本机真实端口（如已确认的 `COM7` 或 `/dev/ttyACM0`）。
 
 ```sh
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> flash
-idf.py -C firmware/sdk/examples/hardware_check -p <PORT> monitor
+idf.py -C examples/hardware_check -p <PORT> flash
+idf.py -C examples/hardware_check -p <PORT> monitor
 ```
 
 预期 esptool 写入校验成功；屏幕显示 **Hardware check**，启动日志包含
@@ -94,19 +96,19 @@ idf.py -C firmware/sdk/examples/hardware_check -p <PORT> monitor
 仅写自定义 ESP32 bootloader、分区表与应用，不刷 STM32/Himax、不构建官方 app。
 分区变化即使不整片擦除，也可能覆盖官方存储。**不要执行 erase-flash**。
 只有确认**连接设备**已有相同自定义分区布局时，才可用
-`idf.py -C firmware/sdk/examples/hardware_check -p <PORT> app-flash` 日常更新应用。
+`idf.py -C examples/hardware_check -p <PORT> app-flash` 日常更新应用。
 本地分区文件相同不足以证明设备分区相同；布局未知或中途刷过官方固件，应使用完整自定义 `flash`。
 
 两个便捷入口语义一致（仍在相同根目录和 IDF 环境）：
 
 ```sh
-bash firmware/sdk/examples/hardware-sdk.sh hardware_check build
-bash firmware/sdk/examples/hardware-sdk.sh hardware_check flash <PORT>
+bash examples/hardware-sdk.sh hardware_check build
+bash examples/hardware-sdk.sh hardware_check flash <PORT>
 ```
 
 ```powershell
-./firmware/sdk/examples/hardware-sdk.ps1 hardware_check build
-./firmware/sdk/examples/hardware-sdk.ps1 hardware_check flash <PORT>
+./examples/hardware-sdk.ps1 hardware_check build
+./examples/hardware-sdk.ps1 hardware_check flash <PORT>
 ```
 
 参数为 body/head/robot/hardware_check、build/flash/monitor、端口；flash/monitor 必须显式端口。
@@ -126,13 +128,13 @@ LVGL 访问需加锁；阻塞音频 read/write/drain 由同一 owner 任务执�
 相机回调或 LVGL 锁内调用。
 
 恢复官方固件时关闭自定义程序及串口监视器，选定已确认的**完整官方 Release**，
-按[公开完整恢复流程](../../../docs/flashing_zh.md#full)核对实际端口和镜像。
+按[公开完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)核对实际端口和镜像。
 恢复会替换自定义 ESP32 app，也可能替换存储与配对固件。恢复后检查官方启动、配网／配对；
 返回 SDK 开发则重新 build／flash 自定义工程。恢复包缺失或来源未知时停止，不能猜偏移地址。
 
 旧工程需将 `watche_hw_*` 头文件／函数／类型／CMake 依赖改为 `watcher_hw_*`，
 常量改为 `WATCHER_HW_*`，IDF 检查改为 `watcher_hw_check_idf()`；没有兼容别名。
-第一次执行 `idf.py -C firmware/sdk/examples/robot -B build-watcher build` 避开旧缓存，
+第一次执行 `idf.py -C examples/robot -B build-watcher build` 避开旧缓存，
 不要给旧固件改名冒充新版本。[迁移指南](../MIGRATION.md)还包含丢事件合同变化。
 历史记录保留当时名称与哈希，不能当作改名后新验收。
 
@@ -147,4 +149,5 @@ LVGL 访问需加锁；阻塞音频 read/write/drain 由同一 owner 任务执�
 
 软件／host／站点构建不证明机械限位、停止时延、边缘触摸、图像／声音质量、资源反复释放
 或长期组合稳定性。完整配对实机与官方恢复验收仍未完成，见[验收边界](../VALIDATION.md)。
-本工作不合并、不更新生产、不烧实体设备、不发布稳定 Release。
+文档修改不代表新完成构建、烧录或实机验收，也不代表已发布稳定 Release。
+提交修改前创建分支，通过 PR 审阅后合并；见[仓库开发流程](repository-workflow.md)。

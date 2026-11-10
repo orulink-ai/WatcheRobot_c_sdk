@@ -1,5 +1,7 @@
 # Hardware example product
 
+> Historical example product rationale, not an additional application or prototype shipped with this SDK. / 历史示例产品说明，不表示本仓库另行交付应用或网页原型。
+
 ## Users
 
 New ESP32 developers, including beginners, using a finger on a desktop robot's 412 pixel screen in ordinary indoor light. They need visible proof that a hardware operation started and completed without watching a serial terminal.
