@@ -198,7 +198,7 @@ esp_err_t read_body_event(void) {
 
 先完成上节的机身初始化，并复用 `check_body_ready()` 检查函数。
 
-**先读[运动注意事项](servo-open-loop_zh.md)**：清空整个可能运动的区域，保证可随时人工断电。
+**先读[运动注意事项](api/body.md#motion-safety)**：清空整个可能运动的区域，保证可随时人工断电。
 程序不能读取舵机实际转到的角度；即使移到参考位置，也可能从另一端移动很远。
 下面的函数不会自动运行，仅在应用根据当前用户操作明确调用时发出指令。
 
@@ -220,7 +220,7 @@ esp_err_t request_move(int x_degrees, int y_degrees, uint32_t duration_ms) {
 - [触摸控制灯光](../examples/body/README.md) · [屏幕、拍照与声音](../examples/head/README.md) · [组合应用](../examples/robot/README.md)。
 - [示例](../examples/README.md)：工程配置、构建与设备注意事项；[官方固件恢复](https://wiki.orulink.ai/docs/flashing#full)。
 - [完整 API 指南](api/README.md)：参数、任务配合、错误恢复和关闭规则。
-- [人工硬件体检](../examples/hardware_check/README_zh.md) · [已有验证结果](verification.md)。
+- [人工硬件体检](../examples/hardware_check/README_zh.md)。
 
 本页只介绍当前 SDK 提供的接口；SD 卡、电池、USB 等硬件不在本页的专用接口范围内。代码编译通过不代替实机验收。
 

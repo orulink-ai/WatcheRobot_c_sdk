@@ -7,14 +7,10 @@
 - [Examples / 示例](../examples/README.md)：选择工程、构建命令、设备要求与运行结果。
 
 环境安装与通用烧录按 [ESP-IDF 6.0.2 官方文档](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)；
-恢复官方固件按 [Wiki](https://wiki.orulink.ai/docs/flashing#full)。设备特有要求见各示例，运动前读[安全说明](servo-open-loop_zh.md)。
+恢复官方固件按 [Wiki](https://wiki.orulink.ai/docs/flashing#full)。设备特有要求见各示例，运动前读[安全说明](api/body.md#motion-safety)。
 Install and flash using the [official ESP-IDF guide](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html);
-use the Wiki for complete official restoration and read [movement precautions](servo-open-loop.md) before motion.
+use the Wiki for complete official restoration and read [movement precautions](api/body.md#motion-safety-english) before motion.
 
 ## Develop the SDK / 开发 SDK
 
 - [Development and contributing / 开发与贡献](development.md)：架构、依赖、验证与本地打包。
-- [Verification record / 验证记录](verification.md)：软件检查与尚未完成的实机验收。
-
-历史记录与原始设计保留在仓库中作为证据，不是当前使用步骤。
-Historical records and original designs remain archived, not current operating instructions.

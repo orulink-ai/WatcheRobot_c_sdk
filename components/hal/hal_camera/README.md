@@ -2,16 +2,16 @@
 
 把拍照和连续取图请求接到摄像头硬件。应用只要获取 JPEG 图像即可，不需要自行管理底层传输。
 
-## 最短接入路径
+内部实现组件（internal implementation）。由公开 SDK 的 [`watcher_hw_camera`](../../sdk/watcher_hw_camera/README.md) 使用；应用不应另开摄像头连接。
 
-普通应用先使用[拍照与取图使用指南](../../../docs/api/camera.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
+## 接口与依赖
 
-## 维护时的约定与限制
+- 接口：[`hal_camera.h`](include/hal_camera.h)
+- 依赖：`sensecap-watcher`、`sscma_client`、`mbedtls`、`esp_timer`、[`watcher_hx_ptl`](../../watcher_hx_ptl/README.md)、`hx_media_protocol`、`hx_ptl_protocol` 和 `jpeg_integrity`。构建按 `CONFIG_WATCHER_CAMERA_BACKEND_PTL` 选择实现。
+- 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
 
-公开摄像头接口要求配套 Himax 固件，且启用 PTL：这是主芯片与摄像头芯片约定的图像传输规则。源码中的其他实现不构成公开接口兼容承诺。不要在公开接口打开时另外启动读图任务；图像数据的有效期与停止/关闭要求见使用指南。
+## 实现约束
 
-- 底层接口：[`hal_camera.h`](include/hal_camera.h)
-- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
-- [测试与实际验证范围](../../../docs/development.md#testing)
+公开摄像头接口要求配套 Himax 固件，且启用 PTL：这是主芯片与摄像头芯片约定的图像传输规则。源码中的其他实现不构成公开接口兼容承诺。不要在公开接口打开时另外启动读图任务；图像数据的有效期与停止/关闭要求见[摄像头使用指南](../../../docs/api/camera.md)。
 
-使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
+许可见仓库 [LICENSE](../../../LICENSE)；依赖保留各自许可证。

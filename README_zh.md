@@ -81,7 +81,7 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 - [开发与贡献](docs/development.md)：供修改 SDK、测试和打包的维护者参考。
 
 当前为开发预览。烧录会改写设备软件，开始前请按[示例注意事项](examples/README.md#before-flash-or-movement--烧录或运动前)准备备份和官方恢复包；运动前请阅读
-[运动注意事项](docs/servo-open-loop_zh.md)。[验证记录](docs/verification.md)区分了软件检查和未完成的实机验收。
+[运动注意事项](docs/api/body.md#motion-safety)。编译通过不代表实机验收。
 
 ## 许可
 

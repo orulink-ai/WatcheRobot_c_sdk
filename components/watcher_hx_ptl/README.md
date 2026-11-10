@@ -2,16 +2,16 @@
 
 在主芯片一侧接收、检查摄像头图像，并记录超时、损坏和丢帧等诊断数据。排查图像传输问题时阅读。
 
-## 最短接入路径
+内部实现组件（internal implementation）。由 [`hal_camera`](../hal/hal_camera/README.md) 使用；公开 SDK 入口为 [`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)。
 
-普通应用先使用[拍照与取图使用指南](../../docs/api/camera.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
+## 接口与依赖
 
-## 维护时的约定与限制
+- 接口：[`watcher_hx_ptl.h`](include/watcher_hx_ptl.h)
+- 依赖：ESP-IDF GPIO/SPI/UART 驱动、`esp_timer`、FreeRTOS、`heap`、`log`，以及 `esp_io_expander`、`sensecap-watcher`、[`hx_media_protocol`](../hx_media_protocol/README.md) 和 [`hx_ptl_protocol`](../hx_ptl_protocol/README.md)。
+- 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
+
+## 实现约束
 
 摄像头独立固件必须另外配套；这里不包含 Himax 芯片端固件。PTL 是两端的图像传输规则。本层读取返回的 JPEG 引用只保持到下次读取或关闭，公开摄像头回调则要求返回前复制。与 SSCMA 摄像头通路不能同时使用；控制串口 UART1 与维护烧录互斥，切换模式前先停止读图。控制停止失败时仍可能保留清理责任，不能直接转交使用权。
 
-- 底层接口：[`watcher_hx_ptl.h`](include/watcher_hx_ptl.h)
-- [架构与资源配合](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies)
-- [测试与实际验证范围](../../docs/development.md#testing)
-
-使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
+许可见仓库 [LICENSE](../../LICENSE)；依赖保留各自许可证。

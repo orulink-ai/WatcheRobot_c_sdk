@@ -84,8 +84,8 @@ Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
 - [Development and contributing](docs/development.md): SDK changes, tests and local packaging for maintainers.
 
 This is a development preview. Flashing replaces device software: prepare backups and a complete official
-recovery bundle using the [example precautions](examples/README.md). Read [movement precautions](docs/servo-open-loop.md) before enabling
-movement. [Verification results](docs/verification.md) distinguish software checks from pending hardware acceptance.
+recovery bundle using the [example precautions](examples/README.md). Read [movement precautions](docs/api/body.md#motion-safety-english) before enabling
+movement. Build checks do not establish hardware acceptance.
 
 ## License
 

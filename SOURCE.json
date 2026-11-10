@@ -10,66 +10,6 @@
       "transform": null
     },
     {
-      "source": "examples/hardware_sdk/AUDIT.md",
-      "destination": "history/AUDIT.md",
-      "source_sha256": "372f9f5dc0d19c5bbea430284356c653b9f6e6737c3b77981c6be62a990c03ca",
-      "sha256": "d56c4fc1777e3425618da8c27afbe30c8d7004638e1b0392767e4042f0332d7d",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
-      "imported_sha256": "21b542933deda0ed357dd3c78f78764f53591efa73008989080525d105664c39",
-      "imported_transform": "public component links",
-      "imported_destination": "AUDIT.md"
-    },
-    {
-      "source": "examples/hardware_sdk/DESIGN.md",
-      "destination": "docs/design/DESIGN.md",
-      "source_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
-      "sha256": "5110b2f3d4b102747fdb3ee7e2a78c09ed05f40e7cb41a1b803c911633e9fe74",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
-      "imported_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
-      "imported_transform": null,
-      "imported_destination": "DESIGN.md"
-    },
-    {
-      "source": "examples/hardware_sdk/MIGRATION.md",
-      "destination": "history/MIGRATION.md",
-      "source_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "sha256": "33b0ad2de7207296bdf38bdd601c44fcb4aea1120c89d8a2de89314421491baa",
-      "transform": "old API migration archived; original source identifiers preserved",
-      "imported_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
-      "imported_transform": null,
-      "imported_destination": "MIGRATION.md"
-    },
-    {
-      "source": "examples/hardware_sdk/PRODUCT.md",
-      "destination": "docs/design/PRODUCT.md",
-      "source_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
-      "sha256": "3349224f8d810d79bb15362ad6fcac491f327d44aadef988523a897045bc16bb",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
-      "imported_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
-      "imported_transform": null,
-      "imported_destination": "PRODUCT.md"
-    },
-    {
-      "source": "examples/hardware_sdk/UX_REVIEW.md",
-      "destination": "history/UX_REVIEW.md",
-      "source_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
-      "sha256": "f09a31adbd3b6fa11b3dd3204a3040b8b9976c0515e54d21ffd346a4b8fbcb6f",
-      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
-      "imported_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
-      "imported_transform": null,
-      "imported_destination": "UX_REVIEW.md"
-    },
-    {
-      "source": "examples/hardware_sdk/VALIDATION.md",
-      "destination": "history/UPSTREAM_VALIDATION.md",
-      "source_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
-      "sha256": "373794123fcf1e98110fdc7dea11d47ba970ec4db3c58d91a30afc5754127451",
-      "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved",
-      "imported_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
-      "imported_transform": null,
-      "imported_destination": "history/UPSTREAM_VALIDATION.md"
-    },
-    {
       "source": "examples/hardware_sdk/body/CMakeLists.txt",
       "destination": "examples/body/CMakeLists.txt",
       "source_sha256": "bf15498c4d50ab5c7196bf497e9a2747446b58104bf54d345cde44a4e1fd8d32",
@@ -348,8 +288,8 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "d252320379efde5b25d8023fe98766e8b1c4590b46a1d9f1e750890e09143693",
-      "transform": "current document navigation consolidated; source and historical evidence preserved",
+      "sha256": "358ae2d5bca2d78a8bca19293f93bd8b344ad446bcaa71bb4a1baf79d3a8da2e",
+      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained",
       "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
       "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
       "imported_destination": "examples/hardware_check/README.md"
@@ -2404,8 +2344,8 @@
       "source": "firmware/s3/components/sensecap-watcher/README.md",
       "destination": "components/sensecap-watcher/README.md",
       "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "sha256": "448f88da03780776176bf5777f8d5a9766cdbc09ce3c93ff7fc799b7c4208572",
-      "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved",
+      "sha256": "2d6203c6d4893691556b73570b7585ae8a4f65ca6b27513bbf18b405c2112239",
+      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained",
       "imported_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "imported_transform": null,
       "imported_destination": "components/sensecap-watcher/README.md"
@@ -3047,5 +2987,97 @@
     "import_path": "firmware/sdk",
     "standalone_import_commit": "85c6af84c93db63db335d4b93f2a114ba66cd7f1",
     "scope": "Standalone documentation organization; source behavior, dependencies and license files unchanged."
-  }
+  },
+  "removed_files": [
+    {
+      "source": "examples/hardware_sdk/AUDIT.md",
+      "destination": "history/AUDIT.md",
+      "source_sha256": "372f9f5dc0d19c5bbea430284356c653b9f6e6737c3b77981c6be62a990c03ca",
+      "sha256": "d56c4fc1777e3425618da8c27afbe30c8d7004638e1b0392767e4042f0332d7d",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "21b542933deda0ed357dd3c78f78764f53591efa73008989080525d105664c39",
+      "imported_transform": "public component links",
+      "imported_destination": "AUDIT.md",
+      "retained_in_git": {
+        "revision": "3f77fc57860977514d64e4277b639c6f80fcb577",
+        "path": "history/AUDIT.md"
+      },
+      "removal_reason": "Historical design, migration or review evidence; retrieved from Git history, not current SDK documentation."
+    },
+    {
+      "source": "examples/hardware_sdk/DESIGN.md",
+      "destination": "docs/design/DESIGN.md",
+      "source_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
+      "sha256": "5110b2f3d4b102747fdb3ee7e2a78c09ed05f40e7cb41a1b803c911633e9fe74",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "c290a3fabd64958d252f639a2a50f61102274c2446699524559791b2c0fffe97",
+      "imported_transform": null,
+      "imported_destination": "DESIGN.md",
+      "retained_in_git": {
+        "revision": "3f77fc57860977514d64e4277b639c6f80fcb577",
+        "path": "docs/design/DESIGN.md"
+      },
+      "removal_reason": "Historical design, migration or review evidence; retrieved from Git history, not current SDK documentation."
+    },
+    {
+      "source": "examples/hardware_sdk/MIGRATION.md",
+      "destination": "history/MIGRATION.md",
+      "source_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
+      "sha256": "33b0ad2de7207296bdf38bdd601c44fcb4aea1120c89d8a2de89314421491baa",
+      "transform": "old API migration archived; original source identifiers preserved",
+      "imported_sha256": "56fd250c4eb071980aba8b3bb5dc302e57cf672992f3f0e8490c68cd4f971cee",
+      "imported_transform": null,
+      "imported_destination": "MIGRATION.md",
+      "retained_in_git": {
+        "revision": "3f77fc57860977514d64e4277b639c6f80fcb577",
+        "path": "history/MIGRATION.md"
+      },
+      "removal_reason": "Historical design, migration or review evidence; retrieved from Git history, not current SDK documentation."
+    },
+    {
+      "source": "examples/hardware_sdk/PRODUCT.md",
+      "destination": "docs/design/PRODUCT.md",
+      "source_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
+      "sha256": "3349224f8d810d79bb15362ad6fcac491f327d44aadef988523a897045bc16bb",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "4aa7b6647af13f70be476c6c4793040fb391de1a2a9d75b8ad2ac8cb3059e046",
+      "imported_transform": null,
+      "imported_destination": "PRODUCT.md",
+      "retained_in_git": {
+        "revision": "3f77fc57860977514d64e4277b639c6f80fcb577",
+        "path": "docs/design/PRODUCT.md"
+      },
+      "removal_reason": "Historical design, migration or review evidence; retrieved from Git history, not current SDK documentation."
+    },
+    {
+      "source": "examples/hardware_sdk/UX_REVIEW.md",
+      "destination": "history/UX_REVIEW.md",
+      "source_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
+      "sha256": "f09a31adbd3b6fa11b3dd3204a3040b8b9976c0515e54d21ffd346a4b8fbcb6f",
+      "transform": "standalone documentation organization and link adaptation; original upstream/import evidence preserved",
+      "imported_sha256": "ff7f779971eff50c98a463c91364d2b3ea73d0af4bcc0eac4b0f5106aaf2995e",
+      "imported_transform": null,
+      "imported_destination": "UX_REVIEW.md",
+      "retained_in_git": {
+        "revision": "3f77fc57860977514d64e4277b639c6f80fcb577",
+        "path": "history/UX_REVIEW.md"
+      },
+      "removal_reason": "Historical design, migration or review evidence; retrieved from Git history, not current SDK documentation."
+    },
+    {
+      "source": "examples/hardware_sdk/VALIDATION.md",
+      "destination": "history/UPSTREAM_VALIDATION.md",
+      "source_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
+      "sha256": "373794123fcf1e98110fdc7dea11d47ba970ec4db3c58d91a30afc5754127451",
+      "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved",
+      "imported_sha256": "7cf923bfc4d782c3cea7a399f6f77c1a0042df1808d9c20c8e30db1eb72d7ac3",
+      "imported_transform": null,
+      "imported_destination": "history/UPSTREAM_VALIDATION.md",
+      "retained_in_git": {
+        "revision": "3f77fc57860977514d64e4277b639c6f80fcb577",
+        "path": "history/UPSTREAM_VALIDATION.md"
+      },
+      "removal_reason": "Historical design, migration or review evidence; retrieved from Git history, not current SDK documentation."
+    }
+  ]
 }

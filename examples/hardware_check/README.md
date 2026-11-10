@@ -13,7 +13,7 @@ Before flashing, complete [setup, backups and official recovery preparation](../
 Verify paired STM32/Himax compatibility and a complete recovery bundle; stop if either
 is unknown. This example runs on ESP32, not the Himax or STM32 port.
 
-Before choosing a motion item, read [motion safety](../../docs/servo-open-loop.md): the application
+Before choosing a motion item, read [motion safety](../../docs/api/body.md#motion-safety-english): the application
 **cannot read the angle a servo actually reaches**. Clear the **entire travel** and keep manual power
 disconnection available. The first command is **X90/Y120**, followed by **X93/Y120**
 or **X90/Y123**. With an unknown start position, the first move can be large; this
@@ -68,7 +68,7 @@ is required. Reboot is not proof that the cause of a fault has been removed.
 
 You do not need to run the old **Check position** step: the application cannot
 measure actual servo angles. Interface compatibility details are in the
-[developer notes](../../docs/servo-open-loop.md#developer-interface-notes-compatibility-does-not-provide-angle-measurements).
+[developer notes](../../docs/api/body.md#motion-safety-english).
 
 ![Software-rendered motion safety page showing reference pose, whole-travel warning and no position sensor](../../docs/images/hardware-check-motion-safety.png)
 
@@ -143,6 +143,5 @@ source provenance if available. Upstream source identifiers are in repository-ro
 [`SOURCE.json`](../../SOURCE.json); they describe source origin, not the device's installed
 firmware. They are not required fields for the simple observation log.
 
-Host tests and [historical results](../../history/VALIDATION.md) do not replace these
-observations. For recovery use the [Wiki full recovery procedure](https://wiki.orulink.ai/docs/flashing#full), never
+Host tests do not replace these observations. For recovery use the [Wiki full recovery procedure](https://wiki.orulink.ai/docs/flashing#full), never
 guessed flash offsets or private-workspace scripts.

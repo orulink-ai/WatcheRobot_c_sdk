@@ -2,16 +2,16 @@
 
 为传来的图像附上编号、时间和校验信息，并检查收到的数据是否符合约定。需要排查丢帧、重复帧或损坏数据时，阅读这一层。
 
-## 最短接入路径
+内部实现组件（internal implementation）。由摄像头传输实现使用；公开 SDK 入口为 [`watcher_hw_camera`](../sdk/watcher_hw_camera/README.md)。
 
-普通应用先使用[拍照与取图使用指南](../../docs/api/camera.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
+## 接口与依赖
 
-## 维护时的约定与限制
+- 接口：[`hx_media_protocol.h`](include/hx_media_protocol.h)
+- 依赖：本组件未声明其他组件依赖；与 [`hx_ptl_protocol`](../hx_ptl_protocol/README.md) 配合使用。
+- 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
+
+## 实现约束
 
 协议是两端对消息格式的约定。这里处理随图像发送的 16 字节附加头；多字节数字按低字节在前的顺序存放。图像类型与长度仍由 PTL 的基础消息头负责。校验和可用于发现传输损坏，不是图像清晰度验收。
 
-- 底层接口：[`hx_media_protocol.h`](include/hx_media_protocol.h)
-- [架构与资源配合](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies)
-- [测试与实际验证范围](../../docs/development.md#testing)
-
-使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
+许可见仓库 [LICENSE](../../LICENSE)；依赖保留各自许可证。

@@ -2,16 +2,16 @@
 
 根据当前使用场景，把旋转、按下、短按和长按交给界面、应用或系统，避免一个操作被多个功能同时解释。维护按键与界面切换时阅读。
 
-## 最短接入路径
+内部实现组件（internal implementation）。这是输入策略辅助层，不是公开屏幕按键订阅接口；公开显示入口为 [`watcher_hw_display`](../../sdk/watcher_hw_display/README.md)。
 
-普通应用先使用[屏幕界面使用指南](../../../docs/api/display.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
+## 接口与依赖
 
-## 维护时的约定与限制
+- 接口：[`watcher_input_router.h`](include/watcher_input_router.h)
+- 依赖：内部使用 FreeRTOS；不直接接管硬件输入驱动。
+- 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
+
+## 实现约束
 
 场景与 owner 表示这次输入应该由谁处理，不是硬件资源转让。例如按下后切换界面，松开时不能不加判断地当作新界面的点击。维护时保留作用域校验和取消事件逻辑；这只是输入辅助层，不是新的机器人应用或公开屏幕按键订阅接口。
 
-- 底层接口：[`watcher_input_router.h`](include/watcher_input_router.h)
-- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
-- [测试与实际验证范围](../../../docs/development.md#testing)
-
-使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
+许可见仓库 [LICENSE](../../../LICENSE)；依赖保留各自许可证。

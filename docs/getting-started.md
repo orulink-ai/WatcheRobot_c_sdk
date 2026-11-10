@@ -199,7 +199,7 @@ Do not replay old actions after recovery; require a new user operation.
 
 First initialize the body as described above and reuse its `check_body_ready()` helper.
 
-**Read [movement precautions](servo-open-loop.md) first.** Clear the entire possible travel area and keep manual power disconnection available.
+**Read [movement precautions](api/body.md#motion-safety-english) first.** Clear the entire possible travel area and keep manual power disconnection available.
 The program cannot read the angle a servo actually reaches. Even a reference move may travel far from an unknown starting point.
 This function does not run automatically; call it only in response to the user's current intended action.
 
@@ -222,7 +222,7 @@ When finished, call `watcher_hw_body_close()` and check its result. Handle faile
 - [Touch-controlled lights](../examples/body/README.md) · [Screen, camera and audio](../examples/head/README.md) · [Combined application](../examples/robot/README.md).
 - [Examples](../examples/README.md): project configuration, builds and device precautions; [official restoration](https://wiki.orulink.ai/docs/flashing#full).
 - [Complete API guides](api/README.md#english-choose-a-task): parameters, tasks, error recovery and cleanup.
-- [Manual hardware checks](../examples/hardware_check/README.md) · [Verification results](verification.md).
+- [Manual hardware checks](../examples/hardware_check/README.md).
 
 This page covers the current SDK interfaces; it does not offer dedicated SD-card, battery or USB APIs. Compilation does not replace hardware acceptance.
 

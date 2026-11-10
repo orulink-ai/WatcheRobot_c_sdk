@@ -1,16 +1,20 @@
-# 让图形界面显示到屏幕上
+# esp_lvgl_port
 
-这是源码随附的 LVGL 图形库适配层，帮助图形库在 ESP 芯片上刷新屏幕。应用要显示文字或按钮，先使用公开屏幕接口，不必直接管理这层适配。
+Local LVGL display/input adapter used by WatcheRobot: **1.4.0-custom.1**, with **LVGL 8.4.0**.
+WatcheRobot 使用的本地界面适配组件，负责图形刷新和输入接入；不是未经修改的上游版本。
 
-## 最短接入路径
+## Usage / 使用
 
-按照[屏幕显示指南](../../docs/api/display.md)初始化、加锁操作界面、解锁，最后关闭。不要同时另行初始化屏幕或启动另一套绘制逻辑。
+Applications normally use [`watcher_hw_display`](../sdk/watcher_hw_display/README.md).
+Do not start a second display stack while the public display API owns the hardware.
+应用通过公开显示接口使用本组件；不要在 SDK 已管理屏幕时重复初始化或另起刷新任务。
 
-## 维护底层适配时
+For board integration, see [`esp_lvgl_port.h`](include/esp_lvgl_port.h) and
+[`CMakeLists.txt`](CMakeLists.txt). Use the matching source configuration rather than substituting a
+same-name Registry component. Lock LVGL changes, retain borrowed display objects only while open,
+and close outside the display lock. See the [display API contract](../../docs/api/display.md).
+板级集成以头文件和构建声明为准；保留本地 DMA 暂存与释放适配，相关回归在 `test_support/host`。
 
-- 底层头文件：[`esp_lvgl_port.h`](include/esp_lvgl_port.h)。
-- SDK 管理共享显示资源；取得屏幕对象的引用不表示可以释放它或绕过公开接口并行使用。
-- 使用完整源码与示例匹配的配置、依赖清单和 ESP-IDF 6.0.2。这个说明不承诺独立组件仓库安装、依赖自动齐备，或与未经修改的上游版本完全兼容。
-- [架构](../../docs/development.md#architecture) · [依赖与本地适配](../../docs/development.md#dependencies) · [测试范围](../../docs/development.md#testing)
-
-此页仅为已有供应商库提供接入导航，不声明新的作者身份。原有署名与依赖许可证不变。
+Upstream project: [Espressif esp-bsp / esp_lvgl_port](https://github.com/espressif/esp-bsp/tree/master/components/esp_lvgl_port).
+Existing copyright notices and licensing in the source remain applicable.
+原作者署名和源码许可保持适用；本地适配不代表可直接替换为最新上游版本。

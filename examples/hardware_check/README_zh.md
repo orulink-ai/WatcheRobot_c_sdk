@@ -11,7 +11,7 @@
 烧录前完成[上手、备份与官方恢复准备](../README.md)。核实配套 STM32/Himax
 兼容性及完整恢复包；任一不明确就停止。此示例运行于 ESP32，不是 Himax 或 STM32 端口。
 
-选择运动项前阅读[运动安全](../../docs/servo-open-loop_zh.md)：应用**不能读取舵机实际转到的角度**。
+选择运动项前阅读[运动安全](../../docs/api/body.md#motion-safety)：应用**不能读取舵机实际转到的角度**。
 清空**完整行程**，保证能人工断电。先命令 **X90/Y120**，再 **X93/Y120** 或 **X90/Y123**。
 起点未知，首次移动可能很大；不是归零或校准，三度命令差也不是实测位移。
 
@@ -57,7 +57,7 @@ idf.py -C examples/hardware_check build
 断线无法送达 STOP，必须依赖配套 STM32 安全机制。重启不代表故障原因已经消除。
 
 无需执行旧 **Check position** 步骤：应用不能测量舵机实际角度。
-接口兼容细节见[安全指南末尾的开发接口说明](../../docs/servo-open-loop_zh.md)。
+接口兼容细节见[安全指南末尾的开发接口说明](../../docs/api/body.md#motion-safety)。
 
 ![软件渲染的运动安全页：参考姿态、完整行程警告和无位置传感器说明](../../docs/images/hardware-check-motion-safety.png)
 
@@ -120,5 +120,5 @@ X 轴运动｜未测｜未能清空整个运动行程
 上游源码标识在仓库根目录的 [`SOURCE.json`](../../SOURCE.json)，它记录源码来源，
 不代表设备当前安装的固件；这些标识不是简单观察记录的必填项。
 
-主机测试及[历史结果](../../history/VALIDATION.md)不代替本次观察。恢复按
+主机测试不代替本次实物观察。恢复按
 [Wiki 完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)，不猜烧录地址，不用私有工作区脚本。

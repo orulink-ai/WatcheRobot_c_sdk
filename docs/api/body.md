@@ -96,3 +96,128 @@ Initialize, check READY, handle events or request an intended action, then close
 - Copy event data before its callback returns. Keep callback context alive until dispatch returns, even after unsubscribe. Do not dispatch recursively or initialize/close from a callback.
 - After lost events, cancel pending actions; close/init outside callbacks, resubscribe, wait for a new READY, and require a new user action. Reconnection or an empty queue must not replay old motion.
 - Check operation and cleanup results separately. Retry failed cleanup before treating resources as released.
+
+
+## Motion safety
+
+
+本页面向编写运动控制或运行硬件体检的人。应用能要求舵机转到某个角度，
+但不能读取它实际上转到了哪里。例如，发出“转到 90 度”的命令后，应用无法确认
+舵机是否真的到了 90 度，也无法确认它是否卡住或已经停止。启用运动前先阅读本页。
+
+### 烧录或运动前：先留出安全空间
+
+- 核实配套 STM32 固件兼容性。SDK 不更新 STM32 或 Himax 固件；兼容性未知或
+  缺少完整官方恢复包时**禁止继续烧录**。先准备[备份与官方恢复](../../examples/README.md)。
+- **每次**运动前清空**整个可能行程**，不能只为预期的小动作留空间。操作者应随时能够人工断电。
+- 体检先命令 **X90/Y120**，再 **X93/Y120** 或 **X90/Y123**。实际起点未知，
+  即使要求转到参考位置，也可能从另一端移动很远。这不是归零、标定或实测三度位移；
+  退出时也不会自动回中。
+
+### 停止：软件报告不等于实物已停
+
+软件 STOP 不是急停装置；ESP32 断连后无法保证停止命令送达。ACK 表示收到命令，
+DONE 表示报告命令完成，都不证明舵机已经到位、没有卡住或机械已经停止。
+**必须亲眼确认实物停住；运动不安全或停止命令无法送达时，人工断电。**
+不要等待软件消息来证明安全，仍需配套 STM32 安全机制和操作者断电措施。
+
+### 出问题时：先停操作，再排查原因
+
+1. 停止继续操作；有危险先人工断电。保留错误日志，排查供电、连接和配套固件。
+2. 取消待执行运动，不要反复触摸尝试解锁，**禁止自动重放旧运动**。
+   重连、命令完成或清空待处理事件都不等于故障解除或机械安全。
+3. 自行编写恢复逻辑时，按[身体 API 的完整恢复步骤](body.md)处理。
+   恢复后重新动作必须由**新的用户操作**发起，不能因为连接恢复就继续旧动作。
+
+### 确认真正的动作结果
+
+方向、整个可运动范围与实际停止必须由人工或未来独立测试装置观察。
+记录配套固件版本、公开源码／构建哈希及逐项结果。电脑上的主机测试只检查软件状态与顺序；
+历史上的位置测量和标定不是当前前提，也不能代替实物观察。
+
+下一步：[人工硬件体检](../../examples/hardware_check/README_zh.md)。
+
+### 开发接口说明：保留兼容接口不代表能测量角度
+
+以下供修改应用时查阅；精确调用与恢复顺序见[身体 API](body.md)。
+
+| 结果或接口 | 能得出什么结论 |
+| --- | --- |
+| `watcher_hw_body_request_position()` | 返回 `ESP_ERR_NOT_SUPPORTED`，不能测量实际角度 |
+| 注册非空的位置回调 | 返回 `ESP_ERR_NOT_SUPPORTED`；用空回调取消订阅仍可重复执行 |
+| 历史 `POSITION` 帧或保留编号 | 仅为兼容旧接口保留，不是当前测得的实际角度 |
+| ACK/NACK | 收到命令／拒绝命令，不证明实际移动 |
+| DONE/FAULT | 报告命令完成／故障，不证明实际角度、没有卡住或机械已停 |
+| 命令坐标或 PWM 推算角度 | 是要求值而非测量值；PWM 指发给舵机的电脉冲信号 |
+
+命令角度限制、主动锁定／释放和 STOP 仍保留。不能用旧位置消息、命令确认或目标角度
+判断行程已清空、限位已恢复或身体已停止。
+
+
+## Motion safety (English)
+
+
+For anyone writing motion controls or running the hardware check. The application
+can request an angle but cannot read where the servo actually ends up. For example,
+after requesting **90 degrees**, it cannot confirm that the servo reached 90 degrees,
+is not stuck, or has stopped. Read this page before enabling motion.
+
+### Before flashing or moving: clear the space
+
+- Verify paired STM32 firmware compatibility. This SDK does not update STM32 or
+  Himax firmware. Unknown compatibility or a missing complete official restore
+  bundle is a **do-not-flash** blocker. Prepare [backups and official recovery](../../examples/README.md).
+- Before **every** motion, clear the **entire possible travel**, not just the expected
+  small move. Keep operator-controlled power disconnection available.
+- The hardware check first commands **X90/Y120**, then **X93/Y120** or **X90/Y123**.
+  The actual starting position is unknown: even a reference move can travel far
+  from the other end. This is not homing, calibration or a measured three-degree
+  move. The example does not automatically return to center when you exit.
+
+### Stopping: a software report is not a physical stop
+
+Software STOP is not an emergency-stop device; a disconnected ESP32 cannot guarantee
+stop delivery. ACK means the command was received; DONE reports command completion.
+Neither proves that the servo reached the angle, is not stuck, or physically stopped.
+**Observe the body stop. If motion is unsafe or the stop command cannot arrive,
+use operator-controlled power disconnection.** Do not wait for a software message
+as proof of safety. Paired STM32 safety and an operator power cut remain necessary.
+
+### When something goes wrong: stop operating, then investigate
+
+1. Stop operating the controls; disconnect power manually if unsafe. Keep error
+   logs and check power, connections and paired firmware.
+2. Cancel pending motion. Do not keep touching to unlock controls, and **never
+   replay old motion automatically**. Reconnecting, command completion or clearing
+   queued events does not clear the fault or establish mechanical safety.
+3. If you write recovery logic, follow the complete [body API recovery procedure](body.md).
+   Movement afterward requires a **new user action**; a restored connection must
+   not resume an old action.
+
+### Check the physical result
+
+A human or independent future test fixture must observe direction, the entire
+range of movement and actual stop. Record paired-firmware versions, public
+source/build hashes and each result. Host tests only check software state and
+sequencing; historical position measurement/calibration is not a current
+prerequisite or a replacement for physical observation.
+
+Continue with the [manual hardware check](../../examples/hardware_check/README.md).
+
+### Developer interface notes: compatibility does not provide angle measurements
+
+Use this section when changing the application. Exact calls and recovery order
+belong in the [body API](body.md).
+
+| Result / interface | What you can conclude |
+| --- | --- |
+| `watcher_hw_body_request_position()` | Returns `ESP_ERR_NOT_SUPPORTED`; it cannot measure the actual angle |
+| Registering a non-null position callback | Returns `ESP_ERR_NOT_SUPPORTED`; cancelling the subscription with a null callback is still safe to repeat |
+| Historical `POSITION` frames or reserved identifiers | Retained for compatibility, not current measurements of actual angles |
+| ACK/NACK | Command received/rejected, not proof of physical movement |
+| DONE/FAULT | Command completion/fault report, not proof of actual angle, lack of stall or physical stopping |
+| Requested coordinates or PWM-derived angles | Command values, not measured angles; PWM is the electrical pulse signal sent to a servo |
+
+Command angle limits, explicit lock/release and STOP remain available. Never use
+old position messages, acknowledgements or requested angles to decide that travel
+is clear, limits have been recovered or the body has stopped.

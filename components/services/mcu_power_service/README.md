@@ -2,16 +2,16 @@
 
 向机身控制芯片发送 5V 开关请求，并标记请求来自哪一类使用者。只有维护底层供电控制时才直接使用。
 
-## 最短接入路径
+内部实现组件（internal implementation）。公开 SDK 的 [`watcher_hw_body`](../../sdk/watcher_hw_body/README.md) 不提供 5V 开关；维护本层需先确定唯一通信管理方。
 
-普通应用的转动、灯光和触摸走[机身控制接口](../../../docs/api/body.md)，但该公开接口没有 5V 开关功能。维护供电控制时，先阅读下方底层头文件并确定唯一的通信管理方，再设计请求、错误处理与清理流程；不要在运行中的公开机身接口旁直接另开一套连接。
+## 接口与依赖
 
-## 维护时的约定与限制
+- 接口：[`mcu_power_service.h`](include/mcu_power_service.h)
+- 依赖：[`mcu_link`](../../protocols/mcu_link/README.md)。
+- 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
+
+## 实现约束
 
 这是底层接口；公开机身接口没有对应的 5V 开关函数，不能据此推断可直接在公开接口上调用。消息发送成功不等于电路已物理断开，更不能替代操作人员可立即执行的人工断电。不要与公开机身接口争用底层连接。
 
-- 底层接口：[`mcu_power_service.h`](include/mcu_power_service.h)
-- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
-- [测试与实际验证范围](../../../docs/development.md#testing)
-
-使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
+许可见仓库 [LICENSE](../../../LICENSE)；依赖保留各自许可证。

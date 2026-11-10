@@ -2,16 +2,16 @@
 
 把录音、播放等操作接到板上的声音芯片，并协调它们共用的硬件。只有排查声音硬件或维护底层驱动时，才需要直接阅读这一层。
 
-## 最短接入路径
+内部实现组件（internal implementation）。由公开 SDK 的 [`watcher_hw_audio`](../../sdk/watcher_hw_audio/README.md) 使用；应用不应单独初始化本层。
 
-普通应用先使用[录音与播放使用指南](../../../docs/api/audio.md)中的初始化、操作与清理流程；无需为了使用这个功能单独初始化本层。只有维护底层实现时，再从下方头文件查找真实接口。
+## 接口与依赖
 
-## 维护时的约定与限制
+- 接口：[`hal_audio.h`](include/hal_audio.h)
+- 依赖：`espressif__esp_codec_dev`；内部使用 `sensecap-watcher`、`esp_audio_codec` 和 `media_lib_sal`。
+- 构建声明：[`CMakeLists.txt`](CMakeLists.txt)。
+
+## 实现约束
 
 底层还提供 PCM（声音采样）和 Opus（压缩声音）支持；公开录放音接口仍按自己的 PCM 格式工作。声音芯片与总线一次只交给一套使用者，不能在公开音频接口打开时另行初始化或操作。失败清理仍可能保留使用权，必须检查释放结果。
 
-- 底层接口：[`hal_audio.h`](include/hal_audio.h)
-- [架构与资源配合](../../../docs/development.md#architecture) · [依赖与本地适配](../../../docs/development.md#dependencies)
-- [测试与实际验证范围](../../../docs/development.md#testing)
-
-使用完整源码与匹配的示例配置、依赖清单（ESP-IDF 6.0.2）；不承诺本层可从组件仓库独立安装。不要绕过公开接口同时占用共享硬件。已有署名和依赖许可证保持不变。
+许可见仓库 [LICENSE](../../../LICENSE)；依赖保留各自许可证。
