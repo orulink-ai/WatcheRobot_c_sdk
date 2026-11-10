@@ -57,7 +57,7 @@ esp_err_t inspect_display_lifecycle(void) {
 
 使用 LVGL 8.4.0 及 head 示例的配套配置，包括 RGB565 颜色格式/字节交换、字体和八线 PSRAM。本接口不承诺兼容 LVGL 9。
 
-软件截图不能证明真机屏幕、边缘触摸或板级 IDF6 触摸适配正常。请按[硬件检查](../hardware-check.md)在实物上确认；最小代码只演示开关资源，不是 LCD 验收。
+软件截图不能证明真机屏幕、边缘触摸或板级 IDF6 触摸适配正常。请按[硬件检查](../../examples/hardware_check/README.md)在实物上确认；最小代码只演示开关资源，不是 LCD 验收。
 
 ## 接入与完整示例
 

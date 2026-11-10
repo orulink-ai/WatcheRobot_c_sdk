@@ -1,4 +1,4 @@
-[English](hardware-check.md) | 简体中文
+[English](README.md) | 简体中文
 
 # 逐项检查机器人的硬件
 
@@ -8,23 +8,25 @@
 
 ## 1. 做好安全准备
 
-烧录前完成[上手、备份与官方恢复准备](../examples/README.md)。核实配套 STM32/Himax
+烧录前完成[上手、备份与官方恢复准备](../README.md)。核实配套 STM32/Himax
 兼容性及完整恢复包；任一不明确就停止。此示例运行于 ESP32，不是 Himax 或 STM32 端口。
 
-选择运动项前阅读[运动安全](servo-open-loop_zh.md)：应用**不能读取舵机实际转到的角度**。
+选择运动项前阅读[运动安全](../../docs/servo-open-loop_zh.md)：应用**不能读取舵机实际转到的角度**。
 清空**完整行程**，保证能人工断电。先命令 **X90/Y120**，再 **X93/Y120** 或 **X90/Y123**。
 起点未知，首次移动可能很大；不是归零或校准，三度命令差也不是实测位移。
 
 ## 2. 构建并启动
 
 在 **WatcheRobot_c_sdk 仓库根目录**、已激活 ESP-IDF **6.0.2** 的终端运行，
-将 `<PORT>` 换成确认过的 ESP32 端口：
+执行构建：
 
 ```sh
 idf.py -C examples/hardware_check build
-idf.py -C examples/hardware_check -p <PORT> flash
-idf.py -C examples/hardware_check -p <PORT> monitor
 ```
+
+预期生成 `examples/hardware_check/build/watcher_hw_hardware_check.bin` 及配套烧录文件；构建不会写入设备。
+工程使用 ESP32-S3、16 MB flash、自定义分区、80 MHz 八线 PSRAM 和 LVGL 8.4.0。
+完成上述设备安全检查后，按[乐鑫官方烧录与监视流程](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)操作本工程，使用已核实的 ESP32 SERIAL-B 端口。
 
 预期日志：`Hardware check v2 | curved zones`；屏幕显示 **Hardware check**。
 不会自动开始测试。Ctrl+] 退出 monitor。
@@ -55,9 +57,9 @@ idf.py -C examples/hardware_check -p <PORT> monitor
 断线无法送达 STOP，必须依赖配套 STM32 安全机制。重启不代表故障原因已经消除。
 
 无需执行旧 **Check position** 步骤：应用不能测量舵机实际角度。
-接口兼容细节见[安全指南末尾的开发接口说明](servo-open-loop_zh.md)。
+接口兼容细节见[安全指南末尾的开发接口说明](../../docs/servo-open-loop_zh.md)。
 
-![软件渲染的运动安全页：参考姿态、完整行程警告和无位置传感器说明](images/hardware-check-motion-safety.png)
+![软件渲染的运动安全页：参考姿态、完整行程警告和无位置传感器说明](../../docs/images/hardware-check-motion-safety.png)
 
 上图由 LVGL（屏幕绘图库）在电脑上渲染，不是机器人实拍。
 
@@ -68,12 +70,12 @@ Voice／Record／Replay 先进入 **Audio setup**。输出 0–95，默认 90，
 不改麦克风模拟增益、不影响固定语音／测试音，也可能放大底噪。原始 PCM（未压缩声音采样）
 不提供降噪；刺耳或啸叫时停止。
 
-照片与录音只在内存。固定语音是闪存内的许可素材，见[素材来源与许可](../examples/common/assets/README.md)。
+照片与录音只在内存。固定语音是闪存内的许可素材，见[素材来源与许可](../common/assets/README.md)。
 
 **Stop** 点一次后等待清理完成，连点不能跳过等待。清理失败后若功能被禁用，不要强行继续；
 其他已就绪功能仍可使用。软件停止不等于实物已停：运动时须亲眼确认机械停止，有危险人工断电。
 不要自动重试旧运动；重新动作必须由新的用户操作发起。修改实现时，另读
-[身体](api/body.md)、[相机](api/camera.md)、[音频](api/audio.md)和[屏幕](api/display.md) API 的使用规则。
+[身体](../../docs/api/body.md)、[相机](../../docs/api/camera.md)、[音频](../../docs/api/audio.md)和[屏幕](../../docs/api/display.md) API 的使用规则。
 
 ## 4. 可选静默串口检查
 
@@ -115,8 +117,8 @@ X 轴运动｜未测｜未能清空整个运动行程
 无图、无声、丢事件、停不住或运动不安全均记失败／阻塞，不要为了完成流程而点 Next。
 
 若需详细工程报告，可另外附固件／镜像哈希、构建日志和可取得的源码来源信息。
-上游源码标识在仓库根目录的 [`SOURCE.json`](../SOURCE.json)，它记录源码来源，
+上游源码标识在仓库根目录的 [`SOURCE.json`](../../SOURCE.json)，它记录源码来源，
 不代表设备当前安装的固件；这些标识不是简单观察记录的必填项。
 
-主机测试及[历史结果](../history/VALIDATION.md)不代替本次观察。恢复按
+主机测试及[历史结果](../../history/VALIDATION.md)不代替本次观察。恢复按
 [Wiki 完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)，不猜烧录地址，不用私有工作区脚本。

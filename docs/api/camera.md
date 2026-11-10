@@ -55,7 +55,7 @@ esp_err_t capture_once(void) {
 
 `watcher_hw_camera_status()` 会报告底层查询失败、连接异常或设备故障，即使本地曾成功打开摄像头。返回 `ESP_OK` 表示读到了状态，不代表摄像头是 READY；还要检查 `state` 与 `last_error`。没有连续取图时也可以 READY，不要求正在 streaming。
 
-临时查询故障在下一次健康查询后可消失；初始化/关闭等生命周期故障仍需 close 后重新初始化。真机无图或图像损坏都不能算通过摄像头验收，参见[硬件检查](../hardware-check.md)。
+临时查询故障在下一次健康查询后可消失；初始化/关闭等生命周期故障仍需 close 后重新初始化。真机无图或图像损坏都不能算通过摄像头验收，参见[硬件检查](../../examples/hardware_check/README.md)。
 
 ## 接入与完整示例
 

@@ -17,7 +17,7 @@ Unrelated user changes, board branding, wire protocols and the service-dependent
 
 - Public components/headers/APIs/types/constants now use `watcher_hw_*` /
   `WATCHER_HW_*`; matching host targets, internal task names and CI paths agree.
-  Applications must follow [MIGRATION.md](../docs/migration.md). Old evidence stays historical.
+  Applications must follow [MIGRATION.md](MIGRATION.md). Old evidence stays historical.
 - Shell no longer treats explicit empty example/action arguments as defaults.
   Both entries reject blank flash/monitor ports before IDF (exit 2); omitted
   arguments retain robot/build defaults, and valid calls preserve IDF arguments

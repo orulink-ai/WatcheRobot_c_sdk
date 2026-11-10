@@ -293,7 +293,7 @@ No stable release or fully validated firmware pairing is claimed.
 - Unified hardware component/header/API/type/constant names and the three
   example app targets under `watcher_hw_*` / `WATCHER_HW_*`. Task/host names,
   CI paths and active bilingual docs agree. This is a preview source-API break;
-  [MIGRATION.md](../docs/migration.md) explains consumer updates and fresh build directories.
+  [MIGRATION.md](MIGRATION.md) explains consumer updates and fresh build directories.
   Earlier entries retain the actual names/checksums of the tested old firmware.
 - TDD namespace guards failed against the old source before the rename.
   Additional script regressions exposed blank-port and explicit-empty-argument

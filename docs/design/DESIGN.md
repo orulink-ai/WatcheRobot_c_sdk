@@ -1,6 +1,6 @@
 # Hardware example design
 
-> Historical example design rationale. References to browser prototypes describe upstream work not shipped here; use [hardware check](../hardware-check.md) for current operations. / 历史示例设计；网页原型不随本仓库交付，当前操作以上手与体检指南为准。
+> Historical example design rationale. References to browser prototypes describe upstream work not shipped here; use [hardware check](../../examples/hardware_check/README.md) for current operations. / 历史示例设计；网页原型不随本仓库交付，当前操作以上手与体检指南为准。
 
 ## Scene and theme
 

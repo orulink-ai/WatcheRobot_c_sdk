@@ -1,3 +1,5 @@
+> Archived old-API migration reference, not required for current SDK use. / 旧接口迁移留档，当前 SDK 使用无需阅读。
+
 # Update an application using the old API names / 更新使用旧接口名的应用
 
 For applications written against `watche_hw_*`. Current development-preview APIs
@@ -56,20 +58,20 @@ is not physical-stop confirmation.
 
 Camera status now also reports faults from the connected device. For every API,
 `status()` returning `ESP_OK` means the query succeeded, not that the device is READY;
-inspect `state` and `last_error`. See the [API guides](README.md) and
-[original correction record](../history/AUDIT.md).
+inspect `state` and `last_error`. See the [API guides](../docs/README.md) and
+[original correction record](AUDIT.md).
 
 相机状态也会报告连接设备的故障；`status()` 成功不等于就绪，仍需检查 `state` 和 `last_error`。
 具体见接口指南和原修正记录。
 
 ## 3. Verify before using hardware / 使用硬件前验证
 
-Run [software tests](development.md#testing), then follow [setup, backups and recovery](../examples/README.md)
+Run [software tests](../docs/development.md#testing), then follow [setup, backups and recovery](../examples/README.md)
 before any flashing. After completing the example safety checks, follow the linked official ESP-IDF flashing workflow for the selected project.
-Read [servo safety](servo-open-loop.md) before moving the body.
+Read [servo safety](../docs/servo-open-loop.md) before moving the body.
 Successful builds establish source consistency, not physical sound, image or motion quality.
-[Historical results](../history/VALIDATION.md) retain the old tested names and hashes.
+[Historical results](VALIDATION.md) retain the old tested names and hashes.
 
-先运行[软件测试](development.md#testing)，烧录前完成[上手、备份与恢复准备](../examples/README.md)，
-完成示例安全检查后，按示例链接的乐鑫官方烧录流程操作所选工程；运动前阅读[舵机安全](servo-open-loop_zh.md)。
+先运行[软件测试](../docs/development.md#testing)，烧录前完成[上手、备份与恢复准备](../examples/README.md)，
+完成示例安全检查后，按示例链接的乐鑫官方烧录流程操作所选工程；运动前阅读[舵机安全](../docs/servo-open-loop_zh.md)。
 构建通过不等于声音、画面或机械验收，历史记录保留当时的固件名称和哈希。

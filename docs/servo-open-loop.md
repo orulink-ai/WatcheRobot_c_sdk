@@ -47,7 +47,7 @@ source/build hashes and each result. Host tests only check software state and
 sequencing; historical position measurement/calibration is not a current
 prerequisite or a replacement for physical observation.
 
-Continue with the [manual hardware check](hardware-check.md).
+Continue with the [manual hardware check](../examples/hardware_check/README.md).
 For older context see [historical public-sync evidence](../history/SYNC_VALIDATION.md).
 
 ## Developer interface notes: compatibility does not provide angle measurements

@@ -222,7 +222,7 @@ When finished, call `watcher_hw_body_close()` and check its result. Handle faile
 - [Touch-controlled lights](../examples/body/README.md) · [Screen, camera and audio](../examples/head/README.md) · [Combined application](../examples/robot/README.md).
 - [Examples](../examples/README.md): project configuration, builds and device precautions; [official restoration](https://wiki.orulink.ai/docs/flashing#full).
 - [Complete API guides](api/README.md#english-choose-a-task): parameters, tasks, error recovery and cleanup.
-- [Manual hardware checks](hardware-check.md) · [Verification results](verification.md).
+- [Manual hardware checks](../examples/hardware_check/README.md) · [Verification results](verification.md).
 
 This page covers the current SDK interfaces; it does not offer dedicated SD-card, battery or USB APIs. Compilation does not replace hardware acceptance.
 
