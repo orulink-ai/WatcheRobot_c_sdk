@@ -53,6 +53,8 @@ Each directory is an independent ESP-IDF project. Replace `robot` in the build c
 - [Branch/PR workflow and provenance](docs/repository-workflow.md)
 - Building a computer-side application on existing firmware? Use the separate [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk).
 
+Component Registry installation is not available yet; use the source workflow above until a verified component version is published.
+
 ## License
 
 First-party code is [Apache-2.0](LICENSE). Third-party components and assets retain their own licenses.

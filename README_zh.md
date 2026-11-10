@@ -49,6 +49,8 @@ idf.py -C examples/robot build
 - [分支开发、PR 与来源记录](docs/repository-workflow.md)
 - 在电脑端使用现有固件开发应用？请用独立的 [Python SDK](https://github.com/orulink-ai/WatcheRobot_python_sdk)。
 
+乐鑫组件平台版本尚未发布；发布并验证前，请使用上面的源码构建方式。
+
 ## 许可
 
 第一方代码采用 [Apache-2.0](LICENSE)，第三方组件与素材保留各自许可。
