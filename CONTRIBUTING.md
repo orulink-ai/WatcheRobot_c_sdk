@@ -35,6 +35,8 @@ Keep product release versions, versioned asset URLs, image hashes and dated veri
 Keep artwork provenance out of tutorial prose and preserve applicable licenses and attribution in their dedicated files. Maintain general motion precautions in one section and link to it near relevant operations.
 配图来源说明不混入教程正文，许可与署名保留在对应文件。通用运动注意事项集中维护，在相关操作处链接引用。
 
+- When adding or updating third-party code, update [THIRD_PARTY.md](THIRD_PARTY.md), preserve original notices and nested licenses, and record local adaptations. / 新增或更新第三方代码时，同步清单并保留原署名及嵌套许可。
+
 ## Checks / 修改后检查
 
 Run from the **repository root** using an isolated Python environment with

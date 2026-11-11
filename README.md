@@ -59,4 +59,4 @@ The SDK supports screen interfaces and touch, JPEG photos and streaming, PCM rec
 
 ## License
 
-First-party code is [Apache-2.0](LICENSE). Third-party components and assets retain their own licenses and attribution.
+First-party code is [Apache-2.0](LICENSE). Third-party components and assets retain their own licenses and attribution. See the [third-party inventory](THIRD_PARTY.md) for bundled components, upstream sources and local adaptations.
