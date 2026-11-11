@@ -1,6 +1,6 @@
 # 拍照与连续获取图像
 
-需要拍一张照片，或连续收到 JPEG 图像时，使用这一组接口。照片通过回调交给应用；保存、显示、上传或 AI 识别由应用另行处理。
+需要拍一张照片，或连续收到 JPEG 图像时，使用这一组接口。照片通过回调交给应用；保存、显示、上传由应用处理。设备端模型推理见单独的 [PTL 视觉指南](vision.md)，不在这组 `watcher_hw_camera` 函数中。
 
 最短流程：确认摄像头固件匹配 → 初始化 → 拍照并在回调内处理图像 → 关闭。下面收到图像后直接返回，不保存照片；要留存图像，必须在回调返回前复制数据。
 
@@ -55,24 +55,22 @@ esp_err_t capture_once(void) {
 
 `watcher_hw_camera_status()` 会报告底层查询失败、连接异常或设备故障，即使本地曾成功打开摄像头。返回 `ESP_OK` 表示读到了状态，不代表摄像头是 READY；还要检查 `state` 与 `last_error`。没有连续取图时也可以 READY，不要求正在 streaming。
 
-临时查询故障在下一次健康查询后可消失；初始化/关闭等生命周期故障仍需 close 后重新初始化。真机无图或图像损坏都不能算通过摄像头验收，参见[硬件检查](../../examples/hardware_check/README.md)。
+临时查询故障在下一次健康查询后可消失；初始化/关闭等生命周期故障仍需 close 后重新初始化。需要查看照片和实时画面时，运行 [head 示例](../../examples/head/README.md)。
 
 ## 接入与完整示例
 
 - 公开头文件：[`watcher_hw_camera.h`](../../bsp/watche_robot/watcher_hw_camera/include/watcher_hw_camera.h)。接口名称和参数以此为准。
-- 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
+- 从完整仓库构建示例，保留工程的配置与依赖文件。
 - 直接 CMake 依赖：watcher_hw_core、hal_camera（必须启用 PTL）。详见[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 - [可运行的 head 示例](../../examples/head/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
 
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../../CONTRIBUTING.md#checks--修改后检查)。
-
 ## English: Take photos and receive images
 
-Capture one JPEG photo or receive a sequence of JPEG frames. Compatible camera firmware is required; image recognition and network upload are application features, not part of this interface.
+Capture one JPEG photo or receive a sequence of JPEG frames. Compatible camera firmware is required. On-device model detection uses the separate [advanced vision API](vision.md) and [face detection tutorial](../../examples/face_detection/README.md); it is not part of this JPEG wrapper. Network upload is an application responsibility.
 Initialize, request a capture or start streaming, stop streaming when finished, then close.
 
 - Use one task to coordinate opening, use and closing. Do not open another camera connection in parallel.
 - Image bytes are valid only during their callback. Copy them before returning if the application needs them later.
 - Do not block the image callback or close the camera from inside it. Stop/close from the coordinating task, check the result, and retry cleanup if it has not finished.
-- A successful build or transfer is not evidence of a clear, current image; inspect actual photos and video on the device.
+- Run the [head example](../../examples/head/README.md) to display photos and live images.

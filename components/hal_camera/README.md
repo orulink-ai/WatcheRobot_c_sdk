@@ -4,6 +4,8 @@
 
 内部实现组件（internal implementation）。由公开 SDK 的 [`watcher_hw_camera`](../../bsp/watche_robot/watcher_hw_camera/README.md) 使用；应用不应另开摄像头连接。
 
+PTL 后端还提供模型目录、模型选择和推理的进阶接口，见[视觉调用指南](../../docs/api/vision.md)及 [face_detection 示例](../../examples/face_detection/README.md)。这不是第二套摄像头连接；不得与已运行的拍照/取流争用同一硬件。
+
 ## 接口与依赖
 
 - 接口：[`hal_camera.h`](include/hal_camera.h)

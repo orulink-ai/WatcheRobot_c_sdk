@@ -46,21 +46,19 @@ esp_err_t play_silence(void) {
 
 ## 音量、完成与出错后的清理
 
-`watcher_hw_audio_volume(percent)` 接受 0–100，但这个数字按芯片的分贝曲线转换，不代表人耳感到的等比例响度。板级支持将输出上限设为 95 以减少失真，采样本身的幅度也影响响度。初始化和调音量会检查功放电源；0 为静音，非零输出解除静音。真机测试从保守音量开始，亲耳检查，不要把进度条走完当成声音正常。
+`watcher_hw_audio_volume(percent)` 接受 0–100，但这个数字按芯片的分贝曲线转换，不代表人耳感到的等比例响度。板级支持将输出上限设为 95 以减少失真，采样本身的幅度也影响响度。初始化和调音量会检查功放电源；0 为静音，非零输出解除静音。首次播放从较低音量开始，再逐步调高。
 
-`watcher_hw_audio_drain(timeout_ms)` 等待已提交的采样离开硬件传输缓冲区（DMA）。必须在同一音频任务中调用，超时必须大于 0。报告播放完成、改音量或关闭前先 drain，并检查返回值；write 成功时仍可能有数据未送出。drain 成功只说明数据送出，不保证声音质量，也不释放音频使用权。
+`watcher_hw_audio_drain(timeout_ms)` 等待已提交的采样离开硬件传输缓冲区（DMA）。必须在同一音频任务中调用，超时必须大于 0。报告播放完成、改音量或关闭前先 drain，并检查返回值；write 成功时仍可能有数据未送出。drain 成功后音频接口仍保持打开，结束使用时调用 close。
 
 初始化或关闭失败后，先重试 `watcher_hw_audio_close()` 并记录清理错误，再把硬件交给别的使用者。清理失败可能仍保留独占使用权，不能只凭原操作的错误返回认定硬件已经释放。使用示例配套的音频依赖与配置；替换声音芯片库前，核对[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 
 ## 接入与完整示例
 
 - 公开头文件：[`watcher_hw_audio.h`](../../bsp/watche_robot/watcher_hw_audio/include/watcher_hw_audio.h)。接口名称和参数以此为准。
-- 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
+- 从完整仓库构建示例，保留工程的配置与依赖文件。
 - 直接 CMake 依赖：watcher_hw_core、hal_audio；私有依赖 freertos。详见[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 - [可运行的 head 示例](../../examples/head/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
-
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../../CONTRIBUTING.md#checks--修改后检查)。
 
 ## English: Record and play sound
 
@@ -68,5 +66,5 @@ Read microphone samples or play samples prepared by the application. The interfa
 
 - Keep initialization, read/write, waiting for playback, volume and close calls in the same task. These calls wait for work to finish; do not run them in interrupts, hardware callbacks or while holding the screen lock.
 - Use signed, little-endian 16-bit mono samples at 16000 or 24000 Hz. Buffer lengths are byte counts, must be positive multiples of two, and must not exceed INT_MAX. Playback memory must be writable because software volume processing may modify it.
-- Wait with drain and check its result before reporting completion, changing volume or closing. Sent data does not prove audible sound or good quality.
+- Wait with drain and check its result before reporting completion, changing volume or closing. Drain leaves the audio interface open; close it when finished.
 - Check cleanup errors separately. A failed close may still hold exclusive hardware access; retry cleanup before handing the audio hardware to other code.

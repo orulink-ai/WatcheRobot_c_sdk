@@ -1,5 +1,4 @@
 #include "esp_log.h"
-#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "watcher_hw_body.h"
@@ -17,8 +16,6 @@ static void on_body_event(const watcher_hw_event_t *received, void *context) {
                                    .primary_green = touch.active ? 128 : 0,
                                    .brightness = 64};
         ESP_LOGI("example", "light: %s", esp_err_to_name(watcher_hw_body_light(&light)));
-        /* Physical feedback was removed. Long-press no longer queries position
-         * or starts a feedback-relative move. Explicit application moves remain available. */
         if (touch.event_code == MCU_TOUCH_EVENT_RELEASE) {
             ESP_LOGI("example", "stop: %s", esp_err_to_name(watcher_hw_body_stop()));
         }
@@ -26,25 +23,6 @@ static void on_body_event(const watcher_hw_event_t *received, void *context) {
         ESP_LOGE("example", "Event loss: controls locked. Cancel actions, then close/init outside callbacks.");
     } else if (event.type == WATCHER_HW_EVENT_LINK) {
         /* A reconnect never replays an action. */
-    } else if (event.type == WATCHER_HW_EVENT_POSITION) {
-        /* Legacy position events are ignored on feedback-free hardware. */
-#if 0
-        mcu_motion_servo_feedback_t position;
-        memcpy(&position, event.payload, sizeof(position));
-        bool fresh = position_pending && event.received_us >= position_requested &&
-                     esp_timer_get_time() - event.received_us < 500000 &&
-                     event.received_us - position_requested < 500000;
-        if (fresh && position.axis_mask == (MCU_MOTION_AXIS_X | MCU_MOTION_AXIS_Y) && position.x_angle_x10 >= 0 &&
-            position.x_angle_x10 <= 1800 && position.y_angle_x10 >= 1000 && position.y_angle_x10 <= 1400) {
-            int x = (position.x_angle_x10 + 5) / 10;
-            int y = (position.y_angle_x10 + 5) / 10;
-            x += x <= 175 ? 3 : -3; /* At most 3.5 degrees including rounding. */
-            uint32_t sequence;
-            ESP_LOGI("example", "small move: %s", esp_err_to_name(watcher_hw_body_move(x, y, 1000, &sequence)));
-        } else {
-            ESP_LOGW("example", "No fresh valid position; movement skipped");
-        }
-#endif
     } else if (event.type == WATCHER_HW_EVENT_MOTION && event.size == sizeof(mcu_motion_lifecycle_event_t)) {
         mcu_motion_lifecycle_event_t result;
         memcpy(&result, event.payload, sizeof(result));
@@ -63,8 +41,19 @@ static void body_events(void) {
         ESP_LOGW("example", "dropped events: %lu", (unsigned long)dropped);
 }
 void app_main(void) {
-    ESP_LOGI("example", "body: %s", esp_err_to_name(watcher_hw_body_init()));
-    ESP_LOGI("example", "subscribe: %s", esp_err_to_name(watcher_hw_body_subscribe(on_body_event, NULL)));
+    esp_err_t ret = watcher_hw_body_init();
+    if (ret != ESP_OK) {
+        ESP_LOGE("example", "Body init failed: %s; example not started", esp_err_to_name(ret));
+        return;
+    }
+    ret = watcher_hw_body_subscribe(on_body_event, NULL);
+    if (ret != ESP_OK) {
+        esp_err_t closed = watcher_hw_body_close();
+        ESP_LOGE("example", "Body subscribe failed: %s; close: %s; example not started",
+                 esp_err_to_name(ret), esp_err_to_name(closed));
+        return;
+    }
+    ESP_LOGI("example", "Body runtime started; waiting for connection and touch events");
     for (;;) {
         body_events();
         vTaskDelay(pdMS_TO_TICKS(10));

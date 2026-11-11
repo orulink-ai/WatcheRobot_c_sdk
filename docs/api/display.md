@@ -2,43 +2,41 @@
 
 需要在屏幕上创建文字、按钮等界面，并接入触摸时，使用这一组接口。界面通过 LVGL 图形库绘制，SDK 负责把画面更新到屏幕。
 
-最短流程：初始化 → 加锁 → 操作界面 → 解锁 → 不再使用时关闭。下面创建后立即删除一条文字，只演示资源的打开和关闭；要看到持续显示的界面，请运行 head 示例。
+最短流程：初始化 → 加锁 → 创建界面 → 解锁。下面的程序会持续显示一行文字，完整工程见 [hello_display](../../examples/hello_display/README.md)。
 
 ## 最短用法
 
 ```c
-#include "watcher_hw_display.h"
 #include "esp_log.h"
+#include "watcher_hw_display.h"
 
-esp_err_t inspect_display_lifecycle(void) {
+void app_main(void) {
     esp_err_t err = watcher_hw_display_init();
-    if (err != ESP_OK) {
-        esp_err_t cleanup = watcher_hw_display_close();
-        ESP_LOGE("sdk_example", "init failed: %s; cleanup: %s",
-                 esp_err_to_name(err), esp_err_to_name(cleanup));
-        return err;
-    }
-    if (watcher_hw_display_lock(1000)) {
-        lv_obj_t *label = lv_label_create(lv_scr_act());
-        if (label) {
-            lv_label_set_text(label, "WatcheRobot SDK");
-            lv_obj_del(label); /* Clean up before this lifecycle-only sample closes. */
+    if (err == ESP_OK) {
+        if (watcher_hw_display_lock(1000)) {
+            lv_obj_t *label = lv_label_create(lv_scr_act());
+            if (label != NULL) {
+                lv_label_set_text(label, "Hello, WatcheRobot!");
+                lv_obj_center(label);
+            } else {
+                err = ESP_ERR_NO_MEM;
+            }
+            watcher_hw_display_unlock();
         } else {
-            err = ESP_ERR_NO_MEM;
+            err = ESP_ERR_TIMEOUT;
         }
-        watcher_hw_display_unlock();
-    } else {
-        err = ESP_ERR_TIMEOUT;
     }
-    esp_err_t closed = watcher_hw_display_close();
-    if (err != ESP_OK || closed != ESP_OK)
-        ESP_LOGE("sdk_example", "operation: %s; close: %s",
-                 esp_err_to_name(err), esp_err_to_name(closed));
-    return err != ESP_OK ? err : closed;
+    if (err != ESP_OK) {
+        esp_err_t closed = watcher_hw_display_close();
+        ESP_LOGE("hello", "Display failed: %s; cleanup: %s", esp_err_to_name(err), esp_err_to_name(closed));
+        /* No retry or second owner is started after failed cleanup. */
+        return;
+    }
+    ESP_LOGI("hello", "Text displayed; LVGL keeps running after app_main returns");
 }
 ```
 
-示例记录操作和清理两个结果，返回值优先保留操作错误。真实应用还必须处理清理失败（例如重试关闭），不能记录后就把资源交给别的使用者。
+app_main() 返回后界面继续刷新。不再使用显示时，先停止界面操作，再调用 watcher_hw_display_close()。
 
 ## 界面锁与资源有效期
 
@@ -53,25 +51,23 @@ esp_err_t inspect_display_lifecycle(void) {
 
 初始化或关闭失败也要检查清理结果。不能认为函数返回错误就已经释放所有资源，必要时重试 close。
 
-## 配置与实际屏幕检查
+## 显示配置
 
 使用 LVGL 8.4.0 及 head 示例的配套配置，包括 RGB565 颜色格式/字节交换、字体和八线 PSRAM。本接口不承诺兼容 LVGL 9。
 
-软件截图不能证明真机屏幕、边缘触摸或板级 IDF6 触摸适配正常。请按[硬件检查](../../examples/hardware_check/README.md)在实物上确认；最小代码只演示开关资源，不是 LCD 验收。
+显示第一行文字可从 [hello_display](../../examples/hello_display/README.md) 开始；按钮和触摸界面见 [head 示例](../../examples/head/README.md)。
 
 ## 接入与完整示例
 
 - 公开头文件：[`watcher_hw_display.h`](../../bsp/watche_robot/watcher_hw_display/include/watcher_hw_display.h)。接口名称和参数以此为准。
-- 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
+- 从完整仓库构建示例，保留工程的配置与依赖文件。
 - 直接 CMake 依赖：watcher_hw_core、sensecap-watcher、esp_lvgl_port、lvgl。详见[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 - [可运行的 head 示例](../../examples/head/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
 
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../../CONTRIBUTING.md#checks--修改后检查)。
-
 ## English: Draw text, buttons and screens
 
-Use the LVGL graphics library to draw the interface and handle screen touch. The display example above checks setup and cleanup; its label is removed before closing, so it is not a persistent UI demo.
+Use the LVGL graphics library to draw the interface and handle screen touch. The complete hello_display code above keeps a label visible after app_main() returns. Close the display when the application no longer needs it.
 
 - Initialize first. Lock before reading or changing LVGL objects, then unlock after the change. Do not call close while holding this lock.
 - One application task coordinates initialization and closing. Handles returned by the SDK are temporary references, not objects the application may free; stop using them before closing.

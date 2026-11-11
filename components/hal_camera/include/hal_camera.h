@@ -1,16 +1,18 @@
 /**
  * @file hal_camera.h
- * @brief Camera HAL: SSCMA client wrapper for Himax HX6538 vision AI chip
+ * @brief Camera HAL for Himax HX6538; backend selected at build time.
  *
- * Provides JPEG frame callback interface via SSCMA protocol.
- * Himax chip communicates with ESP32-S3 via UART/SPI SSCMA protocol.
+ * WatcheRobot public camera APIs require CONFIG_WATCHER_CAMERA_BACKEND_PTL.
+ * PTL provides 640x480 JPEG capture/streaming and WV1 model/inference control.
+ * The legacy SSCMA backend remains a separate implementation, not a drop-in
+ * compatibility promise for the public board API.
  *
- * Current implementation supports:
- * - SSCMA client initialization and connect wait
+ * Both backends expose:
+ * - camera initialization
  * - one-shot frame capture via hal_camera_capture_once()
  * - continuous frame capture via hal_camera_start()/hal_camera_stop()
  *
- * Streaming is currently implemented as a paced one-shot INVOKE loop over SSCMA.
+ * See docs/api/vision.md for the PTL model and inference contracts.
  */
 
 #ifndef HAL_CAMERA_H
@@ -24,7 +26,8 @@
 /**
  * @brief JPEG frame callback type
  *
- * Called from the camera task when a new JPEG frame is available.
+ * PTL capture_once calls this in the caller's task; streaming uses the camera
+ * task. Coordinate lifecycle outside callbacks and copy retained JPEG bytes.
  *
  * @param jpeg         Pointer to JPEG data (valid only during callback)
  * @param size         JPEG data size in bytes
@@ -57,7 +60,7 @@ typedef struct {
     uint8_t box_count;
     hal_camera_inference_box_t boxes[HAL_CAMERA_INFERENCE_MAX_BOXES];
     /**
-     * Optional base64 JPEG view into the SSCMA reply.
+     * Optional base64 JPEG view owned by the selected backend.
      *
      * Valid only for the duration of the inference callback. Consumers that
      * need the image later must copy it into an owned, preallocated buffer.
@@ -121,17 +124,17 @@ typedef void (*hal_camera_inference_cb_t)(const hal_camera_inference_frame_t *fr
 esp_err_t hal_camera_set_capture_activity_callback(hal_camera_capture_activity_cb_t cb, void *ctx);
 
 /**
- * @brief Initialize camera HAL (SSCMA client setup).
+ * @brief Initialize the selected camera transport.
  *
- * @return ESP_OK on success, ESP_FAIL if SSCMA initialization fails
+ * @return ESP_OK on success, otherwise the initialization error.
  */
 esp_err_t hal_camera_init(void);
 
 /**
  * @brief Release camera HAL runtime resources owned by the active app/session.
  *
- * Stops streaming, drops pending capture state, and releases the SSCMA client
- * tasks and buffers. Shared board-level SPI/IO setup remains owned by the BSP.
+ * Stops owned acquisition and releases backend tasks/buffers. Shared board
+ * SPI/IO setup remains owned by the BSP. Check failures before handing over.
  *
  * @return ESP_OK on success
  */
@@ -140,7 +143,8 @@ esp_err_t hal_camera_deinit(void);
 /**
  * @brief Configure the active HX6538 camera sensor output profile.
  *
- * Supported profiles currently map to the sensor catalog reported by the coprocessor:
+ * PTL accepts only 640x480 and ignores quality. The legacy SSCMA backend's
+ * supported profiles map to the sensor catalog reported by the coprocessor:
  * - 240x240
  * - 416x416
  * - 480x480

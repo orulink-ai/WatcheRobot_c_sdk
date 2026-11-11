@@ -17,8 +17,8 @@ typedef enum {
     WATCHER_HW_EVENT_LINK,
     WATCHER_HW_EVENT_TOUCH,
     WATCHER_HW_EVENT_MOTION,
-    WATCHER_HW_EVENT_POSITION,
-    WATCHER_HW_EVENT_OVERFLOW
+    /* Value 3 is retired; keep existing event IDs stable. */
+    WATCHER_HW_EVENT_OVERFLOW = 4
 } watcher_hw_event_type_t;
 typedef struct {
     watcher_hw_event_type_t type;

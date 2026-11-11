@@ -128,27 +128,6 @@ void hc_body_tick(hc_body_t *b, int64_t now) {
         finish(b, ESP_ERR_TIMEOUT);
     }
 }
-#if 0 /* Retired: current servos have no physical position feedback. */
-static void position(hc_body_t *b, const watcher_hw_event_t *e, int64_t now) {
-    if (!b->waiting_position || e->size != sizeof(mcu_motion_servo_feedback_t) || e->received_us < b->started_us ||
-        e->received_us > now || now - e->received_us >= 500000 || now >= b->deadline_us) return;
-    mcu_motion_servo_feedback_t p;
-    memcpy(&p, e->payload, sizeof(p));
-    if (p.axis_mask != 3 || p.x_angle_x10 < 0 || p.x_angle_x10 > 1800 || p.y_angle_x10 < 1000 || p.y_angle_x10 > 1400) {
-        finish(b, ESP_ERR_INVALID_RESPONSE); return;
-    }
-    b->waiting_position = false;
-    b->x = (p.x_angle_x10 + 5) / 10;
-    b->y = (p.y_angle_x10 + 5) / 10;
-    if (b->argument == 1) b->y += b->y <= 137 ? 3 : -3;
-    else b->x += b->x <= 177 ? 3 : -3;
-    uint32_t duration = b->operation == HC_OP_STOP_TEST ? 3000 : 1000;
-    esp_err_t ret = watcher_hw_body_move(b->x, b->y, duration, &b->sequence);
-    if (ret != ESP_OK) { finish(b, ret); return; }
-    b->moving = true;
-    b->deadline_us = now + (int64_t)(duration + 2000) * 1000;
-}
-#endif
 static void touch(hc_body_t *b, const watcher_hw_event_t *e) {
     if (b->operation != HC_OP_TOUCH || e->size != sizeof(mcu_touch_state_t))
         return;

@@ -50,10 +50,12 @@ Hardware features do not automatically imply SDK interfaces. Current SDK support
 
 ## Capabilities and dependencies
 
+Begin with [your first C application](docs/getting-started.md). See the [feature/code/documentation map](docs/features.md) and [compatibility conditions](docs/hardware-compatibility.md) for supported features and setup.
+
 | Available | Capability | Controller / driver | Component | Version |
 | --- | --- | --- | --- | --- |
-| ✓ | Display | SPD2010 | [Display driver](https://components.espressif.com/components/espressif/esp_lcd_spd2010/versions/1.0.1/readme) | 1.0.1 |
-| ✓ | Screen touch | SPD2010 | [Touch driver](https://components.espressif.com/components/espressif/esp_lcd_touch_spd2010/versions/0.0.1/readme) | 0.0.1, locally adapted |
+| ✓ | Display | SPD2010 | [Display API](docs/api/display.md) · [First example](examples/hello_display/README.md) | 1.0.1 |
+| ✓ | Screen touch | SPD2010 | [Display/touch API](docs/api/display.md) | 0.0.1, locally adapted |
 | ✓ | UI drawing | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [UI port](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
 | ✓ | Speaker playback | ES8311 | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
 | ✓ | Microphone recording | ES7243 / ES7243E | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
@@ -61,31 +63,32 @@ Hardware features do not automatically imply SDK interfaces. Current SDK support
 | ✓ | Body movement | Two servos, body controller | [Movement interface](docs/api/body.md) | Included in this source repository |
 | ✓ | Body touch | TTP223 | [Touch events](docs/api/body.md) | Included in this source repository |
 | ✓ | Side and dock lights | WS2812B2020 | [Light interface](docs/api/body.md) | Included in this source repository |
+| ✓ | Model catalog and face inference | Himax PTL / WV1 | [Advanced vision](docs/api/vision.md) | Installed models and matching firmware |
 
-✓ indicates an interface provided by the source, not completed whole-device testing.
-Repository components have not been formally published to Espressif's Component Registry.
+The SDK components in this table are included in the repository.
 See [build requirements](examples/README.md#requirements--环境要求) for paired firmware and dependency details.
 
 ## Examples
 
 | Example | What you can try | Guide |
 | --- | --- | --- |
+| First text | Minimal app_main, display initialization and LVGL locking | [hello_display](examples/hello_display/README.md) |
 | Touch-controlled lights | Touch the body to turn green lights on, release to clear them, and log touch events | [body](examples/body/README.md) |
 | Camera, audio and screen | Take photos, record and replay sound, test the speaker and use screen controls | [head](examples/head/README.md) |
 | Combined application | Combine touch-controlled lights with camera, sound and screen controls | [robot](examples/robot/README.md) |
 | Hardware check | Follow screen prompts to inspect the screen, sound, touch, lights and movement | [hardware_check](examples/hardware_check/README.md) |
+| Face detection | Catalog, identity check and face count; stops after 60 seconds | [face_detection](examples/face_detection/README.md) |
 
 ## Development documentation
 
 Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
 
-- [API usage guide](docs/getting-started.md): initialization and short examples organized by feature.
+- [First-run tutorial](docs/getting-started.md): set up the environment, build, flash and change the first text.
 - [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
 - [Contributing](CONTRIBUTING.md): submitting changes and running checks.
 
-This is a development preview. Flashing replaces device software: prepare backups and a complete official
-recovery bundle using the [example precautions](examples/README.md). Read [movement precautions](docs/api/body.md#motion-safety-english) before enabling
-movement. Build checks do not establish hardware acceptance.
+This is a development preview. First flashing replaces the application and partitions; back up data you need.
+Read [movement precautions](docs/api/body.md#motion-safety-english) before enabling motion.
 
 ## License
 

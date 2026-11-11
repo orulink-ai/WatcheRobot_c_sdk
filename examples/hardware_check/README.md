@@ -9,9 +9,7 @@ private repository. It is not factory certification or an emergency-stop device.
 
 ## 1. Prepare safely
 
-Before flashing, complete [setup, backups and official recovery preparation](../README.md).
-Verify paired STM32/Himax compatibility and a complete recovery bundle; stop if either
-is unknown. This example runs on ESP32, not the Himax or STM32 port.
+Connect and power the head and body. See [first run](../../docs/getting-started.md) for environment setup. Flash this example through the ESP32 SERIAL-B port.
 
 Before choosing a motion item, read [motion safety](../../docs/api/body.md#motion-safety-english): the application
 **cannot read the angle a servo actually reaches**. Clear the **entire travel** and keep manual power
@@ -26,11 +24,12 @@ build the example:
 
 ```sh
 idf.py -C examples/hardware_check build
+idf.py -C examples/hardware_check -p PORT flash monitor
 ```
 
 Expected output: `examples/hardware_check/build/watcher_hw_hardware_check.bin` and matching flash files; building does not write to the device.
 The project uses ESP32-S3, 16 MB flash, custom partitions, 80 MHz octal PSRAM and LVGL 8.4.0.
-After the device safety checks above, follow the [official ESP-IDF flashing and monitoring workflow](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html) for this project, using the verified ESP32 SERIAL-B port.
+Replace PORT with the ESP32 SERIAL-B port. Flashing replaces the application and partitions; back up needed data first.
 
 Expected log: `Hardware check v2 | curved zones`. Expected screen: **Hardware check**.
 No test starts automatically. Exit monitor with Ctrl+].
@@ -58,6 +57,8 @@ results. All results are in RAM and disappear on reboot: save them externally.
 | Motion | Separate safety confirmation for each axis and STOP test | Safe movement and a physically observed stop |
 | Together | Twenty seconds of camera, voice, alternating green zones and touch events | Components work together, with no motor or simultaneous record/play |
 
+The touch test waits for short- and long-press events. Long press depends on the sensor and firmware; for short-press-only devices, use Back and Skip to leave the item.
+
 ### Motion result
 
 The red **STOP** stays red while waiting; duplicate requests are disabled.
@@ -66,9 +67,7 @@ Natural completion counts as an issue in the stop test. Motion errors lock body
 controls until reboot. Disconnection prevents STOP delivery, so paired STM32 safety
 is required. Reboot is not proof that the cause of a fault has been removed.
 
-You do not need to run the old **Check position** step: the application cannot
-measure actual servo angles. Interface compatibility details are in the
-[developer notes](../../docs/api/body.md#motion-safety-english).
+The application cannot measure actual servo angles. See [motion safety](../../docs/api/body.md#motion-safety-english).
 
 ![Software-rendered motion safety page showing reference pose, whole-travel warning and no position sensor](../../docs/images/hardware-check-motion-safety.png)
 Illustration retained from the [original public artwork](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png); not a device photograph.
@@ -113,7 +112,7 @@ bash examples/hardware_check/verify.sh --port <PORT>
 ```
 
 Optional `--log <LOCAL_LOG_PATH>` saves diagnostics. Exit code 0 means the sequence
-completed, 1 timeout/mismatch, 2 invalid arguments. Success is not physical acceptance.
+completed, 1 timeout/mismatch, 2 invalid arguments.
 Review logs for device identifiers/private images before sharing.
 
 Manual monitor commands: `diag status`, `diag photo`, `diag stream`, `diag record`,
@@ -131,18 +130,4 @@ Body touch | Pass | Press and release events appeared for the tested sensor
 X-axis motion | Untested | Safe space for the entire travel was not available
 ```
 
-Add `Date | Operator | Board/version | STM32 firmware version | Himax firmware version |
-SDK revision | Build/toolchain`. Get the SDK revision with `git rev-parse HEAD` and the
-IDF version with `idf.py --version`, from repository root. Note any local changes.
-If an identity is unknown, write `unknown` and obtain it before relying on compatibility;
-do not invent a value. You do not need internal source SHAs to record observations.
-Issue/Skip is not Pass. Missing image, silent audio, lost events, failure to stop or
-unsafe motion means failed/blocked; do not tap Next just to finish.
-
-For a detailed engineering report, also attach firmware/image hashes, build logs and
-source provenance if available. Upstream source identifiers are in repository-root
-[`SOURCE.json`](../../SOURCE.json); they describe source origin, not the device's installed
-firmware. They are not required fields for the simple observation log.
-
-Host tests do not replace these observations. For recovery use the [Wiki full recovery procedure](https://wiki.orulink.ai/docs/flashing#full), never
-guessed flash offsets or private-workspace scripts.
+Results are held in memory and cleared on reboot. To report a problem, include the affected item, steps and error log.

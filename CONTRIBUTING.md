@@ -12,6 +12,26 @@ For changes to the SDK itself; application users should start with the [examples
 
 使用工作分支和 PR，说明修改及实际检查；同步中英文，保留来源、署名和许可，不提交生成物或敏感资料。
 
+## Documentation locations / 文档归属
+
+| Location / 位置 | Owns / 唯一主要职责 |
+| --- | --- |
+| Root README files | Product overview, support boundaries and first-run links / 产品及入口 |
+| `docs/getting-started*.md` | One continuous source-to-device tutorial / 完整上手步骤 |
+| `docs/features.md` | Feature → source → documentation map, including missing tutorials / 功能对照 |
+| `docs/hardware-compatibility.md` | Hardware/firmware conditions, layout and validation limits / 配套条件 |
+| `docs/model-deployment.md` | Model acquisition, package selection and provisioning procedure / 模型获取与安装流程 |
+| `docs/api/` | Parameters, lifecycle, errors and advanced vision / 功能调用契约 |
+| `examples/<name>/README.md` | Build, expected behavior and modification points for that application / 示例说明 |
+| Component README files | Component scope and internal contracts; link to application guides / 内部组件说明 |
+| `tools/packaging/README.md` | Maintainer package validation / 维护者打包流程 |
+
+Keep raw logs, backups, review reports and transient plans outside the source tree or in CI/PR evidence. Avoid duplicate tutorials in component READMEs. New runnable tutorials belong in the IDF example matrix; code snippets must match a built example or have separate compile evidence. Keep English/Chinese entry points aligned and distinguish build, diagnostic and operator acceptance.
+原始日志、备份和临时审查记录留在仓库外或 CI/PR，不另建零散报告目录。新增教程以实际构建示例为依据，不把链接检查通过写成实机通过。
+
+Keep product release versions, versioned asset URLs, image hashes and dated verification results in release manifests and validation records. General tutorials focus on prerequisites, commands, expected results and common errors, linking to compatible releases. Leave integrity checks to the tools; do not make users manually audit manifests, hashes or CRCs as routine setup. Build dependencies remain defined by manifests and lock files.
+通用教程围绕准备、操作、预期结果和常见问题编写，链接到适用的发布入口。产品版本、镜像哈希和单次测试结果留在发布清单与验证记录中；文件校验由工具完成，不把手工检查清单、哈希和 CRC 作为日常上手步骤。构建依赖以工程声明和锁文件为准。
+
 ## Checks / 修改后检查
 
 Run from the **repository root** using an isolated Python environment with

@@ -26,9 +26,6 @@ static captured_frame_t s_history[8];
 static unsigned s_history_count;
 static uint32_t s_frame_gap_ms[8];
 static unsigned s_frame_gap_count;
-static mcu_motion_servo_feedback_t s_feedback;
-static unsigned s_feedback_count;
-static void *s_feedback_ctx;
 static mcu_motion_lifecycle_event_t s_lifecycle_event;
 static unsigned s_lifecycle_count;
 static void *s_lifecycle_ctx;
@@ -89,12 +86,9 @@ esp_err_t mcu_link_send_frame(mcu_link_t *link, uint8_t msg_class, uint8_t msg_i
 static void reset_capture(void) {
     memset(&s_captured, 0, sizeof(s_captured));
     memset(s_history, 0, sizeof(s_history));
-    memset(&s_feedback, 0, sizeof(s_feedback));
     s_history_count = 0u;
     memset(s_frame_gap_ms, 0, sizeof(s_frame_gap_ms));
     s_frame_gap_count = 0u;
-    s_feedback_count = 0u;
-    s_feedback_ctx = NULL;
     memset(&s_lifecycle_event, 0, sizeof(s_lifecycle_event));
     s_lifecycle_count = 0u;
     s_lifecycle_ctx = NULL;
@@ -102,7 +96,6 @@ static void reset_capture(void) {
     s_motion_access = true;
     s_revoke_at_gap = 0u;
     s_fail_msg_id = 0u;
-    assert(mcu_motion_set_servo_feedback_callback(NULL, NULL) == ESP_OK);
     assert(mcu_motion_set_lifecycle_callback(NULL, NULL) == ESP_OK);
 }
 
@@ -123,13 +116,6 @@ void mcu_motion_test_record_frame_gap(uint32_t delay_ms) {
 bool mcu_motion_test_source_has_access(mcu_motion_source_t source) {
     (void)source;
     return s_motion_access;
-}
-
-static void capture_feedback(const mcu_motion_servo_feedback_t *feedback, void *ctx) {
-    assert(feedback != NULL);
-    s_feedback = *feedback;
-    s_feedback_ctx = ctx;
-    s_feedback_count++;
 }
 
 static void capture_lifecycle(const mcu_motion_lifecycle_event_t *event, void *ctx) {
@@ -407,8 +393,7 @@ static void test_chunked_sequence_sends_begin_chunks_and_end(void) {
     assert(s_frame_gap_ms[2] >= 40u);
 }
 
-static void test_motion_state_feedback_uses_stm32_payload_layout(void) {
-    int sentinel = 0;
+static void test_legacy_motion_state_is_ignored(void) {
     mcu_link_event_t event = {
         .type = MCU_LINK_RX_EVENT_SERVO_FEEDBACK,
         .frame =
@@ -439,14 +424,13 @@ static void test_motion_state_feedback_uses_stm32_payload_layout(void) {
 
     reset_capture();
 
-    assert(mcu_motion_set_servo_feedback_callback(capture_feedback, &sentinel) == ESP_ERR_NOT_SUPPORTED);
+    assert(mcu_motion_set_lifecycle_callback(capture_lifecycle, NULL) == ESP_OK);
     assert(mcu_motion_service_handle_link_event(&event) == ESP_OK);
-    assert(s_feedback_count == 0u);
+    assert(s_lifecycle_count == 0u);
     assert(s_captured.send_count == 0);
 }
 
-static void test_servo_feedback_rsp_uses_compact_payload_layout(void) {
-    int sentinel = 0;
+static void test_legacy_servo_feedback_is_ignored(void) {
     mcu_link_event_t event = {
         .type = MCU_LINK_RX_EVENT_SERVO_FEEDBACK,
         .frame =
@@ -473,9 +457,9 @@ static void test_servo_feedback_rsp_uses_compact_payload_layout(void) {
 
     reset_capture();
 
-    assert(mcu_motion_set_servo_feedback_callback(capture_feedback, &sentinel) == ESP_ERR_NOT_SUPPORTED);
+    assert(mcu_motion_set_lifecycle_callback(capture_lifecycle, NULL) == ESP_OK);
     assert(mcu_motion_service_handle_link_event(&event) == ESP_OK);
-    assert(s_feedback_count == 0u);
+    assert(s_lifecycle_count == 0u);
     assert(s_captured.send_count == 0);
 }
 
@@ -538,14 +522,6 @@ int main(int argc, char **argv) {
         assert(mcu_motion_submit_tracked_sequence(&sequence, &receipt) == ESP_ERR_INVALID_ARG);
         assert(s_history_count == 0u && receipt.segment_count == 0u);
     }
-    reset_capture();
-    s_ready = false;
-    assert(mcu_motion_request_feedback() == ESP_ERR_NOT_SUPPORTED);
-    assert(s_captured.send_count == 0);
-    s_ready = true;
-    assert(mcu_motion_request_feedback() == ESP_ERR_NOT_SUPPORTED);
-    assert(s_captured.send_count == 0);
-    assert(s_captured.payload_len == 0);
     test_stop_clears_pending_motion_queue();
     test_sequence_encodes_segments_into_single_frame();
     test_direct_target_encodes_axis_angle_and_source();
@@ -555,7 +531,7 @@ int main(int argc, char **argv) {
     test_motion_lifecycle_callback_preserves_ref_seq_and_terminal_result();
     test_motion_lifecycle_callback_reports_rejection();
     test_motion_lifecycle_ignores_other_services_and_keeps_recent_sequences();
-    test_motion_state_feedback_uses_stm32_payload_layout();
-    test_servo_feedback_rsp_uses_compact_payload_layout();
+    test_legacy_motion_state_is_ignored();
+    test_legacy_servo_feedback_is_ignored();
     return 0;
 }

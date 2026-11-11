@@ -19,6 +19,8 @@ typedef struct {
     uint8_t count;
     watcher_hx_box_t boxes[8];
 } watcher_hx_result_t;
+/* NOT_FINISHED returns the generation and a zero snapshot. The lifecycle
+ * owner must bound startup waiting and reject pending after a valid frame. */
 esp_err_t watcher_hx_control_boxes(watcher_hx_result_t *out);
 esp_err_t watcher_hx_control_catalog(uint32_t crc[4]);
 uint32_t watcher_hx_control_generation(void);

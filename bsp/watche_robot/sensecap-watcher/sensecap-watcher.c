@@ -60,6 +60,8 @@ static sscma_client_flasher_handle_t sscma_flasher_handle = NULL;
 static bool sscma_client_initialized = false;
 
 static lv_disp_t *lvgl_disp = NULL;
+/* LEDC channel/timer remain board-owned across display close/reopen. */
+static bool s_backlight_initialized;
 static esp_lcd_panel_io_handle_t panel_io_handle = NULL;
 static esp_lcd_panel_handle_t panel_handle = NULL;
 static esp_lcd_panel_io_handle_t tp_io_handle = NULL;
@@ -946,6 +948,8 @@ esp_err_t bsp_knob_btn_deinit(void *param) {
 }
 
 static esp_err_t bsp_lcd_backlight_init() {
+    if (s_backlight_initialized)
+        return bsp_lcd_brightness_set(0);
     const ledc_channel_config_t backlight_channel = {.gpio_num = BSP_LCD_GPIO_BL,
                                                      .speed_mode = LEDC_LOW_SPEED_MODE,
                                                      .channel = DRV_LCD_LEDC_CH,
@@ -960,6 +964,7 @@ static esp_err_t bsp_lcd_backlight_init() {
                                                  .clk_cfg = LEDC_AUTO_CLK};
     BSP_ERROR_CHECK_RETURN_ERR(ledc_timer_config(&backlight_timer));
     BSP_ERROR_CHECK_RETURN_ERR(ledc_channel_config(&backlight_channel));
+    s_backlight_initialized = true;
 
     BSP_ERROR_CHECK_RETURN_ERR(bsp_lcd_brightness_set(0));
 
@@ -1220,8 +1225,6 @@ lv_disp_t *bsp_lvgl_init_with_cfg(const bsp_display_cfg_t *cfg) {
     vTaskDelay(pdMS_TO_TICKS(20));
     if (lvgl_port_init(&cfg->lvgl_port_cfg) != ESP_OK)
         return NULL;
-    if (bsp_lcd_backlight_init() != ESP_OK)
-        return NULL;
     lvgl_disp = bsp_display_lcd_init(cfg);
     if (lvgl_disp != NULL) {
         lvgl_disp->driver->rounder_cb = bsp_lvgl_rounder_cb;
@@ -1257,7 +1260,9 @@ esp_err_t bsp_lvgl_deinit(void) {
         touch_indev = NULL;
     }
     if (knob_indev != NULL) {
-        lvgl_port_remove_encoder(knob_indev);
+        ret = lvgl_port_remove_encoder(knob_indev);
+        if (ret != ESP_OK)
+            return ret;
         knob_indev = NULL;
     }
     if (lvgl_disp != NULL) {
@@ -1297,7 +1302,7 @@ esp_err_t bsp_lvgl_deinit(void) {
         panel_io_handle = NULL;
     }
     ret = lvgl_port_deinit();
-    return ret == ESP_OK ? bsp_lcd_brightness_set(0) : ret;
+    return ret == ESP_OK && s_backlight_initialized ? bsp_lcd_brightness_set(0) : ret;
 }
 
 bool bsp_sdcard_is_inserted(void) {

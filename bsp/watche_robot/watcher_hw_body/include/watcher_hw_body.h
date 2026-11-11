@@ -31,8 +31,6 @@ typedef struct {
     uint32_t dropped;
     esp_err_t stop_result;
 } watcher_hw_body_event_loss_t;
-/* No physical feedback hardware: always ESP_ERR_NOT_SUPPORTED; emits no query/event. */
-esp_err_t watcher_hw_body_request_position(void);
 /* LED request uses existing zone/effect enums, RGB/brightness 0..255. */
 esp_err_t watcher_hw_body_light(const mcu_led_request_t *request);
 esp_err_t watcher_hw_body_next_event(watcher_hw_event_t *event);

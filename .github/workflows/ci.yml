@@ -97,7 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: [body, head, robot, hardware_check]
+        example: [hello_display, body, head, robot, hardware_check, face_detection]
     defaults:
       run:
         shell: bash

@@ -14,22 +14,22 @@ Combine the photo/audio screen with touch-controlled body lights; **no automatic
 - Compatible **STM32 body firmware** and matching **Himax PTL camera firmware** are required.
   运行需要兼容的 **STM32 身体固件**与匹配的 **Himax PTL 摄像固件**。
 
-## Build / 构建
+## Build and run / 构建与运行
 
-Run in an activated **ESP-IDF 6.0.2** terminal from the **repository root**:
-在已激活 **ESP-IDF 6.0.2** 的终端、**仓库根目录**执行：
+Run in an activated **ESP-IDF 6.0.2** terminal from the **repository root**. Replace PORT with the ESP32 SERIAL-B port. Flashing replaces the app and partitions; back up needed data first.
+在已激活 **ESP-IDF 6.0.2** 的终端、**仓库根目录**执行。PORT 替换为 ESP32 的 SERIAL-B 端口；首次烧录会替换原应用及分区，需保留的数据请先备份。
 
 ```sh
 idf.py --version
 idf.py -C examples/robot build
+idf.py -C examples/robot -p PORT flash monitor
 ```
 
 Expected output: `examples/robot/build/watcher_hw_robot.bin` and IDF flash files.
 预期产物为上述应用文件及 IDF 配套烧录文件；依赖下载需要网络，构建不会写入设备。
 Dependency downloads need network access; building does not write to a device.
 
-Before flashing, complete the [shared safety requirements](../README.md#before-flash-or-movement--烧录或运动前).
-烧录前先完成[共用安全要求](../README.md#before-flash-or-movement--烧录或运动前)。
+For port setup and recovery, see the [first-run guide](../../docs/getting-started.md) / [上手教程](../../docs/getting-started_zh.md)。
 If adding motion, read [motion safety](../../docs/api/body.md#motion-safety-english) /
 [运动安全](../../docs/api/body.md#motion-safety) before moving.
 
@@ -38,15 +38,14 @@ If adding motion, read [motion safety](../../docs/api/body.md#motion-safety-engl
 Use Photo, then Record and Play; inspect the picture and listen to the sound.
 Touch the body: green lights on; release: green lights off and a stop request. Check touch/light/stop logs.
 拍照并录音回放，亲自检查图像与声音；触摸身体应亮绿灯，松手应熄灯并请求停止，检查对应日志。
-Controls are disabled while busy/unavailable; progress or ACK/DONE does not prove quality or physical stopping.
-忙碌或不可用时控件会禁用；进度或 ACK/DONE 不证明图像声音质量或机械已停。
-For operator-confirmed checks, use [hardware_check](../hardware_check/README.md); untested is not passed.
-需要逐项人工验收请使用硬件体检；未测不算通过。
+Controls are disabled while busy or unavailable.
+忙碌或不可用时控件会禁用。
+For a guided hardware walkthrough, use [hardware_check](../hardware_check/README.md)。逐项体验硬件功能可运行硬件体检。
 
 ## Troubleshooting / 故障处理
 
-Keep error logs and `git rev-parse HEAD`; check power, connections and matching firmware first.
-保留错误日志与源码版本，先查供电、连接与固件配套；没有图像声音、触摸灯光不符不能通过。
+If something fails, check the error log, power, connections and matching firmware.
+查看错误日志，先查供电、连接与固件配套。
 If body events are lost, stop operating; do not repeatedly touch to unlock or automatically replay old actions.
 Reconnection or an empty queue does not clear the fault. Cancel pending actions; follow the [full body API contract](../../docs/api/body.md)
 for close/init outside callbacks, resubscription, a new READY and a **new user action**; do not separately poll its connection.

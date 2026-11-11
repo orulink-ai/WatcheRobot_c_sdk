@@ -8,8 +8,7 @@
 
 ## 1. 做好安全准备
 
-烧录前完成[上手、备份与官方恢复准备](../README.md)。核实配套 STM32/Himax
-兼容性及完整恢复包；任一不明确就停止。此示例运行于 ESP32，不是 Himax 或 STM32 端口。
+准备已连接并供电的头部和身体，环境安装见[上手教程](../../docs/getting-started_zh.md)。本示例烧录到 ESP32 的 SERIAL-B 端口。
 
 选择运动项前阅读[运动安全](../../docs/api/body.md#motion-safety)：应用**不能读取舵机实际转到的角度**。
 清空**完整行程**，保证能人工断电。先命令 **X90/Y120**，再 **X93/Y120** 或 **X90/Y123**。
@@ -22,11 +21,12 @@
 
 ```sh
 idf.py -C examples/hardware_check build
+idf.py -C examples/hardware_check -p PORT flash monitor
 ```
 
 预期生成 `examples/hardware_check/build/watcher_hw_hardware_check.bin` 及配套烧录文件；构建不会写入设备。
 工程使用 ESP32-S3、16 MB flash、自定义分区、80 MHz 八线 PSRAM 和 LVGL 8.4.0。
-完成上述设备安全检查后，按[乐鑫官方烧录与监视流程](https://docs.espressif.com/projects/esp-idf/zh_CN/v6.0.2/esp32s3/get-started/index.html)操作本工程，使用已核实的 ESP32 SERIAL-B 端口。
+PORT 替换为 ESP32 的 SERIAL-B 端口。首次烧录会替换应用和分区，需保留的数据请先备份。
 
 预期日志：`Hardware check v2 | curved zones`；屏幕显示 **Hardware check**。
 不会自动开始测试。Ctrl+] 退出 monitor。
@@ -50,14 +50,15 @@ idf.py -C examples/hardware_check build
 | 运动 | 每个轴与 STOP 测试均单独安全确认 | 动作安全，实物确实停止 |
 | 组合 | 二十秒画面、语音、交替绿灯和触摸事件 | 同时工作，不驱动电机、不同时录音播放 |
 
+**身体触摸**：程序会等待轻触和长按事件。长按取决于传感器及固件支持；设备只有短按时，用 Back 退出该项并选择 Skip。
+
 ### 如何判断运动结果
 
 红色 **STOP** 等待结果时保持红色，不能重复提交。`DONE/STOPPED` 只是软件报告，
 仍须看见实物停住。停止测试若自然完成，应记问题。运动错误锁定身体控制直到重启；
 断线无法送达 STOP，必须依赖配套 STM32 安全机制。重启不代表故障原因已经消除。
 
-无需执行旧 **Check position** 步骤：应用不能测量舵机实际角度。
-接口兼容细节见[安全指南末尾的开发接口说明](../../docs/api/body.md#motion-safety)。
+舵机没有实际位置查询；运动说明见[运动安全](../../docs/api/body.md#motion-safety)。
 
 ![软件渲染的运动安全页：参考姿态、完整行程警告和无位置传感器说明](../../docs/images/hardware-check-motion-safety.png)
 配图沿用[原公开示意图](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png)，不是实物照片。
@@ -95,7 +96,7 @@ bash examples/hardware_check/verify.sh --port <PORT>
 ```
 
 可加 `--log <LOCAL_LOG_PATH>` 保存诊断。退出码 0 表示流程完成，1 超时／结果不匹配，
-2 参数错误；成功不等于实机验收。分享日志前检查设备标识及私人图像。
+2 参数错误。分享日志前检查设备标识及私人图像。
 
 monitor 手动命令：`diag status`、`diag photo`、`diag stream`、`diag record`、
 `diag cancel`、`diag reset`、`diag snapshot`。没有串口电机／灯／扬声器命令。
@@ -111,15 +112,4 @@ monitor 手动命令：`diag status`、`diag photo`、`diag stream`、`diag reco
 X 轴运动｜未测｜未能清空整个运动行程
 ```
 
-另附 `日期｜操作者｜板卡/版本｜STM32 固件版本｜Himax 固件版本｜SDK 版本｜构建/工具链`。
-在仓库根目录用 `git rev-parse HEAD` 查看 SDK 版本，用 `idf.py --version` 查看 IDF 版本，
-并注明是否有本地修改。不知道的标识写“未知”，不能猜填；确认兼容性前须补查相关版本。
-记录观察结果不需要先填满内部源码 SHA。Issue／Skip 不等于 Pass。
-无图、无声、丢事件、停不住或运动不安全均记失败／阻塞，不要为了完成流程而点 Next。
-
-若需详细工程报告，可另外附固件／镜像哈希、构建日志和可取得的源码来源信息。
-上游源码标识在仓库根目录的 [`SOURCE.json`](../../SOURCE.json)，它记录源码来源，
-不代表设备当前安装的固件；这些标识不是简单观察记录的必填项。
-
-主机测试不代替本次实物观察。恢复按
-[Wiki 完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)，不猜烧录地址，不用私有工作区脚本。
+结果保存在内存中，重启会清除。需要反馈问题时，附上发生问题的项目、操作步骤和错误日志即可。

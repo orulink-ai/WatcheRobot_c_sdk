@@ -14,22 +14,22 @@ The example logs touch events and does **not** automatically start servo movemen
   ESP32-S3、**16 MB flash**、自定义分区及兼容的 **STM32 身体固件**，用于灯光、触摸与运动。
 - Body defaults do not enable PSRAM. / body 默认不启用 PSRAM。
 
-## Build / 构建
+## Build and run / 构建与运行
 
-Run in an activated **ESP-IDF 6.0.2** terminal from the **repository root**:
-在已激活 **ESP-IDF 6.0.2** 的终端、**仓库根目录**执行：
+Run in an activated **ESP-IDF 6.0.2** terminal from the **repository root**. Replace PORT with the ESP32 SERIAL-B port. Flashing replaces the app and partitions; back up needed data first.
+在已激活 **ESP-IDF 6.0.2** 的终端、**仓库根目录**执行。PORT 替换为 ESP32 的 SERIAL-B 端口；首次烧录会替换原应用及分区，需保留的数据请先备份。
 
 ```sh
 idf.py --version
 idf.py -C examples/body build
+idf.py -C examples/body -p PORT flash monitor
 ```
 
 Expected output: `examples/body/build/watcher_hw_body.bin` and IDF flash files.
 预期产物为上述应用文件及 IDF 配套烧录文件；依赖下载需要网络，构建不会写入设备。
 Dependency downloads need network access; building does not write to a device.
 
-Before flashing, complete the [shared safety requirements](../README.md#before-flash-or-movement--烧录或运动前).
-烧录前先完成[共用安全要求](../README.md#before-flash-or-movement--烧录或运动前)。
+For port setup and recovery, see the [first-run guide](../../docs/getting-started.md) / [上手教程](../../docs/getting-started_zh.md)。
 If adding motion, read [motion safety](../../docs/api/body.md#motion-safety-english) /
 [运动安全](../../docs/api/body.md#motion-safety) before moving.
 
@@ -39,13 +39,12 @@ Touch: green light on; release: green light off and a stop request.
 Check `touch=... code=...` events and `light:` / release-triggered `stop:` results (`ESP_OK` on success).
 触摸应亮绿灯，松手应熄灯并请求停止；检查对应触摸日志及灯光、停止请求结果。
 A successful request does not prove physical stopping. / 请求成功不证明机械已停。
-For operator-confirmed checks, use [hardware_check](../hardware_check/README.md); untested is not passed.
-需要逐项人工验收请使用硬件体检；未测不算通过。
+For a guided hardware walkthrough, use [hardware_check](../hardware_check/README.md)。逐项体验硬件功能可运行硬件体检。
 
 ## Troubleshooting / 故障处理
 
-Keep error logs and `git rev-parse HEAD`; check power, connections and matching firmware first.
-保留错误日志与源码版本，先查供电、连接与固件配套；触摸事件缺失或灯光不符不能通过。
+If something fails, check the error log, power, connections and matching firmware.
+出现问题时查看错误日志，先查供电、连接与固件配套。
 If events are lost, stop operating; do not repeatedly touch to unlock or automatically replay old actions.
 Reconnection or clearing queued events does not clear the fault. Cancel pending actions and follow the
 [complete body API recovery contract](../../docs/api/body.md): close/init outside callbacks, resubscribe,

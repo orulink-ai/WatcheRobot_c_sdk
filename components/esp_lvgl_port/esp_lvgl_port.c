@@ -558,11 +558,17 @@ esp_err_t lvgl_port_remove_encoder(lv_indev_t *encoder) {
     lvgl_port_encoder_ctx_t *encoder_ctx = (lvgl_port_encoder_ctx_t *)indev_drv->user_data;
 
     if (encoder_ctx->knob_handle != NULL) {
-        iot_knob_delete(encoder_ctx->knob_handle);
+        esp_err_t ret = iot_knob_delete(encoder_ctx->knob_handle);
+        if (ret != ESP_OK)
+            return ret;
+        encoder_ctx->knob_handle = NULL;
     }
 
     if (encoder_ctx->btn_handle != NULL) {
-        iot_button_delete(encoder_ctx->btn_handle);
+        esp_err_t ret = iot_button_delete(encoder_ctx->btn_handle);
+        if (ret != ESP_OK)
+            return ret;
+        encoder_ctx->btn_handle = NULL;
     }
 
     if (encoder_ctx != NULL) {

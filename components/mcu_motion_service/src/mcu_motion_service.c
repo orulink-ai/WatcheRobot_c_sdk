@@ -1003,26 +1003,6 @@ esp_err_t mcu_motion_pwm_lock(const mcu_motion_pwm_lock_request_t *request) {
     return ret;
 }
 
-esp_err_t mcu_motion_set_servo_feedback_callback(mcu_motion_servo_feedback_cb_t cb, void *ctx) {
-    (void)ctx;
-    return cb == NULL ? ESP_OK : ESP_ERR_NOT_SUPPORTED;
-#if 0 /* Retired: current robot has no physical servo feedback. */
-    s_servo_feedback_cb = cb;
-    s_servo_feedback_ctx = ctx;
-    return ESP_OK;
-#endif
-}
-
-esp_err_t mcu_motion_request_feedback(void) {
-    return ESP_ERR_NOT_SUPPORTED;
-#if 0 /* Retired: current robot has no physical servo feedback. */
-    mcu_link_t *link = mcu_link_bootstrap_get_link();
-    if (link == NULL || !mcu_link_bootstrap_is_ready())
-        return ESP_ERR_INVALID_STATE;
-    return mcu_link_send_frame(link, MCU_FRAME_CLASS_MOTION, MCU_MOTION_MSG_SERVO_FEEDBACK_REQ, 0, NULL, 0, NULL, NULL);
-#endif
-}
-
 esp_err_t mcu_motion_set_lifecycle_callback(mcu_motion_lifecycle_cb_t cb, void *ctx) {
     bool callback_active;
 

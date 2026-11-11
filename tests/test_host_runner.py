@@ -34,6 +34,8 @@ def test_discovery_preserves_all_migrated_repository_suites():
          'examples/hardware_check/test_support/host',
          'examples/common/test_support/host'}
     assert len(expected) == 19
+    expected |= {'bsp/watche_robot/sensecap-watcher/test_support/host',
+                 'components/hal_camera/test_support/host'}
     assert {p.relative_to(root).as_posix() for p in module.discover(root)} == expected
 
 

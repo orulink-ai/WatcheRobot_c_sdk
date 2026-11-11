@@ -6,6 +6,10 @@
 # 必须用配置阶段脚本持久化。脚本幂等：已打过补丁则跳过，driver 未拉取时也安全跳过。
 #
 # Python 解释器优先级：IDF 的 PYTHON 变量 > find_package(Python3) 缓存 > 退化到系统 python。
+set(KNOB_SOURCE "${PROJECT_DIR}/managed_components/espressif__knob/iot_knob.c")
+if(EXISTS "${KNOB_SOURCE}")
+    include("${CMAKE_CURRENT_LIST_DIR}/patch_knob_cleanup.cmake")
+endif()
 get_filename_component(_official_project "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
 if(NOT PROJECT_DIR STREQUAL _official_project)
     # Standalone projects own their managed dependencies. Never patch the

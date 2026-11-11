@@ -13,7 +13,8 @@ def test_ci_installs_relocated_requirements_without_changing_matrix():
         assert '-r packaging/requirements.txt' not in commands
     assert jobs['host']['strategy']['matrix'] == {
         'os': ['ubuntu-latest', 'windows-latest'], 'config': ['Debug', 'Release']}
-    assert jobs['idf-examples']['strategy']['matrix']['example'] == ['body', 'head', 'robot', 'hardware_check']
+    assert jobs['idf-examples']['strategy']['matrix']['example'] == [
+        'hello_display', 'body', 'head', 'robot', 'hardware_check', 'face_detection']
     assert set(jobs) == {'python-and-docs', 'host', 'idf-examples', 'package-validation'}
 
 

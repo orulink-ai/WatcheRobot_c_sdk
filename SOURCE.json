@@ -27,8 +27,8 @@
       "source": "examples/hardware_sdk/body/main/app_main.c",
       "destination": "examples/body/main/app_main.c",
       "source_sha256": "0462bacb3dd4926b4c0357e78ba8c74ebe3b8a451d803d5f331bec5675dc4a5a",
-      "sha256": "0462bacb3dd4926b4c0357e78ba8c74ebe3b8a451d803d5f331bec5675dc4a5a",
-      "transform": null
+      "sha256": "1ddbb623d11e74f32786ae6722c0cc8a389ca8c4f0e0a8c138408f655f88b348",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants"
     },
     {
       "source": "examples/hardware_sdk/body/main/idf_component.yml",
@@ -71,8 +71,8 @@
       "source": "examples/hardware_sdk/common/check_body.c",
       "destination": "examples/common/check_body.c",
       "source_sha256": "82df30dcd5d32127d11321f2f57586e7bf2703c2e7411386ee8676e32b80c618",
-      "sha256": "82df30dcd5d32127d11321f2f57586e7bf2703c2e7411386ee8676e32b80c618",
-      "transform": null
+      "sha256": "73d438bbdb88c566d9e45c31893bd2168ccdb45fc12c0ee6105722b4c2f3c1ed",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants"
     },
     {
       "source": "examples/hardware_sdk/common/check_body.h",
@@ -213,8 +213,8 @@
       "source": "examples/hardware_sdk/common/test_support/host/test_check_body.c",
       "destination": "examples/common/test_support/host/test_check_body.c",
       "source_sha256": "5fca65f5c7c7af43f22ed6f8d3d8a075e4d5e3ef004c992fada2fd17ce4055a3",
-      "sha256": "5fca65f5c7c7af43f22ed6f8d3d8a075e4d5e3ef004c992fada2fd17ce4055a3",
-      "transform": null
+      "sha256": "5a55f75c10fa1b77bfe0f90428e6421ef416d727f4fb59fef7fe9ec209bb42b8",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants"
     },
     {
       "source": "examples/hardware_sdk/common/test_support/host/test_check_flow.c",
@@ -290,8 +290,8 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "cbf2af4cda75083180481522534af05f59883c617edf6d9269cedceda8af3665",
-      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained",
+      "sha256": "0e1fd00633c897df692ddcf652953983ed2b8c4518eac1c83421371a65972990",
+      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained; Align documentation with current SDK APIs, PTL backend and tutorial entry points; Focus documentation on setup and feature use; Simplify user documentation",
       "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
       "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
       "imported_destination": "examples/hardware_check/README.md"
@@ -555,8 +555,8 @@
       "source": "examples/hardware_sdk/robot/main/app_main.c",
       "destination": "examples/robot/main/app_main.c",
       "source_sha256": "c0afd4b5afa41a0637adbda9388b09de8d1b9bcc4466898fe1919afe81c245c3",
-      "sha256": "c0afd4b5afa41a0637adbda9388b09de8d1b9bcc4466898fe1919afe81c245c3",
-      "transform": null
+      "sha256": "7f7b1239faad226e27062f753e5bdb2ecea7e7a8f0ee42e0d04a1557e6839c94",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants"
     },
     {
       "source": "examples/hardware_sdk/robot/main/idf_component.yml",
@@ -1194,8 +1194,8 @@
       "source": "firmware/s3/components/esp_lvgl_port/esp_lvgl_port.c",
       "destination": "components/esp_lvgl_port/esp_lvgl_port.c",
       "source_sha256": "392d84ce563860c538e3b87561bc4c7bc9a6c3e167d370885cfa99b24aa907c6",
-      "sha256": "392d84ce563860c538e3b87561bc4c7bc9a6c3e167d370885cfa99b24aa907c6",
-      "transform": null
+      "sha256": "e5d71d450ce6b3f3c0f8fc84e34f79b5565cebf062e6199ee4770c6774797f08",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage"
     },
     {
       "source": "firmware/s3/components/esp_lvgl_port/idf_component.yml",
@@ -1295,8 +1295,8 @@
       "source": "firmware/s3/components/hal/hal_camera/include/hal_camera.h",
       "destination": "components/hal_camera/include/hal_camera.h",
       "source_sha256": "f7cb8b7304d189305dae5980f60667a9a95b57c5d3f5211d206235adeffd856f",
-      "sha256": "f7cb8b7304d189305dae5980f60667a9a95b57c5d3f5211d206235adeffd856f",
-      "transform": null,
+      "sha256": "338a8207d7f6ece76835ce43a7af249674d98f4f8787907844791eb6660d6279",
+      "transform": "Align documentation with current SDK APIs, PTL backend and tutorial entry points",
       "imported_destination": "components/hal/hal_camera/include/hal_camera.h"
     },
     {
@@ -1319,8 +1319,8 @@
       "source": "firmware/s3/components/hal/hal_camera/src/hal_camera_ptl.c",
       "destination": "components/hal_camera/src/hal_camera_ptl.c",
       "source_sha256": "74145f5dd073306c00dfc2a9a6111d88aeeaf443d1cdd68ec4fca3e4f6b5ec83",
-      "sha256": "74145f5dd073306c00dfc2a9a6111d88aeeaf443d1cdd68ec4fca3e4f6b5ec83",
-      "transform": null,
+      "sha256": "6426d0a563f137b888040efe626c20d1aed8d1ca171b3e50c8c564fbf24bf38d",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage",
       "imported_destination": "components/hal/hal_camera/src/hal_camera_ptl.c"
     },
     {
@@ -2174,16 +2174,16 @@
       "source": "firmware/s3/components/sdk/watcher_hw_body/include/watcher_hw_body.h",
       "destination": "bsp/watche_robot/watcher_hw_body/include/watcher_hw_body.h",
       "source_sha256": "3f5d0553423ef036acca2e481706e6897b12d9aa711ff619de0cdc61f37975bf",
-      "sha256": "3f5d0553423ef036acca2e481706e6897b12d9aa711ff619de0cdc61f37975bf",
-      "transform": null,
+      "sha256": "94433b95bbe8d812075c480b72875256987691cc6effbc4a43d24e74e3df8faf",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/sdk/watcher_hw_body/include/watcher_hw_body.h"
     },
     {
       "source": "firmware/s3/components/sdk/watcher_hw_body/test_support/host/CMakeLists.txt",
       "destination": "bsp/watche_robot/watcher_hw_body/test_support/host/CMakeLists.txt",
       "source_sha256": "c3dfdb52ee453707a7dc42753c9098e890e1bbe7089b699c45c2151c30bc3f3d",
-      "sha256": "4f572c26e636573abcecb89f04787a2a7316ca439e589084c0cb52fdf62cf22d",
-      "transform": "ESP-BSP-style directory relocation and path-only build/documentation adaptation; original source identity and hashes preserved",
+      "sha256": "75ac55becb9f6a60beeb42e780f5d098b6f22c4c0ccf4bd7cb5d4a43dbdaabeb",
+      "transform": "ESP-BSP-style directory relocation and path-only build/documentation adaptation; original source identity and hashes preserved; Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/sdk/watcher_hw_body/test_support/host/CMakeLists.txt",
       "imported_sha256": "c3dfdb52ee453707a7dc42753c9098e890e1bbe7089b699c45c2151c30bc3f3d",
       "imported_transform": null
@@ -2240,16 +2240,16 @@
       "source": "firmware/s3/components/sdk/watcher_hw_body/test_support/host/test_body.c",
       "destination": "bsp/watche_robot/watcher_hw_body/test_support/host/test_body.c",
       "source_sha256": "32f3f8e7780bcd59b953ac935d32673fdfd301da7f8f9af17675fad4e99b46b8",
-      "sha256": "32f3f8e7780bcd59b953ac935d32673fdfd301da7f8f9af17675fad4e99b46b8",
-      "transform": null,
+      "sha256": "d1b87f1370362806b468d71cdac5e3bffac565c70bc1d9b7008c89a7c359c08d",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/sdk/watcher_hw_body/test_support/host/test_body.c"
     },
     {
       "source": "firmware/s3/components/sdk/watcher_hw_body/watcher_hw_body.c",
       "destination": "bsp/watche_robot/watcher_hw_body/watcher_hw_body.c",
       "source_sha256": "f32462e5f72a9945d4dabbefeb69b92000a95561ffa6b3121ad03da93233a918",
-      "sha256": "f32462e5f72a9945d4dabbefeb69b92000a95561ffa6b3121ad03da93233a918",
-      "transform": null,
+      "sha256": "c9b802be87f05f27c5575ed34a0f746afd7da014bdf01b6362a66346c7cb2f18",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/sdk/watcher_hw_body/watcher_hw_body.c"
     },
     {
@@ -2312,8 +2312,8 @@
       "source": "firmware/s3/components/sdk/watcher_hw_core/include/watcher_hw_core.h",
       "destination": "bsp/watche_robot/watcher_hw_core/include/watcher_hw_core.h",
       "source_sha256": "4f53d9dedb2a29733e3d5f327429f006eabf85978ce3ccad49adc40d8c045cc1",
-      "sha256": "4f53d9dedb2a29733e3d5f327429f006eabf85978ce3ccad49adc40d8c045cc1",
-      "transform": null,
+      "sha256": "a4908c33371858887e7c99baf1a7d02ac0009370f64108f276c5b31ace729ab7",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/sdk/watcher_hw_core/include/watcher_hw_core.h"
     },
     {
@@ -2508,8 +2508,8 @@
       "source": "firmware/s3/components/sensecap-watcher/patches.cmake",
       "destination": "bsp/watche_robot/sensecap-watcher/patches.cmake",
       "source_sha256": "81a75eb81bfe9ee08c1e32933639cd1b054a5f03b98b0842618f3c4f0d1c6225",
-      "sha256": "c35f28dcfcf26fbe2852e96ba5aec3716ae6590664167295fdd393881ce42e99",
-      "transform": "ESP-BSP-style directory relocation and path-only build/documentation adaptation; original source identity and hashes preserved",
+      "sha256": "0394254ea7e8b24e66fd27682eaac34716fe38c5b11050962442321ec987f8be",
+      "transform": "ESP-BSP-style directory relocation and path-only build/documentation adaptation; original source identity and hashes preserved; Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage",
       "imported_destination": "components/sensecap-watcher/patches.cmake",
       "imported_sha256": "81a75eb81bfe9ee08c1e32933639cd1b054a5f03b98b0842618f3c4f0d1c6225",
       "imported_transform": null
@@ -2518,8 +2518,8 @@
       "source": "firmware/s3/components/sensecap-watcher/sensecap-watcher.c",
       "destination": "bsp/watche_robot/sensecap-watcher/sensecap-watcher.c",
       "source_sha256": "2d36b41f4226ea9e6b1c54c8348e2dfe935b5043ba553fd2e1486dd16bd1ac87",
-      "sha256": "2d36b41f4226ea9e6b1c54c8348e2dfe935b5043ba553fd2e1486dd16bd1ac87",
-      "transform": null,
+      "sha256": "89a0db05337d567e05cf554457075eb8d2836666097b4e2e762b201c2af279ff",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage",
       "imported_destination": "components/sensecap-watcher/sensecap-watcher.c"
     },
     {
@@ -2608,16 +2608,16 @@
       "source": "firmware/s3/components/services/mcu_motion_service/include/mcu_motion_service.h",
       "destination": "components/mcu_motion_service/include/mcu_motion_service.h",
       "source_sha256": "9448c8ef40f3c486a3e10e7748dfd83200c7e7c569ffcdc4d91a9e7ac0df6487",
-      "sha256": "9448c8ef40f3c486a3e10e7748dfd83200c7e7c569ffcdc4d91a9e7ac0df6487",
-      "transform": null,
+      "sha256": "84b80bb2f152131c29f211aad90f417b8087ab126792be97a7fbf3e1ca81d0ee",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/services/mcu_motion_service/include/mcu_motion_service.h"
     },
     {
       "source": "firmware/s3/components/services/mcu_motion_service/src/mcu_motion_service.c",
       "destination": "components/mcu_motion_service/src/mcu_motion_service.c",
       "source_sha256": "5e634a8e20d60a710e73778ddbcafa512ef0cb0e8f5aedcecf4e047eb57f5e8e",
-      "sha256": "5e634a8e20d60a710e73778ddbcafa512ef0cb0e8f5aedcecf4e047eb57f5e8e",
-      "transform": null,
+      "sha256": "606a5db5ce83585697ada6f8bce839eaffa3d8f42aae6cd0fb0fbb59e3b8b49d",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/services/mcu_motion_service/src/mcu_motion_service.c"
     },
     {
@@ -2672,8 +2672,8 @@
       "source": "firmware/s3/components/services/mcu_motion_service/test_support/host/src/test_mcu_motion_service.c",
       "destination": "components/mcu_motion_service/test_support/host/src/test_mcu_motion_service.c",
       "source_sha256": "140bb98989414ee1f9c8b7756fe1f4732793143771854118b866e0b91f9717e9",
-      "sha256": "140bb98989414ee1f9c8b7756fe1f4732793143771854118b866e0b91f9717e9",
-      "transform": null,
+      "sha256": "09c351b8f7e51dde1fa6e88b02f15bb8768613a105b04782a96057914552b1c4",
+      "transform": "Guard example startup failures and/or remove unsupported servo-position API remnants",
       "imported_destination": "components/services/mcu_motion_service/test_support/host/src/test_mcu_motion_service.c"
     },
     {
@@ -3039,8 +3039,8 @@
       "source": "firmware/s3/components/watcher_hx_ptl/include/watcher_hx_control.h",
       "destination": "components/watcher_hx_ptl/include/watcher_hx_control.h",
       "source_sha256": "403a9353b8a06399676315587ddc29893883d52f0c8ed2b4e730ab1beea48ce4",
-      "sha256": "403a9353b8a06399676315587ddc29893883d52f0c8ed2b4e730ab1beea48ce4",
-      "transform": null
+      "sha256": "6c8b3ae271c7d12a70780db9b53a1aa579b1787be8d4c934b6d698e216edcb3f",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage"
     },
     {
       "source": "firmware/s3/components/watcher_hx_ptl/include/watcher_hx_ptl.h",
@@ -3067,8 +3067,8 @@
       "source": "firmware/s3/components/watcher_hx_ptl/test_support/host/stubs/esp_err.h",
       "destination": "components/watcher_hx_ptl/test_support/host/stubs/esp_err.h",
       "source_sha256": "fe8a9fcddbe1ea33bc8f6acc0e1449f948b320bc68c95721c3e10518a1d8d58b",
-      "sha256": "fe8a9fcddbe1ea33bc8f6acc0e1449f948b320bc68c95721c3e10518a1d8d58b",
-      "transform": null
+      "sha256": "01c7b49deb1f657acbf7b689bc3a0448ee3777854c69eea94ce42420b4bed0df",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage"
     },
     {
       "source": "firmware/s3/components/watcher_hx_ptl/test_support/host/stubs/esp_log.h",
@@ -3116,8 +3116,8 @@
       "source": "firmware/s3/components/watcher_hx_ptl/test_support/host/test_control.c",
       "destination": "components/watcher_hx_ptl/test_support/host/test_control.c",
       "source_sha256": "a98a14046ada2567dcacc88245819d1cbfaed4c88b1f6616a3eb14704c3af86c",
-      "sha256": "a98a14046ada2567dcacc88245819d1cbfaed4c88b1f6616a3eb14704c3af86c",
-      "transform": null
+      "sha256": "ae43a48823291d8485e0d90bedefd0c2ad01f1a95e69329ec97b28fc860fc17f",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage"
     },
     {
       "source": "firmware/s3/components/watcher_hx_ptl/test_support/host/test_ptl_init.c",
@@ -3130,8 +3130,8 @@
       "source": "firmware/s3/components/watcher_hx_ptl/watcher_hx_control.c",
       "destination": "components/watcher_hx_ptl/watcher_hx_control.c",
       "source_sha256": "74f1f5102430ed4b927de9566fe3417edfc41a34a0feda7b2474373d204134e8",
-      "sha256": "74f1f5102430ed4b927de9566fe3417edfc41a34a0feda7b2474373d204134e8",
-      "transform": null
+      "sha256": "e78380f1342bd50d38a008f8f89a099fb7c720be06af234327ed10b4ab3e5ed7",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage"
     },
     {
       "source": "firmware/s3/components/watcher_hx_ptl/watcher_hx_ptl.c",

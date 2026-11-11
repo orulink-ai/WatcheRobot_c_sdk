@@ -86,16 +86,6 @@ typedef struct {
     mcu_motion_source_t source;
 } mcu_motion_pwm_lock_request_t;
 
-typedef struct {
-    uint8_t axis_mask;
-    uint16_t x_raw;
-    int16_t x_angle_x10;
-    uint16_t y_raw;
-    int16_t y_angle_x10;
-} mcu_motion_servo_feedback_t;
-
-typedef void (*mcu_motion_servo_feedback_cb_t)(const mcu_motion_servo_feedback_t *feedback, void *ctx);
-
 typedef enum {
     MCU_MOTION_LIFECYCLE_ACKED = 0,
     MCU_MOTION_LIFECYCLE_REJECTED,
@@ -160,8 +150,6 @@ void mcu_motion_stop_release(uint32_t token);
  * pending trajectory target. Requires a matching successful STOP barrier. */
 esp_err_t mcu_motion_stop_control_origin(uint32_t token, int16_t *x, int16_t *y);
 esp_err_t mcu_motion_service_init(void);
-/* Legacy physical query: current hardware always returns ESP_ERR_NOT_SUPPORTED. */
-esp_err_t mcu_motion_request_feedback(void);
 esp_err_t mcu_motion_submit_with_seq(const mcu_motion_request_t *request, uint32_t *out_seq);
 esp_err_t mcu_motion_submit(const mcu_motion_request_t *request);
 esp_err_t mcu_motion_jog_with_seq(const mcu_motion_jog_request_t *request, uint32_t *out_seq);
@@ -178,8 +166,6 @@ esp_err_t mcu_motion_submit_tracked_sequence(const mcu_motion_chunked_sequence_t
                                              mcu_motion_sequence_receipt_t *out_receipt);
 esp_err_t mcu_motion_pwm_unlock(const mcu_motion_pwm_unlock_request_t *request);
 esp_err_t mcu_motion_pwm_lock(const mcu_motion_pwm_lock_request_t *request);
-/* Legacy subscription: non-NULL is unsupported; NULL unregister remains idempotent. */
-esp_err_t mcu_motion_set_servo_feedback_callback(mcu_motion_servo_feedback_cb_t cb, void *ctx);
 /* The lifecycle callback runs on the MCU link task and must remain non-blocking.
  * Register/unregister it from another task, not recursively from the callback itself. */
 esp_err_t mcu_motion_set_lifecycle_callback(mcu_motion_lifecycle_cb_t cb, void *ctx);

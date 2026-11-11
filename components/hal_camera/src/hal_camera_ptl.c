@@ -56,6 +56,7 @@ typedef struct {
     void *inference_ctx;
     uint32_t inference_generation;
     hal_camera_inference_stats_t inference_stats;
+    esp_err_t inference_status;
 } hal_camera_ptl_context_t;
 
 static hal_camera_ptl_context_t s_ctx;
@@ -616,12 +617,18 @@ esp_err_t hal_camera_get_diagnostics(hal_camera_diagnostics_t *out_diagnostics) 
     out_diagnostics->supports_model_management = true;
     out_diagnostics->status = ESP_OK;
     out_diagnostics->model_status = s_catalog_valid ? ESP_OK : ESP_ERR_INVALID_STATE;
+    esp_err_t inference_status = ESP_OK;
+    uint32_t inference_generation = 0;
 
     if (s_ctx.lock != NULL && xSemaphoreTake(s_ctx.lock, portMAX_DELAY) == pdTRUE) {
         out_diagnostics->initialized = s_ctx.initialized;
         out_diagnostics->connected = s_ctx.initialized;
         out_diagnostics->streaming = s_ctx.streaming;
         out_diagnostics->inferencing = s_ctx.inferencing;
+        if (s_ctx.inferencing) {
+            inference_status = s_ctx.inference_status;
+            inference_generation = s_ctx.inference_generation;
+        }
         out_diagnostics->busy =
             s_ctx.streaming || s_ctx.capture_in_progress || s_ctx.deinitializing || s_ctx.inferencing;
         if (s_catalog_valid) {
@@ -646,6 +653,8 @@ esp_err_t hal_camera_get_diagnostics(hal_camera_diagnostics_t *out_diagnostics) 
         out_diagnostics->inferencing = state.mode == 2;
         out_diagnostics->busy = state.mode != 0;
         out_diagnostics->status = state.mode == 4 || state.error ? ESP_FAIL : ESP_OK;
+        if (out_diagnostics->status == ESP_OK && state.mode == 2 && state.generation == inference_generation)
+            out_diagnostics->status = inference_status;
     } else if (control_status != ESP_ERR_INVALID_STATE) {
         out_diagnostics->connected = false;
         out_diagnostics->status = control_status;
@@ -665,6 +674,7 @@ static void inference_task(void *arg) {
     /* Camera cold starts affect inference exposure just as they affect photos.
      * Reuse the tested valid-frame/time gate before delivering motion inputs. */
     hx_photo_warmup_t warmup = {.started_us = (uint64_t)esp_timer_get_time()};
+    bool first_frame_seen = false;
     for (;;) {
         xSemaphoreTake(s_ctx.lock, portMAX_DELAY);
         bool stop = s_ctx.inference_stop;
@@ -754,12 +764,21 @@ static void inference_task(void *arg) {
             } else {
                 received = status;
             }
-        } else if (received == ESP_OK && result.generation != s_ctx.inference_generation) {
+        } else if ((received == ESP_OK || received == ESP_ERR_NOT_FINISHED) &&
+                   result.generation != s_ctx.inference_generation) {
             watcher_hx_state_t actual;
             confirmed_lost = watcher_hx_control_status(&actual) == ESP_OK &&
                              actual.generation != s_ctx.inference_generation;
         }
         xSemaphoreTake(s_ctx.lock, portMAX_DELAY);
+        /* A cold start has no frame yet. Bound this exemption to five seconds
+         * and this generation, and never apply it after receiving a frame. */
+        bool startup_pending = received == ESP_ERR_NOT_FINISHED && !first_frame_seen &&
+                               result.generation == s_ctx.inference_generation && !confirmed_lost &&
+                               (uint64_t)esp_timer_get_time() - warmup.started_us < 5000000ULL;
+        if (received == ESP_ERR_NOT_FINISHED && !startup_pending)
+            received = !first_frame_seen && result.generation == s_ctx.inference_generation
+                           ? ESP_ERR_TIMEOUT : ESP_ERR_INVALID_RESPONSE;
         if (confirmed_lost && !s_ctx.inference_generation_lost) {
             s_ctx.inference_generation_lost = true;
             ESP_LOGW(TAG, "inference owner lost expected=%lu; fresh HX status differs",
@@ -768,6 +787,8 @@ static void inference_task(void *arg) {
         if (received == ESP_OK && result.generation == s_ctx.inference_generation && result.sequence != last_sequence &&
             !s_ctx.inference_stop && !s_ctx.inference_generation_lost) {
             last_sequence = result.sequence;
+            first_frame_seen = true;
+            s_ctx.inference_status = ESP_OK;
             frame.sequence = result.sequence;
             frame.timestamp_ms = acquisition_ms;
             frame.frame_width = result.width;
@@ -786,8 +807,10 @@ static void inference_task(void *arg) {
                 callback = s_ctx.inference_cb;
                 context = s_ctx.inference_ctx;
             }
-        } else if (received != ESP_OK)
+        } else if (received != ESP_OK && !startup_pending) {
             ++s_ctx.inference_stats.parse_failures;
+            s_ctx.inference_status = received;
+        }
         xSemaphoreGive(s_ctx.lock);
         if (callback)
             callback(&frame, context);
@@ -848,6 +871,7 @@ esp_err_t hal_camera_start_inference_ex(hal_camera_inference_cb_t cb, void *ctx,
         s_ctx.inference_ctx = ctx;
         s_ctx.inference_generation = watcher_hx_control_generation();
         memset(&s_ctx.inference_stats, 0, sizeof(s_ctx.inference_stats));
+        s_ctx.inference_status = ESP_OK;
         (void)xSemaphoreTake(s_ctx.inference_stopped, 0);
         if (xTaskCreateWithCaps(inference_task, "hx_inference", 8192, NULL, 5, &s_ctx.inference_task,
                                 MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) != pdPASS)

@@ -42,12 +42,25 @@ esp_err_t inspect_body(void) {
 
 `watcher_hw_body_move(x_degrees, y_degrees, duration_ms, &sequence)` 接受 X 0–180°、Y 100–140°、时长 1–65535 ms。这些是接口允许发送的范围，不是机器人实际位置的测量结果，也不保证整个行程都没有障碍。返回的 `sequence` 只用于关联这条指令，不代表动作已经完成。
 
-- `watcher_hw_body_request_position()` 始终返回 `ESP_ERR_NOT_SUPPORTED`，不会发送查询，也不会生成位置事件。
+- 当前硬件不支持实际角度测量，SDK 不提供位置查询或位置反馈事件。
 - 例如 X90/Y120 只是一个目标：机器人如果正停在另一端，移到这里仍可能走很远，不能把它当作无风险“回中”。不要为了验证初始化就发送演示动作。
 - `ACK` 表示对端对指令的应答，`DONE` 表示对端报告这条指令结束；两者以及报告中的最终角度都不是角度传感器实测，**不证明已经到位或停止**。运动事件里的角度字段以 0.1° 为单位。
-- 确保整个可能运动的区域内没有人手、线缆或障碍，并始终保留人工断电手段。与控制芯片断连后，软件停止指令无法送到；`watcher_hw_body_stop()` 成功也不等于物理急停验收。
+- 确保整个可能运动的区域内没有人手、线缆或障碍，并始终保留人工断电手段。与控制芯片断连后，软件停止指令无法送到；`watcher_hw_body_stop()` 成功也不等于物理急停。
 
 `watcher_hw_body_light(const mcu_led_request_t *)` 设置灯光；颜色分量与亮度是 0–255。区域、模式、效果及请求字段见[灯光接口头文件](../../components/mcu_led_service/include/mcu_led_service.h)。这些请求仍经过同一个机身连接，不要另外启动底层通信。
+
+| 字段 | 当前调用含义 |
+| --- | --- |
+| `zone` | `ALL`、`SIDE`、`BOTTOM`，分别是全部、侧边、底座 |
+| `mode` | `OFF` 关闭、`STATIC` 常亮、`EFFECT` 灯效 |
+| `primary_red/green/blue`、`brightness` | 0–255；亮度在发送前缩放主颜色 |
+| `effect_id` | BLINK、BREATHING、RAINBOW、STATUS_PULSE |
+| `period_ms` | 灯效周期，EFFECT 模式必须非零；静态模式不把它用作持续时间 |
+| `secondary_*`、`repeat_count` | 结构中保留，但当前发送实现不将它们编码到灯效请求；不能据此承诺双色或有限次数重复 |
+
+修改点见 [body 示例入口](../../examples/body/main/app_main.c)。先等 READY，再用 `watcher_hw_body_light()` 发送完整请求。
+
+身体触摸事件可能包含按下、释放及协议定义的长按。当前测试设备只确认短按；SDK 不保证每种传感器/固件都产生长按。完整事件消费方式见 [body 示例](../../examples/body/README.md)，不要在不支持长按的设备上等待必然出现的 Long press。
 
 ## 接收触摸、连接与动作事件
 
@@ -79,12 +92,10 @@ SDK 把事件按到达顺序暂存，应用选择一种方式取出：
 ## 接入与完整示例
 
 - 公开头文件：[`watcher_hw_body.h`](../../bsp/watche_robot/watcher_hw_body/include/watcher_hw_body.h)。接口名称和参数以此为准。
-- 使用完整源码与示例匹配的配置、分区和依赖清单；当前为开发预览，不提供未经验证的组件仓库安装命令。仅复制头文件不能补齐所有依赖。
+- 从完整仓库构建示例，保留工程的配置与依赖文件。
 - 直接 CMake 依赖：watcher_hw_core、mcu_runtime、mcu_motion_service、mcu_led_service、mcu_sensor_service；私有依赖 freertos、esp_timer、motion_arbiter。详见[依赖与本地适配](../../examples/README.md#requirements--环境要求)。
 - [可运行的 body 示例](../../examples/body/README.md) · [组合示例](../../examples/robot/README.md)
 - [构建、配套固件、备份与恢复](../../examples/README.md) · [文档导航](README.md)
-
-代码片段用于说明接口和使用顺序，不是对机器人执行过的验收记录。已有验证与真机检查边界见[测试说明](../../CONTRIBUTING.md#checks--修改后检查)。
 
 ## English: Motion, lights and touch
 
@@ -100,124 +111,22 @@ Initialize, check READY, handle events or request an intended action, then close
 
 ## Motion safety
 
+舵机没有实际位置反馈，目标角度、ACK 和 DONE 都不是测量结果。SDK 不提供实际位置查询或位置回调。
 
-本页面向编写运动控制或运行硬件体检的人。应用能要求舵机转到某个角度，
-但不能读取它实际上转到了哪里。例如，发出“转到 90 度”的命令后，应用无法确认
-舵机是否真的到了 90 度，也无法确认它是否卡住或已经停止。启用运动前先阅读本页。
+- 运动前清空整个可能行程，并保留人工断电手段；起点未知时，回到参考位置也可能产生较大动作。
+- 软件 STOP 不是急停装置，断连后可能无法送达。运动异常或停止无效时直接断电。
+- 发生故障后取消积压动作，按上文恢复流程重新初始化。连接恢复后，由新的用户操作发起运动，不自动重放旧动作。
 
-### 烧录或运动前：先留出安全空间
-
-- 核实配套 STM32 固件兼容性。SDK 不更新 STM32 或 Himax 固件；兼容性未知或
-  缺少完整官方恢复包时**禁止继续烧录**。先准备[备份与官方恢复](../../examples/README.md)。
-- **每次**运动前清空**整个可能行程**，不能只为预期的小动作留空间。操作者应随时能够人工断电。
-- 体检先命令 **X90/Y120**，再 **X93/Y120** 或 **X90/Y123**。实际起点未知，
-  即使要求转到参考位置，也可能从另一端移动很远。这不是归零、标定或实测三度位移；
-  退出时也不会自动回中。
-
-### 停止：软件报告不等于实物已停
-
-软件 STOP 不是急停装置；ESP32 断连后无法保证停止命令送达。ACK 表示收到命令，
-DONE 表示报告命令完成，都不证明舵机已经到位、没有卡住或机械已经停止。
-**必须亲眼确认实物停住；运动不安全或停止命令无法送达时，人工断电。**
-不要等待软件消息来证明安全，仍需配套 STM32 安全机制和操作者断电措施。
-
-### 出问题时：先停操作，再排查原因
-
-1. 停止继续操作；有危险先人工断电。保留错误日志，排查供电、连接和配套固件。
-2. 取消待执行运动，不要反复触摸尝试解锁，**禁止自动重放旧运动**。
-   重连、命令完成或清空待处理事件都不等于故障解除或机械安全。
-3. 自行编写恢复逻辑时，按[身体 API 的完整恢复步骤](body.md)处理。
-   恢复后重新动作必须由**新的用户操作**发起，不能因为连接恢复就继续旧动作。
-
-### 确认真正的动作结果
-
-方向、整个可运动范围与实际停止必须由人工或未来独立测试装置观察。
-记录配套固件版本、公开源码／构建哈希及逐项结果。电脑上的主机测试只检查软件状态与顺序；
-历史上的位置测量和标定不是当前前提，也不能代替实物观察。
-
-下一步：[人工硬件体检](../../examples/hardware_check/README_zh.md)。
-
-### 开发接口说明：保留兼容接口不代表能测量角度
-
-以下供修改应用时查阅；精确调用与恢复顺序见[身体 API](body.md)。
-
-| 结果或接口 | 能得出什么结论 |
-| --- | --- |
-| `watcher_hw_body_request_position()` | 返回 `ESP_ERR_NOT_SUPPORTED`，不能测量实际角度 |
-| 注册非空的位置回调 | 返回 `ESP_ERR_NOT_SUPPORTED`；用空回调取消订阅仍可重复执行 |
-| 历史 `POSITION` 帧或保留编号 | 仅为兼容旧接口保留，不是当前测得的实际角度 |
-| ACK/NACK | 收到命令／拒绝命令，不证明实际移动 |
-| DONE/FAULT | 报告命令完成／故障，不证明实际角度、没有卡住或机械已停 |
-| 命令坐标或 PWM 推算角度 | 是要求值而非测量值；PWM 指发给舵机的电脉冲信号 |
-
-命令角度限制、主动锁定／释放和 STOP 仍保留。不能用旧位置消息、命令确认或目标角度
-判断行程已清空、限位已恢复或身体已停止。
-
+使用 [hardware_check](../../examples/hardware_check/README_zh.md) 可分别体验 X、Y 轴和 STOP。
 
 ## Motion safety (English)
 
+Servos have no actual-position feedback. Target angles, ACK and DONE are not measurements; the SDK provides no actual-position query or callback.
 
-For anyone writing motion controls or running the hardware check. The application
-can request an angle but cannot read where the servo actually ends up. For example,
-after requesting **90 degrees**, it cannot confirm that the servo reached 90 degrees,
-is not stuck, or has stopped. Read this page before enabling motion.
+- Clear the entire travel and keep manual power disconnection available. Moving to a reference position can travel far from an unknown starting point.
+- Software STOP is not an emergency stop and may not arrive after disconnection. Cut power if movement is unsafe or stopping fails.
+- Cancel queued actions after a fault and use the recovery procedure above. Resume movement only on a new user action.
 
-### Before flashing or moving: clear the space
+Try individual X, Y and STOP operations with [hardware_check](../../examples/hardware_check/README.md).
 
-- Verify paired STM32 firmware compatibility. This SDK does not update STM32 or
-  Himax firmware. Unknown compatibility or a missing complete official restore
-  bundle is a **do-not-flash** blocker. Prepare [backups and official recovery](../../examples/README.md).
-- Before **every** motion, clear the **entire possible travel**, not just the expected
-  small move. Keep operator-controlled power disconnection available.
-- The hardware check first commands **X90/Y120**, then **X93/Y120** or **X90/Y123**.
-  The actual starting position is unknown: even a reference move can travel far
-  from the other end. This is not homing, calibration or a measured three-degree
-  move. The example does not automatically return to center when you exit.
-
-### Stopping: a software report is not a physical stop
-
-Software STOP is not an emergency-stop device; a disconnected ESP32 cannot guarantee
-stop delivery. ACK means the command was received; DONE reports command completion.
-Neither proves that the servo reached the angle, is not stuck, or physically stopped.
-**Observe the body stop. If motion is unsafe or the stop command cannot arrive,
-use operator-controlled power disconnection.** Do not wait for a software message
-as proof of safety. Paired STM32 safety and an operator power cut remain necessary.
-
-### When something goes wrong: stop operating, then investigate
-
-1. Stop operating the controls; disconnect power manually if unsafe. Keep error
-   logs and check power, connections and paired firmware.
-2. Cancel pending motion. Do not keep touching to unlock controls, and **never
-   replay old motion automatically**. Reconnecting, command completion or clearing
-   queued events does not clear the fault or establish mechanical safety.
-3. If you write recovery logic, follow the complete [body API recovery procedure](body.md).
-   Movement afterward requires a **new user action**; a restored connection must
-   not resume an old action.
-
-### Check the physical result
-
-A human or independent future test fixture must observe direction, the entire
-range of movement and actual stop. Record paired-firmware versions, public
-source/build hashes and each result. Host tests only check software state and
-sequencing; historical position measurement/calibration is not a current
-prerequisite or a replacement for physical observation.
-
-Continue with the [manual hardware check](../../examples/hardware_check/README.md).
-
-### Developer interface notes: compatibility does not provide angle measurements
-
-Use this section when changing the application. Exact calls and recovery order
-belong in the [body API](body.md).
-
-| Result / interface | What you can conclude |
-| --- | --- |
-| `watcher_hw_body_request_position()` | Returns `ESP_ERR_NOT_SUPPORTED`; it cannot measure the actual angle |
-| Registering a non-null position callback | Returns `ESP_ERR_NOT_SUPPORTED`; cancelling the subscription with a null callback is still safe to repeat |
-| Historical `POSITION` frames or reserved identifiers | Retained for compatibility, not current measurements of actual angles |
-| ACK/NACK | Command received/rejected, not proof of physical movement |
-| DONE/FAULT | Command completion/fault report, not proof of actual angle, lack of stall or physical stopping |
-| Requested coordinates or PWM-derived angles | Command values, not measured angles; PWM is the electrical pulse signal sent to a servo |
-
-Command angle limits, explicit lock/release and STOP remain available. Never use
-old position messages, acknowledgements or requested angles to decide that travel
-is clear, limits have been recovered or the body has stopped.
+Lighting uses OFF/STATIC/EFFECT modes and ALL/SIDE/BOTTOM zones. Primary RGB and brightness are 0–255; EFFECT requires a nonzero period. The sender does not encode secondary_* or repeat_count. Long-press events depend on the sensor and paired firmware.

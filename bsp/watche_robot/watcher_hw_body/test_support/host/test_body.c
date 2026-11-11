@@ -23,13 +23,12 @@ static mcu_link_event_t incoming[128];
 static size_t read_index, write_index;
 static mcu_touch_state_t latest_touch;
 static mcu_motion_lifecycle_cb_t lifecycle;
-static mcu_motion_servo_feedback_cb_t feedback;
 static mcu_motion_request_t submitted;
 static bool uart_busy;
 static bool uart_gate_owned;
 static esp_err_t poll_error;
 static unsigned probes;
-static unsigned motion_stops, position_requests;
+static unsigned motion_stops;
 static esp_err_t stop_result;
 #ifdef WATCHER_BODY_EXAMPLE_SOURCE
 #define app_main example_app_main
@@ -188,11 +187,6 @@ esp_err_t mcu_motion_set_lifecycle_callback(mcu_motion_lifecycle_cb_t cb, void *
     lifecycle = cb;
     return ESP_OK;
 }
-esp_err_t mcu_motion_set_servo_feedback_callback(mcu_motion_servo_feedback_cb_t cb, void *ctx) {
-    (void)ctx;
-    feedback = cb;
-    return ESP_OK;
-}
 motion_arbiter_owner_t motion_arbiter_current_owner(void) {
     return MOTION_ARBITER_OWNER_NONE;
 }
@@ -208,10 +202,6 @@ esp_err_t mcu_motion_stop(mcu_motion_source_t source) {
     assert(!uart_gate_owned);
     ++motion_stops;
     return stop_result;
-}
-esp_err_t mcu_motion_request_feedback(void) {
-    ++position_requests;
-    return ESP_OK;
 }
 esp_err_t mcu_link_uart_wait_tx_done(uint32_t timeout) {
     assert(timeout == 250);
@@ -291,7 +281,6 @@ static void overflow_regression(void) {
            state.last_error == ESP_ERR_NO_MEM);
     assert(motion_stops == before_stops + 1); /* Best effort, once per latch. */
     assert(watcher_hw_body_move(90, 120, 1000, NULL) == ESP_ERR_INVALID_STATE);
-    assert(watcher_hw_body_request_position() == ESP_ERR_NOT_SUPPORTED);
     assert(watcher_hw_body_light(&light) == ESP_ERR_INVALID_STATE);
     /* Priority notification cannot be lost to a full queue. */
     assert(watcher_hw_body_next_event(NULL) == ESP_ERR_INVALID_ARG);
@@ -303,14 +292,9 @@ static void overflow_regression(void) {
 #ifdef WATCHER_BODY_EXAMPLE_SOURCE
     on_body_event(&event, NULL);
     uint32_t dispatched;
-    unsigned before_requests = position_requests;
     assert(watcher_hw_body_dispatch_events(32, &dispatched) == ESP_OK && dispatched == 32);
-    assert(position_requests == before_requests);
-    mcu_motion_servo_feedback_t position = {
-        .axis_mask = MCU_MOTION_AXIS_X | MCU_MOTION_AXIS_Y, .x_angle_x10 = 900, .y_angle_x10 = 1200};
-    assert(feedback == NULL); /* Body runtime must never subscribe to physical feedback. */
-    watcher_hw_event_t legacy = {.type = WATCHER_HW_EVENT_POSITION, .size = sizeof(position)};
-    memcpy(legacy.payload, &position, sizeof(position));
+    watcher_hw_event_t legacy = {.type = (watcher_hw_event_type_t)3, .size = 9}; /* Retired event ID. */
+    memset(legacy.payload, 0xff, legacy.size);
     on_body_event(&legacy, NULL); /* Even an injected legacy event must not cause motion. */
     assert(moves == before_moves);
     assert(watcher_hw_body_unsubscribe(on_body_event, NULL) == ESP_OK);
@@ -412,7 +396,7 @@ int main(void) {
         fail_stage = i;
         int before = stops;
         assert(watcher_hw_body_init() == ESP_FAIL && stops == before + 1 && !link_active);
-        assert(!lifecycle && !feedback);
+        assert(!lifecycle);
         assert(watcher_hw_body_close() == ESP_OK);
     }
     fail_stage = 0;
@@ -514,7 +498,7 @@ int main(void) {
         assert(watcher_hw_body_move(90, 120, 1000, &seq) == ESP_ERR_INVALID_STATE);
         shutdown_timeout = false;
         assert(watcher_hw_body_close() == ESP_OK);
-        assert(!link_active && !lifecycle && !feedback);
+        assert(!link_active && !lifecycle);
         assert(watcher_hw_body_close() == ESP_OK);
     }
     assert(deletes == 7);

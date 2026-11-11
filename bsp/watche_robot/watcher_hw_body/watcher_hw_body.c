@@ -71,12 +71,6 @@ static void motion_event(const mcu_motion_lifecycle_event_t *event, void *ctx) {
     /* Invoked synchronously by dispatch while our runtime mutex is held. */
     publish(WATCHER_HW_EVENT_MOTION, event->ref_seq, event, sizeof(*event));
 }
-#if 0 /* Retired physical feedback producer; keep wire/event IDs compatible. */
-static void position_event(const mcu_motion_servo_feedback_t *event, void *ctx) {
-    (void)ctx;
-    publish(WATCHER_HW_EVENT_POSITION, 0, event, sizeof(*event));
-}
-#endif
 static void set_status(watcher_hw_state_t state, esp_err_t error) {
     if (status.state == state && status.last_error == error)
         return;
@@ -229,7 +223,6 @@ esp_err_t watcher_hw_body_init(void) {
     }
     if (ret != ESP_OK) {
         (void)mcu_motion_set_lifecycle_callback(NULL, NULL);
-        (void)mcu_motion_set_servo_feedback_callback(NULL, NULL);
         mcu_link_bootstrap_stop();
         set_status(WATCHER_HW_FAULT, ret);
     }
@@ -266,7 +259,6 @@ esp_err_t watcher_hw_body_close(void) {
     vTaskDelete(worker);
     worker = NULL;
     (void)mcu_motion_set_lifecycle_callback(NULL, NULL);
-    (void)mcu_motion_set_servo_feedback_callback(NULL, NULL);
     mcu_link_bootstrap_stop();
     set_status(WATCHER_HW_CLOSED, ret);
     memset(subscribers, 0, sizeof(subscribers));
@@ -307,15 +299,6 @@ esp_err_t watcher_hw_body_stop(void) {
     esp_err_t ret = transport_ready() ? mcu_motion_stop(MCU_MOTION_SOURCE_UNKNOWN) : ESP_ERR_INVALID_STATE;
     unlock();
     return ret;
-}
-esp_err_t watcher_hw_body_request_position(void) {
-    return ESP_ERR_NOT_SUPPORTED;
-#if 0 /* Retired: current robot has no physical servo feedback. */
-    lock();
-    esp_err_t ret = ready() ? mcu_motion_request_feedback() : ESP_ERR_INVALID_STATE;
-    unlock();
-    return ret;
-#endif
 }
 esp_err_t watcher_hw_body_light(const mcu_led_request_t *request) {
     if (request == NULL)

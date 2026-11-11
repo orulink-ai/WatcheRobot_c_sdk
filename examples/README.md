@@ -5,10 +5,14 @@ Choose what you want to try. Each project can be built independently.
 
 | I want to… / 我想…… | Project / 工程 |
 | --- | --- |
+| Display my first text / 显示第一行文字 | [hello_display](hello_display/README.md) |
 | Touch the body to change lights / 触摸身体改变灯光 | [body](body/README.md) |
 | Take pictures, record/play sound and use screen controls / 拍照、录音播放、操作屏幕 | [head](head/README.md) |
 | Combine both / 组合以上功能 | [robot](robot/README.md) |
 | Check hardware with operator confirmation / 逐项人工硬件体检 | [hardware_check](hardware_check/README.md) |
+| Read model catalog and detect faces / 模型目录与人脸检测 | [English](face_detection/README.md) / [中文教程](face_detection/README_zh.md) |
+
+New users: follow the [first-run tutorial](../docs/getting-started.md) / [完整上手教程](../docs/getting-started_zh.md). Firmware/layout conditions live in [compatibility](../docs/hardware-compatibility.md); function/source/document locations live in the [feature map](../docs/features.md).
 
 ## Requirements / 环境要求
 
@@ -32,7 +36,7 @@ Replace `body` with the chosen project. Output goes to its `build/` directory, i
 and does not write to a device. / 将 `body` 换成所选工程；构建产物位于该工程的 `build/`。
 依赖下载需要网络，构建不会写入设备。
 
-All examples select ESP32-S3, 16 MB flash and custom partitions. head/robot/hardware_check enable
+All examples select ESP32-S3, 16 MB flash and custom partitions. Head/display/vision examples enable
 80 MHz octal PSRAM and LVGL 8.4.0. Body control needs compatible STM32 firmware; camera use needs
 matching Himax PTL firmware. / 所有示例选择 ESP32-S3、16 MB flash 和自定义分区；头部相关工程启用
 八线 PSRAM。身体与摄像功能分别需要兼容的 STM32 和 Himax PTL 固件。
@@ -43,22 +47,17 @@ The body and robot examples do not automatically start servo movement.
 
 ## Before flash or movement / 烧录或运动前
 
-Verify the ESP32 **SERIAL-B** port (not the STM32/Himax port), compatible paired firmware, its version and image hashes, and
-backups and a complete official restore bundle. Full custom flash overwrites official `agentcfg` (0x12000–0x20000);
-app-only restoration is insufficient. Stop if compatibility or recovery assets are unknown. Do not guess offsets, write an app-only image at `0x0`, or use `erase-flash` for troubleshooting.
-Return to official firmware using the [Wiki full recovery procedure](https://wiki.orulink.ai/docs/flashing#full), then verify official startup and pairing. A handshake or filename alone does not prove compatibility.
-Servos have no physical position feedback; reference movement can be large. Clear the entire travel
-and keep manual power disconnection available. ACK/DONE/software STOP do not prove physical stopping.
+Connect the head's USB data port and choose **SERIAL-B (ESP32)**. First flashing replaces the installed application and partition table; back up data you need. Run from the repository root, replacing body with your example and PORT with its ESP32 port:
+连接头部数据 USB，选择 **SERIAL-B（ESP32）**。首次烧录会替换原应用和分区，需保留的数据请先备份。在仓库根目录运行，将 body 换为所选示例，PORT 换为实际端口：
 
-先核实 ESP32 的 **SERIAL-B** 接口及实际端口，不要使用 STM32/Himax 端口。记录板卡与配套固件版本、镜像哈希；文件名或握手成功不证明兼容。
-准备备份与已核实的完整官方恢复包；缺少时停止。完整自定义烧录会覆盖官方 `agentcfg`（0x12000–0x20000），只刷应用不足以恢复官方布局。
-不要猜偏移、从 `0x0` 写入应用单文件，或用 `erase-flash` 排障。
-返回官方固件按 [Wiki 完整恢复流程](https://wiki.orulink.ai/docs/flashing#full)，不是只刷应用；恢复后检查官方启动与配对。
-资料不明时停止。舵机无物理位置反馈，参考动作也可能大行程；清空整个行程并保留人工断电，不能靠软件完成状态判断机械停止。
+```sh
+idf.py -C examples/body -p PORT flash monitor
+```
 
-For writing and monitoring a built example, follow the official [ESP-IDF flash/monitor instructions](https://docs.espressif.com/projects/esp-idf/en/v6.0.2/esp32s3/get-started/index.html#flash-onto-the-device) with that example as the project. Full custom flash uses its generated bootloader, partition table and application.
-App-only updates are appropriate **only after verifying the device already uses the same custom partition layout**; local files alone do not prove the device layout.
-烧录与串口监视按乐鑫官方流程对所选工程操作；完整自定义烧录使用该工程生成的引导程序、分区表和应用。仅在核实设备已采用相同自定义分区后才可单独更新应用；不确定或刷回过官方固件时重新做上述检查。
+Press Ctrl+] to leave the monitor. For setup and recovery, see [first run](../docs/getting-started.md) / [上手教程](../docs/getting-started_zh.md).
+
+Before moving, clear the full travel area and keep power disconnection available. Servos have no actual-position feedback; software STOP cannot replace an emergency power cut. See [motion safety](../docs/api/body.md#motion-safety-english).
+运动前清空完整行程并保留人工断电手段。舵机没有实际位置反馈，软件 STOP 不代替断电急停；详见[运动注意事项](../docs/api/body.md#motion-safety)。
 
 ## Shared code and further reading / 共享代码与参考
 
@@ -66,4 +65,4 @@ App-only updates are appropriate **only after verifying the device already uses 
 Do not run `idf.py -C examples/common build`.
 common 不是独立工程或公开 SDK 接口，不要单独构建。
 
-[API guides](../docs/api/README.md) · [Tests and evidence](../CONTRIBUTING.md#checks--修改后检查) · [Dependencies](README.md#requirements--环境要求)
+[API guides](../docs/api/README.md) · [Contributing](../CONTRIBUTING.md) · [Dependencies](README.md#requirements--环境要求)
