@@ -1,0 +1,62 @@
+# robot: Pictures, sound and touch-controlled lights / 拍照、声音与触摸灯光
+
+## Overview / 概述
+
+Combine the photo/audio screen with touch-controlled body lights; **no automatic servo movement**.
+将拍照、录放音界面与身体触摸灯光组合；**不会自动启动舵机运动**。
+
+## Requirements / 要求
+
+- Git and **ESP-IDF 6.0.2**; environment setup: [official IDF instructions](../README.md#requirements--环境要求).
+  Git 与 **ESP-IDF 6.0.2**；环境安装与激活见上述官方文档入口。
+- ESP32-S3, **16 MB flash**, custom partitions and **80 MHz octal PSRAM**; LVGL **8.4.0** is selected.
+  ESP32-S3、**16 MB flash**、自定义分区与 **80 MHz 八线 PSRAM**；工程选用 LVGL **8.4.0**。
+- Compatible **STM32 body firmware** and matching **Himax PTL camera firmware** are required.
+  运行需要兼容的 **STM32 身体固件**与匹配的 **Himax PTL 摄像固件**。
+
+## Build and run / 构建与运行
+
+Run in an activated **ESP-IDF 6.0.2** terminal from the **repository root**. Replace PORT with the ESP32 SERIAL-B port. Flashing replaces the app and partitions; back up needed data first.
+在已激活 **ESP-IDF 6.0.2** 的终端、**仓库根目录**执行。PORT 替换为 ESP32 的 SERIAL-B 端口；首次烧录会替换原应用及分区，需保留的数据请先备份。
+
+```sh
+idf.py --version
+idf.py -C examples/robot build
+idf.py -C examples/robot -p PORT flash monitor
+```
+
+Expected output: `examples/robot/build/watcher_hw_robot.bin` and IDF flash files.
+预期产物为上述应用文件及 IDF 配套烧录文件；依赖下载需要网络，构建不会写入设备。
+Dependency downloads need network access; building does not write to a device.
+
+For port setup and recovery, see the [first-run guide](../../docs/getting-started.md) / [上手教程](../../docs/getting-started_zh.md)。
+If adding motion, read [motion safety](../../docs/api/body.md#motion-safety-english) /
+[运动安全](../../docs/api/body.md#motion-safety) before moving.
+
+## Expected behavior / 预期行为
+
+Use Photo, then Record and Play; inspect the picture and listen to the sound.
+Touch the body: green lights on; release: green lights off and a stop request. Check touch/light/stop logs.
+拍照并录音回放，亲自检查图像与声音；触摸身体应亮绿灯，松手应熄灯并请求停止，检查对应日志。
+Controls are disabled while busy or unavailable.
+忙碌或不可用时控件会禁用。
+For a guided hardware walkthrough, use [hardware_check](../hardware_check/README.md)。逐项体验硬件功能可运行硬件体检。
+
+## Troubleshooting / 故障处理
+
+If something fails, check the error log, power, connections and matching firmware.
+查看错误日志，先查供电、连接与固件配套。
+If body events are lost, stop operating; do not repeatedly touch to unlock or automatically replay old actions.
+Reconnection or an empty queue does not clear the fault. Cancel pending actions; follow the [full body API contract](../../docs/api/body.md)
+for close/init outside callbacks, resubscription, a new READY and a **new user action**; do not separately poll its connection.
+丢事件后先停操作，不反复触摸解锁、不自动重放旧动作；重连或清空队列不能解除故障。取消积压动作，
+按身体 API 在回调外关闭并检查结果、初始化、重新订阅，等新的 READY 与**新的用户操作**；不另行轮询连接。
+The photo/audio demo has no automatic retry or running shutdown; do not start a second instance.
+拍照音频示例不自动重试，也不支持运行中关闭；不要启动另一个实例控制相同硬件。
+For modifications, use one coordinating task for camera operations and one owner task for all audio calls;
+copy retained callback images and lock LVGL access. Follow the full ownership/cleanup contracts:
+[camera](../../docs/api/camera.md), [audio](../../docs/api/audio.md), [display](../../docs/api/display.md).
+修改时，摄像操作由同一管理任务协调，音频调用交给同一音频任务；留用回调图片先复制，访问 LVGL 加锁。
+资源管理与失败后清理须遵守上述相机、音频、屏幕 API 的完整契约。
+Return to official firmware: [Wiki full recovery](https://wiki.orulink.ai/docs/flashing#full), then verify startup/pairing.
+返回官方固件直接按 [Wiki 完整恢复](https://wiki.orulink.ai/docs/flashing#full)，再检查启动与配对。

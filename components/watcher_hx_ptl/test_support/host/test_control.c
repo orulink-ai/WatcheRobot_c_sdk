@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 static int failures, held, bad_boxes;
+static const char *boxes_override;
 static unsigned generation, mode, model, mode_requests;
 static bool inject_foreign;
 static bool lose_mode_ack;
@@ -129,7 +130,10 @@ int uart_write_bytes(int port, const void *data, size_t size) {
         offset = 0;
         return (int)size;
     } else if (sscanf(request, "WV1 RESULT %u", &id) == 1) {
-        snprintf(reply, sizeof(reply), "WV1 BOXES %u %u 2 18 320 240 %u\r\n", id, generation, bad_boxes ? 9 : 0);
+        if (boxes_override)
+            snprintf(reply, sizeof(reply), "WV1 BOXES %u %u %s\r\n", id, generation, boxes_override);
+        else
+            snprintf(reply, sizeof(reply), "WV1 BOXES %u %u 2 18 320 240 %u\r\n", id, generation, bad_boxes ? 9 : 0);
         offset = 0;
         return (int)size;
     } else {
@@ -175,6 +179,18 @@ int main(void) {
     CHECK(watcher_hx_control_status(&state) == ESP_OK && state.mode == 2 && state.model == 4 && state.generation == 1);
     watcher_hx_result_t result = {0};
     CHECK(watcher_hx_control_boxes(&result) == ESP_OK && result.sequence == 18 && result.count == 0);
+    boxes_override = "2 0 0 0 0";
+    CHECK(watcher_hx_control_boxes(&result) == ESP_ERR_NOT_FINISHED && result.generation == generation &&
+          result.sequence == 0 && result.count == 0);
+    boxes_override = "2 1 320 240 0";
+    CHECK(watcher_hx_control_boxes(&result) == ESP_OK && result.sequence == 1 && result.count == 0);
+    const char *invalid[] = {"4 0 0 0 0", "2 0 320 240 0", "2 1 0 0 0", "2 0 0 0 1", "2 0 0 0 0 7"};
+    for (unsigned i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i) {
+        boxes_override = invalid[i];
+        CHECK(watcher_hx_control_boxes(&result) == ESP_ERR_INVALID_RESPONSE && result.sequence == 1);
+    }
+    boxes_override = NULL;
+    CHECK(watcher_hx_control_boxes(&result) == ESP_OK && result.sequence == 18);
     bad_boxes = 1;
     CHECK(watcher_hx_control_boxes(&result) == ESP_ERR_INVALID_RESPONSE && result.sequence == 18);
     CHECK(watcher_hx_control_mode(0, 0) == ESP_OK);

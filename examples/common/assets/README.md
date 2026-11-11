@@ -1,40 +1,25 @@
-# Speaker-test asset
+# Speaker-test sample / 扬声器测试样本
 
-`speaker_pcm.inc` contains a synthetic English voice saying:
+Use **Test speaker → Test voice** in the head/robot screen, or follow the hardware-check speaker prompts. The bundled sample says:
+
+在 head/robot 的 **Test speaker → Test voice** 或硬件检查的扬声器项目中播放内置语音：
 
 > This is the speaker test. One, two, three.
 
-The original test text and generated sample data are dedicated to the public
-domain under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
-SPDX: `CC0-1.0`. This dedication applies to the asset, not surrounding SDK code.
-No JoyInside response, private recording, Microsoft voice, MBROLA voice, voice
-clone or cloud credentials are included. The sample is an intentionally robotic
-formant voice, not an imitation of a person.
+## Format and playback / 格式与播放
 
-## Provenance and format
+`speaker_pcm.inc` contains mono signed PCM16 audio at 16000 Hz, generated with the eSpeak NG `en-us` formant voice. No audio download or generation step is needed to run the example.
 
-- eSpeak NG 1.52.0, built-in `en-us` formant voice, speed 150, amplitude 100.
-- Input text is exactly the sentence above.
-- Offline FFmpeg `N-121420-gce9d181444-20251011`: mono signed PCM16, 16000 Hz.
-- Filter: `aresample=16000,acompressor=threshold=0.18:ratio=3:attack=5:release=80:makeup=2,afade=t=in:d=0.01`.
-- The resulting master peak was 26866. Asset-generation scaling is
-  `sign(sample) * round(abs(sample) * 30000 / 26866)` (round half away from zero).
-  This is baked into the test asset, never applied automatically by the SDK.
-- 60562 samples, 121124 bytes, 3.785125 seconds; peak 30000, RMS about 4191.
-- SHA256 of canonical little-endian PCM bytes:
-  `f76e5918bfba51b42c431ffab5d3d16ded679d765eb26e33c469bba1c4d5304f`.
-- FNV-1a checksum and signal bounds are checked by the portable host test.
+`speaker_pcm.inc` 是使用 eSpeak NG 的 `en-us` 合成语音生成的 16000 Hz、16 位有符号单声道 PCM。运行示例无需另行下载或生成音频。
 
-Generation uses eSpeak as an offline tool. Its GPL-3.0 engine/data and FFmpeg
-are not linked into or distributed with this example. The formant synthesis
-converts our own test text, not a third-party audio recording. See the
-[GNU output FAQ](https://www.gnu.org/licenses/gpl-faq.html#GPLOutput).
-Building or running the example requires neither tool, a network, nor a model.
+The sample stays read-only in flash. Playback copies blocks into writable scratch memory for SDK volume processing. The **Output** setting adjusts playback level; recording **Replay** boost does not affect this sample.
 
-The asset stays read-only in flash. The media owner copies each block into
-writable scratch before SDK playback; repeated tests cannot compound codec
-software gain. Speaker tests always use 1x source gain. Only the explicit Output
-setting changes playback level; recording Replay boost does not affect tests.
+样本以只读形式保存在 Flash 中，播放时分块复制到可写缓冲区供 SDK 处理音量。**Output** 调整播放音量，录音 **Replay** 的放大设置不影响此样本。
 
-This asset is not an acoustic calibration reference. Peak/RMS or successful
-DMA delivery do not prove perceived loudness, speaker integrity or speech quality.
+## License / 许可
+
+The original test text and generated sample data are dedicated to the public domain under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). SPDX: `CC0-1.0`. This applies to the sample, not the surrounding SDK code.
+
+测试文本与生成的语音数据采用 CC0 1.0，适用范围为该素材；SDK 代码的许可见仓库 LICENSE。
+
+The sample was generated offline with eSpeak NG and FFmpeg. These tools are not linked into or distributed with the example. See the [GNU output FAQ](https://www.gnu.org/licenses/gpl-faq.html#GPLOutput) for tool-output licensing.

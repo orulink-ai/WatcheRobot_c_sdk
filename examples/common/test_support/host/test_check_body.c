@@ -3,15 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 static watcher_hw_status_t status = {WATCHER_HW_READY, ESP_OK};
-static unsigned moves, stops, queries, leds;
+static unsigned moves, stops, leds;
 static int target_x, target_y;
 static esp_err_t stop_error;
 esp_err_t watcher_hw_body_status(watcher_hw_status_t *out) {
     *out = status;
-    return ESP_OK;
-}
-esp_err_t watcher_hw_body_request_position(void) {
-    queries++;
     return ESP_OK;
 }
 esp_err_t watcher_hw_body_move(int x, int y, uint32_t duration, uint32_t *seq) {
@@ -39,8 +35,9 @@ static watcher_hw_event_t event(watcher_hw_event_type_t type, const void *data, 
     return e;
 }
 static void position(hc_body_t *b, int x, int y, int64_t received, int64_t now) {
-    mcu_motion_servo_feedback_t p = {.axis_mask = 3, .x_angle_x10 = (int16_t)x, .y_angle_x10 = (int16_t)y};
-    watcher_hw_event_t e = event(WATCHER_HW_EVENT_POSITION, &p, sizeof(p), received);
+    /* Old position event ID is no longer public; unknown input cannot change targets. */
+    int16_t p[] = {(int16_t)x, (int16_t)y};
+    watcher_hw_event_t e = event((watcher_hw_event_type_t)3, p, sizeof(p), received);
     hc_body_event(b, &e, now);
 }
 static void touch(hc_body_t *b, unsigned id, mcu_touch_event_code_t code, int64_t us) {
@@ -60,7 +57,7 @@ int main(void) {
     assert(hc_body_start(&b, HC_OP_TOUCH, 0, 1, 1000) == ESP_OK);
     touch(&b, 0, MCU_TOUCH_EVENT_RELEASE, 1100);
     touch(&b, 0, MCU_TOUCH_EVENT_LONG_PRESS, 1200);
-    assert(!b.finished && moves == 0 && leds == 0 && queries == 0);
+    assert(!b.finished && moves == 0 && leds == 0);
     touch(&b, 0, MCU_TOUCH_EVENT_PRESS, 1300);
     touch(&b, 1, MCU_TOUCH_EVENT_RELEASE, 1400); /* Different sensor cannot finish gesture. */
     assert(b.touch_stage == 0);
@@ -85,7 +82,7 @@ int main(void) {
 
     /* Open-loop acceptance uses an explicit reference command, never ADC. */
     assert(hc_body_start(&b, HC_OP_MOVE, 0, 2, 1000) == ESP_OK);
-    assert(queries == 0 && moves == 1 && target_x == 90 && target_y == 120);
+    assert(moves == 1 && target_x == 90 && target_y == 120);
     assert(b.moving);
     uint32_t reference = b.sequence;
     position(&b, 1798, 1398, 1200, 1300);
@@ -152,7 +149,6 @@ int main(void) {
         assert(hc_body_start(&b, HC_OP_LIGHT, i, 12, 1000) == ESP_OK);
     assert(leds == 28 && b.lights_owned);
     assert(hc_body_lights_off(&b) == ESP_OK && !b.lights_owned);
-    assert(queries == 0);
     puts("open-loop body adapter: reference, explicit steps, sequence matching, stop, disconnect passed");
     return 0;
 }

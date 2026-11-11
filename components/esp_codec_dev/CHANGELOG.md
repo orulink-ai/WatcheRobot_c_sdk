@@ -1,5 +1,7 @@
 # Changelog
 
+> Upstream component history, not the WatcheRobot SDK changelog. Upstream test applications are excluded from this public SDK snapshot. / 第三方组件历史，非本 SDK 发布日志；上游测试应用不随本 SDK 交付。
+
 ## v1.2.0
 
 ### Features
@@ -7,7 +9,7 @@
 - Add IDF v5.3 support  
   Using new i2c driver `esp_driver_i2c`, add `bus_handle` configuration for `audio_codec_i2c_cfg_t`.  
   User need create the `bus_handle` using API `i2c_new_master_bus` instead of `i2c_driver_install`.
-- Change test code to standalone application, user can directly build it under folder [codec_dev_test](test_apps/codec_dev_test)
+- Change test code to standalone application, user can directly build it under folder `codec_dev_test` (upstream-only; not bundled here)
 
 ### Bug Fixes
 

@@ -1,0 +1,4 @@
+# Local-only packaging/test tools. No credentials or upload dependency.
+idf-component-manager==2.5.2
+PyYAML==6.0.3
+pytest==9.2.0

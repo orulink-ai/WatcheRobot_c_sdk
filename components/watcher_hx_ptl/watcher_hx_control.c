@@ -102,6 +102,12 @@ static esp_err_t boxes_locked(watcher_hx_result_t *out) {
     esp_err_t result = exchange_numbers(request, id, "WV1 BOXES ", values, 55, &count, 700);
     if (result != ESP_OK)
         return result;
+    /* MODE INFERENCE is acknowledged before the first sensor result exists.
+     * Only the producer's exact empty snapshot is pending, not malformed data. */
+    if (count == 7 && values[2] == 2 && values[3] == 0 && values[4] == 0 && values[5] == 0 && values[6] == 0) {
+        *out = (watcher_hx_result_t){.generation = values[1]};
+        return ESP_ERR_NOT_FINISHED;
+    }
     if (count < 7 || values[2] != 2 || !values[3] || values[4] != 320 || values[5] != 240 || values[6] > 8 ||
         count != 7 + values[6] * 6U)
         return ESP_ERR_INVALID_RESPONSE;

@@ -1,6 +1,8 @@
 # ESP Codec Device
+
+> This is upstream component reference documentation, not WatcheRobot board wiring or a runnable SDK quickstart. The upstream `test_apps/codec_dev_test` application is not included; the `ut_*` helpers below belong to that application. Start WatcheRobot development with [this repository's examples](../../examples/README.md).
 - [![Component Registry](https://components.espressif.com/components/espressif/esp_codec_dev/badge.svg)](https://components.espressif.com/components/espressif/esp_codec_dev)
-- [中文版本](./README_CN.md)
+- [中文版本](README_CN.md)
 
 ## General Information
 
@@ -12,7 +14,7 @@
 * Easy-to-use high-level API for playback and recording
 * Support for volume adjustment in software when it is not supported in hardware
 * Support customized volume curve and customized volume control
-* Easy to port to other platform after replacing codes under [platform](./platform)
+* Easy to port to other platform after replacing codes under [platform](platform)
 
 The currently supported codec devices are listed as below:
 
@@ -159,7 +161,7 @@ To balance the speaker's loudness across different platforms when playing the sa
 ## Usage
 
 The steps below take the ES8311 codec as an example to illustrate how to play and record audio.
-1. Install the driver for codec control and data bus referring to [test_board.c](test_apps/codec_dev_test/main/test_board.c)  
+1. Install the driver for codec control and data bus referring to `test_board.c` (upstream-only example, not bundled)
    	```c
 	ut_i2c_init(0);
 	ut_i2s_init(0);
@@ -235,4 +237,4 @@ The steps below take the ES8311 codec as an example to illustrate how to play an
 	const audio_codec_if_t *my_codec_new(my_codec_cfg_t *codec_cfg);
 	```
 
-For details, refer to the sample code [my_codec.c](test_apps/codec_dev_test/main/my_codec.c).
+For details, refer to the sample code `my_codec.c` (upstream-only example, not bundled).
