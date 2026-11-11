@@ -619,6 +619,7 @@ esp_err_t hal_camera_get_diagnostics(hal_camera_diagnostics_t *out_diagnostics) 
     out_diagnostics->model_status = s_catalog_valid ? ESP_OK : ESP_ERR_INVALID_STATE;
     esp_err_t inference_status = ESP_OK;
     uint32_t inference_generation = 0;
+    unsigned inference_mode = 0;
 
     if (s_ctx.lock != NULL && xSemaphoreTake(s_ctx.lock, portMAX_DELAY) == pdTRUE) {
         out_diagnostics->initialized = s_ctx.initialized;
@@ -628,6 +629,7 @@ esp_err_t hal_camera_get_diagnostics(hal_camera_diagnostics_t *out_diagnostics) 
         if (s_ctx.inferencing) {
             inference_status = s_ctx.inference_status;
             inference_generation = s_ctx.inference_generation;
+            inference_mode = s_ctx.inference_jpeg_only ? 1 : 2;
         }
         out_diagnostics->busy =
             s_ctx.streaming || s_ctx.capture_in_progress || s_ctx.deinitializing || s_ctx.inferencing;
@@ -653,7 +655,10 @@ esp_err_t hal_camera_get_diagnostics(hal_camera_diagnostics_t *out_diagnostics) 
         out_diagnostics->inferencing = state.mode == 2;
         out_diagnostics->busy = state.mode != 0;
         out_diagnostics->status = state.mode == 4 || state.error ? ESP_FAIL : ESP_OK;
-        if (out_diagnostics->status == ESP_OK && state.mode == 2 && state.generation == inference_generation)
+        /* Only merge this owner's runtime error into its matching HX session.
+         * JPEG-only uses PREVIEW (1), while model inference uses INFERENCE (2). */
+        if (out_diagnostics->status == ESP_OK && inference_mode != 0 && state.mode == inference_mode &&
+            state.generation == inference_generation)
             out_diagnostics->status = inference_status;
     } else if (control_status != ESP_ERR_INVALID_STATE) {
         out_diagnostics->connected = false;

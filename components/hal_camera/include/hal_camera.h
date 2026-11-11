@@ -52,6 +52,8 @@ typedef struct {
 typedef struct {
     uint32_t sequence;
     uint32_t timestamp_ms;
+    /* Coordinate dimensions of this result: PTL BOXES 320x240, paired JPEG
+     * metadata / JPEG-only 640x480. Preview fallback can change these per frame. */
     uint16_t frame_width;
     uint16_t frame_height;
     uint16_t preprocess_ms;

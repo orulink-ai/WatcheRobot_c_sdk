@@ -22,6 +22,22 @@ set_property(SOURCE test_inference_startup.c APPEND PROPERTY OBJECT_DEPENDS
     "${CMAKE_CURRENT_BINARY_DIR}/context.inc;${CMAKE_CURRENT_BINARY_DIR}/inference_task.inc")
 target_include_directories(inference_startup PRIVATE "${CMAKE_CURRENT_BINARY_DIR}" ../../include
     ../../../watcher_hx_ptl/include ../../../watcher_hx_ptl/test_support/host/stubs)
-foreach(scenario initial after_frame timeout boundary recovery wrong_generation error)
+foreach(scenario initial after_frame timeout boundary recovery wrong_generation error
+                 jpeg_timeout jpeg_recovery paired paired_fallback)
     add_test(NAME inference_startup_${scenario} COMMAND inference_startup ${scenario})
+endforeach()
+
+string(FIND "${source}" "esp_err_t hal_camera_get_diagnostics(" begin)
+string(SUBSTRING "${source}" ${begin} -1 tail)
+string(FIND "${tail}" "\n}" end)
+math(EXPR length "${end}+3")
+string(SUBSTRING "${tail}" 0 ${length} diagnostics)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/diagnostics.inc" "${diagnostics}\n")
+add_executable(inference_diagnostics test_inference_diagnostics.c)
+set_property(SOURCE test_inference_diagnostics.c APPEND PROPERTY OBJECT_DEPENDS
+    "${CMAKE_CURRENT_BINARY_DIR}/context.inc;${CMAKE_CURRENT_BINARY_DIR}/diagnostics.inc")
+target_include_directories(inference_diagnostics PRIVATE "${CMAKE_CURRENT_BINARY_DIR}" ../../include
+    ../../../watcher_hx_ptl/include ../../../watcher_hx_ptl/test_support/host/stubs)
+foreach(scenario jpeg_timeout model_timeout healthy foreign_generation foreign_mode inactive remote_error control_error)
+    add_test(NAME inference_diagnostics_${scenario} COMMAND inference_diagnostics ${scenario})
 endforeach()

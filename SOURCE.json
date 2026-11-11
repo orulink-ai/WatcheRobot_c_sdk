@@ -1295,8 +1295,8 @@
       "source": "firmware/s3/components/hal/hal_camera/include/hal_camera.h",
       "destination": "components/hal_camera/include/hal_camera.h",
       "source_sha256": "f7cb8b7304d189305dae5980f60667a9a95b57c5d3f5211d206235adeffd856f",
-      "sha256": "338a8207d7f6ece76835ce43a7af249674d98f4f8787907844791eb6660d6279",
-      "transform": "Align documentation with current SDK APIs, PTL backend and tutorial entry points",
+      "sha256": "cc4f9dab12a92eb36177a0d84e55f669aa0a92021e368e8a0647b0f029b3a620",
+      "transform": "Align documentation with current SDK APIs, PTL backend and tutorial entry points; Document per-result PTL coordinate dimensions and preview fallback",
       "imported_destination": "components/hal/hal_camera/include/hal_camera.h"
     },
     {
@@ -1319,8 +1319,8 @@
       "source": "firmware/s3/components/hal/hal_camera/src/hal_camera_ptl.c",
       "destination": "components/hal_camera/src/hal_camera_ptl.c",
       "source_sha256": "74145f5dd073306c00dfc2a9a6111d88aeeaf443d1cdd68ec4fca3e4f6b5ec83",
-      "sha256": "6426d0a563f137b888040efe626c20d1aed8d1ca171b3e50c8c564fbf24bf38d",
-      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage",
+      "sha256": "b22d0fc9eafc1a4e5b20e6874d5ea41a5d027e1d264fc45e2058e574823efa11",
+      "transform": "Fix display cleanup/backlight lifecycle or classify bounded inference startup pending; add regression coverage; Report local inference errors only for the matching model or JPEG-only session",
       "imported_destination": "components/hal/hal_camera/src/hal_camera_ptl.c"
     },
     {

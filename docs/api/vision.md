@@ -53,7 +53,7 @@
 | --- | --- |
 | `sequence` | 结果序号，HAL 过滤重复序号；不保证每个结果都交给界面，不用于直接计算 FPS。 |
 | `timestamp_ms` | ESP32 取数边界的单调毫秒时间，不是传感器曝光时间。 |
-| `frame_width`、`frame_height` | 普通模型推理结果的坐标尺寸为 320×240，不是 JPEG 预览尺寸。 |
+| `frame_width`、`frame_height` | 当前结果的坐标尺寸：控制通道 BOXES 为 320×240，配对预览结果为 640×480。逐帧读取这两个字段，不要写死缩放尺寸。 |
 | `box_count`、`boxes[]` | 当前结果最多 8 个框；只有已核验人脸模型时，示例才把框数标为 Faces。 |
 | 框的 `x/y/width/height` | 按协议透传的位置及尺寸。当前仓库未明确 x/y 是中心还是左上角；绘框前需依据配套固件的坐标定义转换。 |
 | 框的 `score`、`target` | 分数范围 0–100；类别编号依模型解释，不是人物 ID。仓库尚无完整的各模型标签对照表。 |
@@ -78,7 +78,7 @@ HAL 还会等待曝光稳定（至少 12 个有效帧且经过 1.2 秒）再交�
 | `parse_failures` | 累计错误数，也可能包含传输错误；不是仅统计语法错误。 |
 | `last_interval_ms/max_interval_ms/interval_total_ms` | 当前 PTL 未填写，不用于帧率或延迟结论。 |
 
-诊断 `status` 保留最近的运行错误，后续有效帧可恢复 OK；累计错误计数不因此清零。启动成功后，从回调获取检测结果。
+诊断 `status` 在模式和会话匹配时反映本地模型推理或 JPEG-only 的最近运行错误，后续有效帧可恢复 OK；累计错误计数不因此清零。控制通道或设备报告的错误优先保留。启动成功后，从回调获取检测结果。
 
 先检查 `hal_camera_get_diagnostics()` 的返回值，再读 `status`；模型查询情况另见 `model_status`、`model_available`。示例遇到运行错误就退出，不自动重试整轮推理；HAL 可以恢复状态，不等于示例会继续运行。
 
@@ -94,9 +94,11 @@ HAL 还会等待曝光稳定（至少 12 个有效帧且经过 1.2 秒）再交�
 
 ## 可选预览与配置边界
 
-`hal_camera_start_inference_ex()` 可设置 `include_preview_image=true`，通过同一生命周期取得配对 JPEG 预览。图像验证失败时检测框仍可能可用，图像指针为空；不要拼接上一帧图像和当前框。此路径需要独立检查图像、检测框及对齐效果，基础人脸计数测试不覆盖它。
+`hal_camera_start_inference_ex()` 可设置 `include_preview_image=true`，通过同一生命周期取得配对 JPEG 预览。配对结果的 `frame_width/frame_height` 为 640×480。配对帧读取或解包失败时，HAL 会尝试读取控制通道 BOXES，成功后回传 320×240 的结果且不携带图像。因此，同一次运行中尺寸也可能变化。
 
-`jpeg_only=true` 必须同时启用 `include_preview_image`，使用无模型的 JPEG 模式，并非人脸推理。PTL JPEG 固定 640×480；`hal_camera_configure()` 仅接受该尺寸，忽略 quality。检测结果和预览尺寸不同；绘框还涉及坐标原点、裁切、旋转与显示缩放，不能把简单缩放当作已验证的对齐方案。
+若配对元数据有效而 JPEG 验证或编码失败，检测框仍可能可用，尺寸保持 640×480，但图像指针为空。应用应逐帧检查尺寸、图像指针和长度，只将同一回调内的图像与框配对，不要沿用上一帧图像。
+
+`jpeg_only=true` 必须同时启用 `include_preview_image`，使用无模型的 JPEG 模式，并非人脸推理，其结果尺寸也是 640×480。PTL JPEG 固定 640×480；`hal_camera_configure()` 仅接受该尺寸，忽略 quality。绘框时使用当前结果的坐标尺寸，并结合配套固件的坐标原点、图像裁切、旋转与显示缩放进行转换。
 
 源码保留 SSCMA 后端供维护，不构成板级公开 API 的替代兼容承诺。应用不要在 PTL 运行时直接打开另一个 UART/SPI 摄像控制器。
 
@@ -106,8 +108,10 @@ Use the advanced PTL HAL for catalog/select/inference; the public camera wrapper
 
 Catalog labels are CRC-based: Person, Pet, Gesture and Face correspond to known slot identities. Face detection does not provide identity recognition. Selection does not upload models; PTL metadata writes are unsupported.
 
-Detection coordinates are 320×240, preview JPEGs 640×480; at most eight boxes, with scores 0–100. The repository does not yet specify whether x/y mean center or top-left, or provide a complete per-model class map. Use the paired firmware's coordinate definition when drawing overlays. Callbacks borrow all data until return. Do not stop/close or block on UI work in the callback. Retain storage until cleanup succeeds. JPEG-only delivers images without model inference.
+Read `frame_width/frame_height` from every callback: control-channel BOXES results use 320×240, while paired JPEG results and JPEG-only use 640×480. Failed paired reads/unpacking can fall back to BOXES without an image, so dimensions may change within one run. Valid paired metadata retains 640×480 if JPEG validation/encoding fails, but the image pointer is null. Never pair a previous image with current boxes.
+
+There are at most eight boxes, with scores 0–100. The repository does not yet specify whether x/y mean center or top-left, or provide a complete per-model class map. Use the current result dimensions and paired firmware's coordinate definition when drawing overlays. Callbacks borrow all data until return. Do not stop/close or block on UI work in the callback. Retain storage until cleanup succeeds. JPEG-only delivers images without model inference.
 
 Exact empty snapshots are tolerated only before the first frame, for the same generation, within five seconds. Real errors remain counted; diagnostics can recover on a valid frame while cumulative failures remain. Exposure warmup also delays callbacks. Timing/interval fields not populated by PTL are not performance measurements. Keep the full lifecycle under one owner and do not combine this example with an independently initialized camera demo.
 
-Check both the diagnostics call result and its `status` field. The example exits on a reported error instead of waiting for recovery. CRC verification means a known slot identity, not a signature or accuracy guarantee; the low-level selection call does not enforce identity checks. For runnable steps, modification points and symptom-based troubleshooting, use the [English tutorial](../../examples/face_detection/README.md).
+Check both the diagnostics call result and its `status` field. Diagnostics include local errors from model inference or JPEG-only only when the device mode and session match; control-channel and device errors take precedence. The example exits on a reported error instead of waiting for recovery. CRC verification means a known slot identity, not a signature or accuracy guarantee; the low-level selection call does not enforce identity checks. For runnable steps, modification points and symptom-based troubleshooting, use the [English tutorial](../../examples/face_detection/README.md).
