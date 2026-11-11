@@ -60,7 +60,7 @@ esp_err_t inspect_body(void) {
 
 修改点见 [body 示例入口](../../examples/body/main/app_main.c)。先等 READY，再用 `watcher_hw_body_light()` 发送完整请求。
 
-身体触摸事件可能包含按下、释放及协议定义的长按。当前测试设备只确认短按；SDK 不保证每种传感器/固件都产生长按。完整事件消费方式见 [body 示例](../../examples/body/README.md)，不要在不支持长按的设备上等待必然出现的 Long press。
+身体触摸目前仅支持短按，应用通过按下和释放事件响应触摸。协议保留的长按事件尚待确认，不应作为应用流程的触发条件。完整事件消费方式见 [body 示例](../../examples/body/README.md)。
 
 ## 接收触摸、连接与动作事件
 
@@ -104,6 +104,7 @@ Initialize, check READY, handle events or request an intended action, then close
 
 - The program cannot read the servos' actual angles. Command targets, ACK/DONE and reported final angles do not prove arrival or stopping. Clear the entire travel area and keep manual power disconnection available; a disconnected ESP32 cannot deliver Stop.
 - Use one application task to read events and change subscriptions. Choose queued reads or callback dispatch, not both; do not open or poll a second body connection.
+- Body touch currently supports short presses through press and release events. Support for the protocol's long-press event remains unconfirmed; do not depend on it to advance an application flow.
 - Copy event data before its callback returns. Keep callback context alive until dispatch returns, even after unsubscribe. Do not dispatch recursively or initialize/close from a callback.
 - After lost events, cancel pending actions; close/init outside callbacks, resubscribe, wait for a new READY, and require a new user action. Reconnection or an empty queue must not replay old motion.
 - Check operation and cleanup results separately. Retry failed cleanup before treating resources as released.

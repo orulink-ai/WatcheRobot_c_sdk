@@ -52,12 +52,12 @@ results. All results are in RAM and disappear on reboot: save them externally.
 | Camera | 3/2/1 photo, then five-second live view | Fresh image and changing frame count; tap photo to enlarge |
 | Speaker | Fixed CC0 voice, then one-second tone | Clear audible output, not just a progress bar |
 | Microphone | Countdown and three-second recording, then separate Replay | Raw input follows speech; replay is audible without squeal |
-| Body touch | Tap/release, then hold/release on one sensor | Press → Release → Press → Long press → Release, without motors/lights |
+| Body touch | Tap and release one sensor | Observe Press → Release; see below to exit, without motors/lights |
 | Lights | Side/Bottom: red, green, blue, dim, bright, breathing, off | Each of 14 zone/color/effect observations |
 | Motion | Separate safety confirmation for each axis and STOP test | Safe movement and a physically observed stop |
 | Together | Twenty seconds of camera, voice, alternating green zones and touch events | Components work together, with no motor or simultaneous record/play |
 
-The touch test waits for short- and long-press events. Long press depends on the sensor and firmware; for short-press-only devices, use Back and Skip to leave the item.
+Body touch currently supports short presses only; long-press support remains unconfirmed. The test still waits for a long-press event. After observing Press → Release, use Back and Skip to leave the item; a short press alone will not automatically pass this test.
 
 ### Motion result
 

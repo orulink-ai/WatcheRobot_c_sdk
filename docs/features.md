@@ -28,7 +28,7 @@ English: this map separates public application APIs, advanced PTL vision, intern
 | 机身初始化、关闭与状态查询 | [`watcher_hw_body_init`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
 | X/Y目标角度与动作时长控制 | [`watcher_hw_body_move`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
 | 请求停止动作 | [`watcher_hw_body_stop`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
-| 身体触摸按下/释放；长按取决于传感器及固件支持 | [`watcher_hw_body_next_event`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
+| 身体触摸短按：按下/释放事件 | [`watcher_hw_body_next_event`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
 | 灯光区域、RGB颜色、亮度、关闭 | [`watcher_hw_body_light`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
 | 灯光闪烁效果 | [`watcher_hw_body_light`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |
 | 灯光呼吸效果 | [`watcher_hw_body_light`](../bsp/watche_robot/watcher_hw_body/watcher_hw_body.c) | [docs/api/body.md](../docs/api/body.md) |

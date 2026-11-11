@@ -290,8 +290,8 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "0e1fd00633c897df692ddcf652953983ed2b8c4518eac1c83421371a65972990",
-      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained; Align documentation with current SDK APIs, PTL backend and tutorial entry points; Focus documentation on setup and feature use; Simplify user documentation",
+      "sha256": "f36286f9661843dcfba82c05b04677e131b7851cccc9869a608583991be14fd9",
+      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained; Align documentation with current SDK APIs, PTL backend and tutorial entry points; Focus documentation on setup and feature use; Simplify user documentation; Clarify short-press support and touch-check exit steps",
       "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
       "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
       "imported_destination": "examples/hardware_check/README.md"
