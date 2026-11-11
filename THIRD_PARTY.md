@@ -33,7 +33,11 @@ ESP-IDF 框架及 Component Manager 获取的 LVGL、cJSON、显示/触控驱动
 
 ## 素材与维护 / Assets and maintenance
 
-语音样本的 CC0 许可及来源见[素材说明](examples/common/assets/README.md)。产品图和商标的权利不随代码 Apache-2.0 许可授予。
+- 产品图：[`docs/images/product/`](docs/images/product) 中三张 JPEG 摘自或宇连接《WatcheRobot 产品手册 V1.1》，是产品渲染图，归或宇连接所有，不是 SDK 实机测试照片。产品图和商标的权利不随代码 Apache-2.0 许可授予。
+- 运动安全配图：[`hardware-check-motion-safety.png`](docs/images/hardware-check-motion-safety.png) 沿用[原公开示意图](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png)，是 LVGL 软件渲染界面，不是实物照片；本记录不额外授予素材许可。
+- 语音样本：CC0 许可及来源见[素材说明](examples/common/assets/README.md)。
+
+Product JPEGs come from Orulink's *WatcheRobot Product Manual V1.1*, are owned by Orulink, and are renders rather than device-test photographs. The motion-safety illustration is retained from the immutable public source linked above and is an LVGL software rendering, not a device photograph. Code licensing does not grant rights to product artwork or trademarks; these source records do not create a separate artwork license grant.
 
 新增或替换第三方组件时，更新本清单并保留上游地址、可追溯版本/修订、原始许可和本地适配说明；不要因根目录已有 [LICENSE](LICENSE) 而删除组件自己的许可。未列入第三方表的项目代码不因“缺少独立 license 文件”自动证明为自研；发现额外来源时继续补录。
 
