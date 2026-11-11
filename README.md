@@ -45,50 +45,17 @@ and lights into your own interactions.
 </tr>
 </table>
 
-Product renders and hardware details come from Orulink’s WatcheRobot Product Manual V1.1. Images belong to Orulink; the code’s Apache-2.0 license does not grant rights to product artwork or trademarks.
-Hardware features do not automatically imply SDK interfaces. Current SDK support is listed below.
+## Get started
 
-## Capabilities and dependencies
+The SDK is currently a development preview.
 
-Begin with [your first C application](docs/getting-started.md). See the [feature/code/documentation map](docs/features.md) and [compatibility conditions](docs/hardware-compatibility.md) for supported features and setup.
+Follow [your first C application](docs/getting-started.md) to install ESP-IDF, build and flash the display example, then change the text on screen.
 
-| Available | Capability | Controller / driver | Component | Version |
-| --- | --- | --- | --- | --- |
-| ✓ | Display | SPD2010 | [Display API](docs/api/display.md) · [First example](examples/hello_display/README.md) | 1.0.1 |
-| ✓ | Screen touch | SPD2010 | [Display/touch API](docs/api/display.md) | 0.0.1, locally adapted |
-| ✓ | UI drawing | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [UI port](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
-| ✓ | Speaker playback | ES8311 | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
-| ✓ | Microphone recording | ES7243 / ES7243E | [Audio component](components/esp_codec_dev/README.md) · [Guide](docs/api/audio.md) | 1.2.0, locally adapted |
-| ✓ | Photos and image stream | OV5647 / Himax HX6538 | [Camera interface](bsp/watche_robot/watcher_hw_camera/README.md) | Included in this source repository |
-| ✓ | Body movement | Two servos, body controller | [Movement interface](docs/api/body.md) | Included in this source repository |
-| ✓ | Body touch | TTP223 | [Touch events](docs/api/body.md) | Included in this source repository |
-| ✓ | Side and dock lights | WS2812B2020 | [Light interface](docs/api/body.md) | Included in this source repository |
-| ✓ | Model catalog and face inference | Himax PTL / WV1 | [Advanced vision](docs/api/vision.md) | Installed models and matching firmware |
+The SDK supports screen interfaces and touch, JPEG photos and streaming, PCM recording and playback, body movement, short-press touch events, lights and on-device face detection. See [hardware and firmware requirements](docs/hardware-compatibility.md) for setup, and [model installation](docs/model-deployment.md) before using face detection.
 
-The SDK components in this table are included in the repository.
-See [build requirements](examples/README.md#requirements--环境要求) for paired firmware and dependency details.
-
-## Examples
-
-| Example | What you can try | Guide |
-| --- | --- | --- |
-| First text | Minimal app_main, display initialization and LVGL locking | [hello_display](examples/hello_display/README.md) |
-| Touch-controlled lights | Touch the body to turn green lights on, release to clear them, and log touch events | [body](examples/body/README.md) |
-| Camera, audio and screen | Take photos, record and replay sound, test the speaker and use screen controls | [head](examples/head/README.md) |
-| Combined application | Combine touch-controlled lights with camera, sound and screen controls | [robot](examples/robot/README.md) |
-| Hardware check | Follow screen prompts to inspect the screen, sound, touch, lights and movement | [hardware_check](examples/hardware_check/README.md) |
-| Face detection | Catalog, identity check and face count; stops after 60 seconds | [face_detection](examples/face_detection/README.md) |
-
-## Development documentation
-
-Use **ESP-IDF 6.0.2 / ESP32-S3** and **LVGL 8.4.0** for the screen interface.
-
-- [First-run tutorial](docs/getting-started.md): set up the environment, build, flash and change the first text.
-- [Find an interface by task](docs/api/README.md): movement, lights, touch, camera, audio and screen.
-- [Contributing](CONTRIBUTING.md): submitting changes and running checks.
-
-This is a development preview. First flashing replaces the application and partitions; back up data you need.
-Read [movement precautions](docs/api/body.md#motion-safety-english) before enabling motion.
+- [Feature guide](docs/features.md): find the API entry and documentation for a feature.
+- [Examples](examples/README.md): choose a runnable project for display, media, lights or vision.
+- [Contributing](CONTRIBUTING.md): build checks and submission guidelines for SDK changes.
 
 ## License
 

@@ -2,20 +2,13 @@ English | [简体中文](README_zh.md)
 
 # Check the robot's hardware, one item at a time
 
-For someone with a real board who wants to check its screen, camera, sound,
-touch, lights and motion. The `hardware_check` example guides you through **8 groups,
-26 manual observations**. It needs no Python SDK, Daemon, server, SD card, model or
-private repository. It is not factory certification or an emergency-stop device.
+The `hardware_check` example guides you through screen, camera, audio, touch, light and motion checks using the touchscreen. It runs locally on the robot.
 
 ## 1. Prepare safely
 
 Connect and power the head and body. See [first run](../../docs/getting-started.md) for environment setup. Flash this example through the ESP32 SERIAL-B port.
 
-Before choosing a motion item, read [motion safety](../../docs/api/body.md#motion-safety-english): the application
-**cannot read the angle a servo actually reaches**. Clear the **entire travel** and keep manual power
-disconnection available. The first command is **X90/Y120**, followed by **X93/Y120**
-or **X90/Y123**. With an unknown start position, the first move can be large; this
-is not homing or calibration, and a three-degree command is not measured travel.
+Before choosing a motion item, read [motion safety](../../docs/api/body.md#motion-safety-english). The test first requests **X90/Y120**, followed by **X93/Y120** or **X90/Y123**. The initial move can be large from an unknown starting position.
 
 ## 2. Build and start
 
@@ -67,12 +60,7 @@ Natural completion counts as an issue in the stop test. Motion errors lock body
 controls until reboot. Disconnection prevents STOP delivery, so paired STM32 safety
 is required. Reboot is not proof that the cause of a fault has been removed.
 
-The application cannot measure actual servo angles. See [motion safety](../../docs/api/body.md#motion-safety-english).
-
-![Software-rendered motion safety page showing reference pose, whole-travel warning and no position sensor](../../docs/images/hardware-check-motion-safety.png)
-Illustration retained from the [original public artwork](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png); not a device photograph.
-
-This LVGL (screen graphics library) host-rendered illustration is not a robot photograph.
+![Motion safety screen](../../docs/images/hardware-check-motion-safety.png)
 
 ### Sound and cancellation
 
@@ -87,9 +75,7 @@ Photos and recordings stay in RAM. Fixed voice is a licensed flash asset:
 
 **Stop**: tap once and wait for cleanup. Repeated taps cannot bypass it. If a
 function is disabled after cleanup fails, do not force it to continue; other ready
-functions may still be used. Software stop does not mean physical stop: for motion,
-observe the mechanism and disconnect power manually if unsafe. Do not automatically
-retry an old motion; any new movement requires a new user action. For implementation
+functions may still be used. Before retrying motion, follow [motion safety](../../docs/api/body.md#motion-safety-english). For implementation
 rules, see the [body](../../docs/api/body.md), [camera](../../docs/api/camera.md), [audio](../../docs/api/audio.md)
 and [display](../../docs/api/display.md) API guides.
 
@@ -117,17 +103,8 @@ Review logs for device identifiers/private images before sharing.
 
 Manual monitor commands: `diag status`, `diag photo`, `diag stream`, `diag record`,
 `diag cancel`, `diag reset`, `diag snapshot`. No serial motor/light/speaker commands
-are provided. `diag reset` does not clear a body fault lock. The RGB565 snapshot
-(a software image) cannot prove touch, sound or motion.
+are provided. `diag reset` does not clear a body fault lock. `diag snapshot` exports the current UI as an RGB565 image.
 
-## 5. Save the result
+## 5. Report a problem
 
-Save a text file or spreadsheet before reboot. Use one row per item:
-
-```text
-Item | Pass/Issue/Untested | What actually happened
-Body touch | Pass | Press and release events appeared for the tested sensor
-X-axis motion | Untested | Safe space for the entire travel was not available
-```
-
-Results are held in memory and cleared on reboot. To report a problem, include the affected item, steps and error log.
+Include the affected item, steps and error log. Results are held in memory and cleared on reboot.

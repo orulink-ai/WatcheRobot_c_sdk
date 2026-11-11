@@ -1,15 +1,13 @@
 # 在电脑上测试体检界面
 
 运行这些测试可以检查体检界面的布局、触摸操作和软件绘制结果，不需要连接机器人或安装 ESP-IDF。
-输出是电脑渲染的图片，**不能证明实机屏幕、触摸或其他硬件通过**。
 
 测试使用真实 LVGL 8.4.0，编译当前界面代码；仅替代电脑上不存在的 ESP 内存、显示锁、输入队列和图片释放接口。
-它不是完整机器人模拟器，也不使用 SDL 或真实屏幕驱动。
 
 ## 在独立 C SDK 仓库运行
 
 先安装 Git、CMake 3.20+ 和可用 C/C++ 编译器（Windows 使用已配置 MSVC 的开发者终端）。
-以下仅运行电脑端软件测试，不需要 ESP-IDF、不连接设备。若已有真实 LVGL 8.4.0 源码，
+若已有 LVGL 8.4.0 源码，
 可在本目录执行下列命令；将占位符替换为源码绝对路径，含空格时保留引号：
 
 ```text
@@ -20,12 +18,11 @@ ctest --test-dir build -C Release --output-on-failure --no-tests=error
 
 单配置生成器还应在 configure 时传 `-DCMAKE_BUILD_TYPE=Release`；Windows 可显式传 `-G "Visual Studio 17 2022" -A x64`。
 
-固件 `main/idf_component.yml` / `dependencies.lock` 使用 **LVGL 8.4.0**。工程严格要求真实 8.4.0；配置时读取版本头，运行时也断言版本，提供其他版本会明确失败，不修改/伪造库版本。
+固件 `main/idf_component.yml` / `dependencies.lock` 使用 **LVGL 8.4.0**，主机测试也使用该版本。
 
 没有 LVGL 源码时，在 **WatcheRobot_c_sdk 仓库根目录**执行下列准备和回归命令。
 依赖放在相邻目录，避免混入提交；示例目标目录必须尚不存在，否则先检查原目录而非覆盖。
-`$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用。固定 SHA 对应 LVGL 8.4.0，
-不是浮动分支。以下是本地执行方式；CI 文件存在不代表远端已运行，具体结果见 PR Checks 与 [测试证据](../../../../CONTRIBUTING.md#checks--修改后检查)：
+`$PWD` 写法在 PowerShell 与 macOS/Linux Shell 均可使用。以下提交对应 LVGL 8.4.0；完整检查说明见[贡献指南](../../../../CONTRIBUTING.md#checks--修改后检查)。
 
 ```text
 git clone --no-checkout https://github.com/lvgl/lvgl.git ../WatcheRobot-c-sdk-lvgl
@@ -35,11 +32,9 @@ cmake --build ../WatcheRobot-c-sdk-host-build-release --config Release --target 
 ctest --test-dir ../WatcheRobot-c-sdk-host-build-release -C Release --output-on-failure --no-tests=error
 ```
 
-预期 configure 显示真实 LVGL 8.4.0，构建产生 `check_view_tests`，CTest 运行 22 项并报告
-0 失败；实际失败需保留，不以历史数字代替本次执行。每条命令成功后再执行下一条。
+构建产生 `check_view_tests`，CTest 应报告 0 失败。每条命令成功后再执行下一条。
 可归档构建目录中的 `snapshots/*.ppm` 与 `Testing/Temporary/LastTest.log`。
 Debug 验证使用单独的 `../WatcheRobot-c-sdk-host-build-debug` 目录，并将配置值改为 Debug。
-不依赖 ESP-IDF、不运行固件 build/flash；输出为电脑软件渲染，不是实机证明。
 
 `lv_conf.h` 开启 RGB565、snapshot 和 Montserrat 14/16/18/20/24/48。所有测试源通过 `#ifdef NDEBUG / #error` 防止断言失效；MSVC 用 `/UNDEBUG`，其他编译器用 `-UNDEBUG`，Release 同样执行断言。新增测试和 mock 目标使用 `/W4 /WX`（其他编译器 `-Wall -Wextra -Werror`）；生产代码与 LVGL 是独立依赖目标，保留警告而不要求上游库零警告。注意字体名的 px 大小不等于其 `line_height`（18px 的行高实际为 21）。
 
@@ -71,4 +66,4 @@ Debug 验证使用单独的 `../WatcheRobot-c-sdk-host-build-debug` 目录，并
 
 ## 软件截图
 
-`HOST_WRITE_PPM=ON` 时测试程序直接写 `build/snapshots/<scenario>.ppm`，失败也会保存当时画面。也可运行 `build/Release/check_view_tests photo --ppm <文件路径>`（单配置生成器的程序在 build 根目录）。仅为 LVGL 软件渲染证据，**不是 LCD 实机证明**。构建产物和 PPM 均在本目录忽略，不提交。
+`HOST_WRITE_PPM=ON` 时测试程序直接写 `build/snapshots/<scenario>.ppm`，失败也会保存当时画面。也可运行 `build/Release/check_view_tests photo --ppm <文件路径>`（单配置生成器的程序在 build 根目录）。构建产物和 PPM 均在本目录忽略，不提交。

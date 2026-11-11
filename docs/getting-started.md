@@ -34,7 +34,7 @@ Close competing serial tools, attach only the intended device, then run:
 python -m serial.tools.list_ports -v
 ```
 
-Choose **CH342 SERIAL-B (ESP32)**, not SERIAL-A (Himax); do not infer roles from COM numbers. Replace `PORT` with your actual port, such as `COM49` or a listed Unix device path.
+Choose **CH342 SERIAL-B (ESP32)**, not SERIAL-A (Himax); do not infer roles from COM numbers. Replace `PORT` with the Windows COM port or Unix device path listed for your device.
 
 Flashing writes the example's bootloader, partition table and application. It replaces the installed application and may overwrite configuration; back up data you need first. See [backup and recovery](hardware-compatibility.md#备份与分区检查).
 
@@ -60,15 +60,7 @@ Change the string in [`main/app_main.c`](../examples/hello_display/main/app_main
 
 ## 6. Add a feature
 
-| Task | Guide | Runnable example |
-| --- | --- | --- |
-| Screen, buttons, touch | [Display](api/display.md) | [hello_display](../examples/hello_display/README.md), [head](../examples/head/README.md) |
-| Photos and JPEG stream | [Camera](api/camera.md) | [head](../examples/head/README.md) |
-| PCM recording/playback | [Audio](api/audio.md) | [head](../examples/head/README.md) |
-| Body touch, lights, motion | [Body](api/body.md) | [body](../examples/body/README.md), [hardware_check](../examples/hardware_check/README.md) |
-| Model catalog and faces | [Advanced PTL vision](api/vision.md) | [face_detection](../examples/face_detection/README.md) |
-
-See the [feature/code/documentation map](features.md). Keep one lifecycle owner per resource, check initialization errors, and do not initialize hardware alongside an existing demo using it.
+Find the API you need in the [feature guide](features.md), or choose a complete project from [examples](../examples/README.md). Keep one lifecycle owner per resource, check initialization errors, and do not initialize hardware alongside an existing demo using it.
 
 ## Troubleshooting
 

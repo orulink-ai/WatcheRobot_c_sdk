@@ -55,8 +55,8 @@
       "source": "examples/hardware_sdk/common/assets/README.md",
       "destination": "examples/common/assets/README.md",
       "source_sha256": "2f422d18859794890f78e32fd8dced13a9089fa2385d47ca18159bcded2ac724",
-      "sha256": "e5161be212621997210dc2bc72871d0b1a41893c839e5afabf067e40915adaa1",
-      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved",
+      "sha256": "16a982cc9a0482b1e434db3fa2eb073904071b17f84664b7b540fc53f2e6cecc",
+      "transform": "public documentation rewritten for first-time developers; original upstream/import evidence preserved; Focus documentation on usage and remove audit commentary",
       "imported_sha256": "2f422d18859794890f78e32fd8dced13a9089fa2385d47ca18159bcded2ac724",
       "imported_transform": null
     },
@@ -290,8 +290,8 @@
       "source": "examples/hardware_sdk/hardware_check/README.md",
       "destination": "examples/hardware_check/README.md",
       "source_sha256": "d9ca9fbf1d6379fdafceeb623e9f67f22c78a0d899b6d094c095c09d82fcf798",
-      "sha256": "f36286f9661843dcfba82c05b04677e131b7851cccc9869a608583991be14fd9",
-      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained; Align documentation with current SDK APIs, PTL backend and tutorial entry points; Focus documentation on setup and feature use; Simplify user documentation; Clarify short-press support and touch-check exit steps",
+      "sha256": "65b53d90ae7a426fd83f97747a9690b3d77ccdd54c453be39b078afdf22fa2e3",
+      "transform": "component-scoped documentation and current SDK navigation; original upstream identity and hashes retained; Align documentation with current SDK APIs, PTL backend and tutorial entry points; Focus documentation on setup and feature use; Simplify user documentation; Clarify short-press support and touch-check exit steps; Focus documentation on usage and remove audit commentary",
       "imported_sha256": "a02858fb2faa69dd2c92cfaeeece425315b74c0ec0c1d17eca5de3002422caa8",
       "imported_transform": "replace stale feedback-dependent upstream instructions with bilingual public guides",
       "imported_destination": "examples/hardware_check/README.md"
@@ -405,8 +405,8 @@
       "source": "examples/hardware_sdk/hardware_check/test_support/host/README.md",
       "destination": "examples/hardware_check/test_support/host/README.md",
       "source_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
-      "sha256": "ef54f078dbfe5adf3a7a2b7ff79a7a68b6d6074b6571e2285363ac79f2f49d9c",
-      "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved",
+      "sha256": "5e984a04910cf5a061eed54549a396f267ad45f7fc546a1c9c58fb8ec62bd1ea",
+      "transform": "documentation navigation consolidated; original evidence and upstream source hashes preserved; Focus documentation on usage and remove audit commentary",
       "imported_sha256": "9bde3865a68daec218fb38ba9b9b7b1aea4b269a8f8cac902f776b5052af87fe",
       "imported_transform": null,
       "imported_destination": "examples/hardware_check/test_support/host/README.md"

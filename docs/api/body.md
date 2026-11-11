@@ -2,7 +2,7 @@
 
 需要发送转动指令、设置机身灯光，或接收触摸和连接变化时，使用这一组接口。SDK 统一负责与机身控制芯片通信，应用不必自己收发消息。
 
-**当前硬件无法实测舵机角度。** 软件收到“已接收”或“已完成”，也不能证明机器人已经到位或停稳。
+调用运动接口前，先阅读[运动注意事项](#motion-safety)。
 
 最短流程：初始化 → 检查是否就绪 → 根据当前用户操作处理事件、设置灯光或发送运动指令 → 关闭。下面只查看状态，不演示转动；初始化返回后可能仍在连接中。
 
@@ -38,14 +38,11 @@ esp_err_t inspect_body(void) {
 
 示例记录操作和清理两个结果，返回值优先保留操作错误。真实应用还必须处理清理失败（例如重试关闭），不能记录后就把资源交给别的使用者。
 
-## 发送指令前：不要把指令角度当作实测角度
+## 转动、灯光与触摸
 
-`watcher_hw_body_move(x_degrees, y_degrees, duration_ms, &sequence)` 接受 X 0–180°、Y 100–140°、时长 1–65535 ms。这些是接口允许发送的范围，不是机器人实际位置的测量结果，也不保证整个行程都没有障碍。返回的 `sequence` 只用于关联这条指令，不代表动作已经完成。
+`watcher_hw_body_move(x_degrees, y_degrees, duration_ms, &sequence)` 接受 X 0–180°、Y 100–140°、时长 1–65535 ms。返回的 `sequence` 用于关联指令及后续事件。
 
-- 当前硬件不支持实际角度测量，SDK 不提供位置查询或位置反馈事件。
-- 例如 X90/Y120 只是一个目标：机器人如果正停在另一端，移到这里仍可能走很远，不能把它当作无风险“回中”。不要为了验证初始化就发送演示动作。
-- `ACK` 表示对端对指令的应答，`DONE` 表示对端报告这条指令结束；两者以及报告中的最终角度都不是角度传感器实测，**不证明已经到位或停止**。运动事件里的角度字段以 0.1° 为单位。
-- 确保整个可能运动的区域内没有人手、线缆或障碍，并始终保留人工断电手段。与控制芯片断连后，软件停止指令无法送到；`watcher_hw_body_stop()` 成功也不等于物理急停。
+`ACK` 表示对端应答，`DONE` 表示对端报告指令结束；事件中的角度字段以 0.1° 为单位。实际位置反馈和 STOP 的使用边界见[运动注意事项](#motion-safety)。
 
 `watcher_hw_body_light(const mcu_led_request_t *)` 设置灯光；颜色分量与亮度是 0–255。区域、模式、效果及请求字段见[灯光接口头文件](../../components/mcu_led_service/include/mcu_led_service.h)。这些请求仍经过同一个机身连接，不要另外启动底层通信。
 
@@ -102,7 +99,7 @@ SDK 把事件按到达顺序暂存，应用选择一种方式取出：
 Send movement and light requests, and read touch or connection events. The SDK manages the connection to the body controller.
 Initialize, check READY, handle events or request an intended action, then close. Initialization may still be connecting when it returns.
 
-- The program cannot read the servos' actual angles. Command targets, ACK/DONE and reported final angles do not prove arrival or stopping. Clear the entire travel area and keep manual power disconnection available; a disconnected ESP32 cannot deliver Stop.
+- Read [motion precautions](#motion-safety-english) before sending movement requests.
 - Use one application task to read events and change subscriptions. Choose queued reads or callback dispatch, not both; do not open or poll a second body connection.
 - Body touch currently supports short presses through press and release events. Support for the protocol's long-press event remains unconfirmed; do not depend on it to advance an application flow.
 - Copy event data before its callback returns. Keep callback context alive until dispatch returns, even after unsubscribe. Do not dispatch recursively or initialize/close from a callback.
@@ -130,4 +127,4 @@ Servos have no actual-position feedback. Target angles, ACK and DONE are not mea
 
 Try individual X, Y and STOP operations with [hardware_check](../../examples/hardware_check/README.md).
 
-Lighting uses OFF/STATIC/EFFECT modes and ALL/SIDE/BOTTOM zones. Primary RGB and brightness are 0–255; EFFECT requires a nonzero period. The sender does not encode secondary_* or repeat_count. Long-press events depend on the sensor and paired firmware.
+Lighting uses OFF/STATIC/EFFECT modes and ALL/SIDE/BOTTOM zones. Primary RGB and brightness are 0–255; EFFECT requires a nonzero period. The sender does not encode secondary_* or repeat_count.

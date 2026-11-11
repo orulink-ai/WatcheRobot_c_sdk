@@ -42,7 +42,7 @@ For a guided hardware walkthrough, use [hardware_check](../hardware_check/README
 ## Troubleshooting / 故障处理
 
 If something fails, check the error log, power, connections and matching firmware.
-查看错误日志，先查供电、连接与固件配套；没有图片或声音不能通过。
+查看错误日志，检查供电、连接与固件配套。
 The demo does not automatically retry or support shutdown while running; do not start a second instance.
 本示例不自动重试，也不支持运行中关闭；不要启动另一个实例控制相同硬件。
 When modifying it, use one coordinating task for camera operations and one owner task for all audio calls;

@@ -40,7 +40,7 @@ idf.py -C examples/hello_display build
 python -m serial.tools.list_ports -v
 ```
 
-选择 **CH342 SERIAL-B（ESP32）**，不是 SERIAL-A（Himax），不按 COM 号码大小判断。下文 `PORT` 必须替换成实际端口，例如 `COM49` 或系统列出的 Unix 设备路径。
+选择 **CH342 SERIAL-B（ESP32）**，不是 SERIAL-A（Himax），不按 COM 号码大小判断。下文 `PORT` 必须替换成系统列出的 Windows COM 端口或 Unix 设备路径。
 
 首次烧录会写入示例的引导程序、分区表和应用，替换原应用并可能覆盖原配置。需要保留的数据请先备份；备份与恢复见[烧录说明](hardware-compatibility.md#备份与分区检查)。
 
@@ -66,15 +66,7 @@ idf.py -C examples/hello_display -p PORT -b 460800 flash monitor
 
 ## 6. 按功能继续
 
-| 目标 | 调用说明 | 可运行示例 |
-| --- | --- | --- |
-| 屏幕、按钮、触摸 | [显示](api/display.md) | [hello_display](../examples/hello_display/README.md)、[head](../examples/head/README.md) |
-| 拍照、连续 JPEG | [相机](api/camera.md) | [head](../examples/head/README.md) |
-| 录音、播放 PCM | [音频](api/audio.md) | [head](../examples/head/README.md) |
-| 身体触摸、灯光、运动 | [身体](api/body.md) | [body](../examples/body/README.md)、[hardware_check](../examples/hardware_check/README_zh.md) |
-| 模型目录、人脸检测 | [PTL 视觉进阶接口](api/vision.md) | [face_detection](../examples/face_detection/README_zh.md) |
-
-完整范围见[功能—代码—文档对照](features.md)。同一硬件由一个管理任务负责生命周期，初始化失败后不继续调用功能；不要让综合演示和自己的代码同时初始化同一硬件。
+在[功能指南](features.md)中查找要添加的接口，或从[示例目录](../examples/README.md)选择完整工程。同一硬件由一个管理任务负责生命周期，初始化失败后不继续调用功能；不要让综合演示和自己的代码同时初始化同一硬件。
 
 ## 常见问题
 

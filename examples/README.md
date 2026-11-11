@@ -1,7 +1,7 @@
 # Examples / 示例
 
 Choose what you want to try. Each project can be built independently.
-按功能选择，每个工程都能独立构建。接口调用见[中文使用指南](../docs/getting-started_zh.md) / [API usage](../docs/getting-started.md)。
+按功能选择，每个工程都能独立构建。接口调用见[功能指南 / Feature guide](../docs/features.md)。
 
 | I want to… / 我想…… | Project / 工程 |
 | --- | --- |
@@ -56,8 +56,8 @@ idf.py -C examples/body -p PORT flash monitor
 
 Press Ctrl+] to leave the monitor. For setup and recovery, see [first run](../docs/getting-started.md) / [上手教程](../docs/getting-started_zh.md).
 
-Before moving, clear the full travel area and keep power disconnection available. Servos have no actual-position feedback; software STOP cannot replace an emergency power cut. See [motion safety](../docs/api/body.md#motion-safety-english).
-运动前清空完整行程并保留人工断电手段。舵机没有实际位置反馈，软件 STOP 不代替断电急停；详见[运动注意事项](../docs/api/body.md#motion-safety)。
+Before enabling movement, read [motion safety](../docs/api/body.md#motion-safety-english).
+启用运动前，阅读[运动注意事项](../docs/api/body.md#motion-safety)。
 
 ## Shared code and further reading / 共享代码与参考
 

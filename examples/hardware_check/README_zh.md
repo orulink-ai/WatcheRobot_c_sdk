@@ -2,17 +2,13 @@
 
 # 逐项检查机器人的硬件
 
-本页供持有实物板卡、希望检查屏幕、相机、声音、触摸、灯光和运动的人使用。
-`hardware_check` 示例引导完成 **8 组、26 项人工观察**，不需要 Python SDK、Daemon、
-服务端、SD 卡、模型或私库。它不是工厂认证或急停设备。
+`hardware_check` 示例通过触摸屏引导检查屏幕、相机、声音、触摸、灯光和运动，直接在机器人上运行。
 
 ## 1. 做好安全准备
 
 准备已连接并供电的头部和身体，环境安装见[上手教程](../../docs/getting-started_zh.md)。本示例烧录到 ESP32 的 SERIAL-B 端口。
 
-选择运动项前阅读[运动安全](../../docs/api/body.md#motion-safety)：应用**不能读取舵机实际转到的角度**。
-清空**完整行程**，保证能人工断电。先命令 **X90/Y120**，再 **X93/Y120** 或 **X90/Y123**。
-起点未知，首次移动可能很大；不是归零或校准，三度命令差也不是实测位移。
+选择运动项前阅读[运动安全](../../docs/api/body.md#motion-safety)。测试先发送 **X90/Y120**，再发送 **X93/Y120** 或 **X90/Y123**；起点未知时，首次移动可能较大。
 
 ## 2. 构建并启动
 
@@ -58,12 +54,7 @@ PORT 替换为 ESP32 的 SERIAL-B 端口。首次烧录会替换应用和分区�
 仍须看见实物停住。停止测试若自然完成，应记问题。运动错误锁定身体控制直到重启；
 断线无法送达 STOP，必须依赖配套 STM32 安全机制。重启不代表故障原因已经消除。
 
-舵机没有实际位置查询；运动说明见[运动安全](../../docs/api/body.md#motion-safety)。
-
-![软件渲染的运动安全页：参考姿态、完整行程警告和无位置传感器说明](../../docs/images/hardware-check-motion-safety.png)
-配图沿用[原公开示意图](https://github.com/orulink-ai/WatcheRobot-public/blob/eb78c212999374c9afd48de9c160c73991e646ae/docs/images/embedded-sdk/hardware-check-motion-safety.png)，不是实物照片。
-
-上图由 LVGL（屏幕绘图库）在电脑上渲染，不是机器人实拍。
+![运动安全提示界面](../../docs/images/hardware-check-motion-safety.png)
 
 ### 声音与取消操作
 
@@ -75,8 +66,7 @@ Voice／Record／Replay 先进入 **Audio setup**。输出 0–95，默认 90，
 照片与录音只在内存。固定语音是闪存内的许可素材，见[素材来源与许可](../common/assets/README.md)。
 
 **Stop** 点一次后等待清理完成，连点不能跳过等待。清理失败后若功能被禁用，不要强行继续；
-其他已就绪功能仍可使用。软件停止不等于实物已停：运动时须亲眼确认机械停止，有危险人工断电。
-不要自动重试旧运动；重新动作必须由新的用户操作发起。修改实现时，另读
+其他已就绪功能仍可使用。重新尝试运动前，按[运动安全](../../docs/api/body.md#motion-safety)处理。修改实现时，另读
 [身体](../../docs/api/body.md)、[相机](../../docs/api/camera.md)、[音频](../../docs/api/audio.md)和[屏幕](../../docs/api/display.md) API 的使用规则。
 
 ## 4. 可选静默串口检查
@@ -100,16 +90,8 @@ bash examples/hardware_check/verify.sh --port <PORT>
 
 monitor 手动命令：`diag status`、`diag photo`、`diag stream`、`diag record`、
 `diag cancel`、`diag reset`、`diag snapshot`。没有串口电机／灯／扬声器命令。
-`diag reset` 不清除身体故障锁；RGB565 截图只是软件图像，不证明真实触摸、声音或运动。
+`diag reset` 不清除身体故障锁；`diag snapshot` 将当前界面导出为 RGB565 图像。
 
-## 5. 保存结论
+## 5. 反馈问题
 
-重启前保存为文本或表格，每项一行：
-
-```text
-项目｜通过/问题/未测｜实际现象
-身体触摸｜通过｜所测传感器的按下、释放事件均出现
-X 轴运动｜未测｜未能清空整个运动行程
-```
-
-结果保存在内存中，重启会清除。需要反馈问题时，附上发生问题的项目、操作步骤和错误日志即可。
+附上发生问题的项目、操作步骤和错误日志。结果保存在内存中，重启会清除。

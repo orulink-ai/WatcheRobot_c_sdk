@@ -44,48 +44,17 @@ WatcheRobot（小沃）是一款面向开发者和创作者的 AI 桌面机器�
 </tr>
 </table>
 
-产品图与硬件信息摘自或宇连接《WatcheRobot 产品手册 V1.1》；图片为渲染图，归或宇连接所有，代码的 Apache-2.0 许可不授予图片或商标使用权。硬件具有的能力不等于本 SDK 已提供对应接口，当前支持范围见下表。
+## 开始使用
 
-## 功能与依赖
+SDK 当前为开发预览。
 
-第一次使用从[源码到首次运行](docs/getting-started_zh.md)开始。完整的功能、代码入口和文档位置见[功能对照表](docs/features.md)和[配套条件](docs/hardware-compatibility.md)。
+按照[首次运行教程](docs/getting-started_zh.md)安装 ESP-IDF，构建并烧录显示示例，再修改屏幕上的文字。
 
-| 支持 | 功能 | 控制芯片或驱动 | 组件 | 版本 |
-| --- | --- | --- | --- | --- |
-| ✓ | 屏幕显示 | SPD2010 | [显示 API](docs/api/display.md) · [最小示例](examples/hello_display/README.md) | 1.0.1 |
-| ✓ | 屏幕触摸 | SPD2010 | [显示与触摸 API](docs/api/display.md) | 0.0.1，含本地适配 |
-| ✓ | 界面绘制 | LVGL | [LVGL](https://components.espressif.com/components/lvgl/lvgl/versions/8.4.0/readme) · [界面适配](components/esp_lvgl_port/README.md) | 8.4.0 / 1.4.0-custom.1 |
-| ✓ | 扬声器播放 | ES8311 | [音频组件](components/esp_codec_dev/README.md) · [使用指南](docs/api/audio.md) | 1.2.0，含本地适配 |
-| ✓ | 麦克风录音 | ES7243 / ES7243E | [音频组件](components/esp_codec_dev/README.md) · [使用指南](docs/api/audio.md) | 1.2.0，含本地适配 |
-| ✓ | 拍照与连续画面 | OV5647 / Himax HX6538 | [摄像接口](bsp/watche_robot/watcher_hw_camera/README.md) | 随本仓库源码提供 |
-| ✓ | 身体转动 | 双舵机、机身控制芯片 | [运动接口](docs/api/body.md) | 随本仓库源码提供 |
-| ✓ | 身体触摸 | TTP223 | [触摸事件](docs/api/body.md) | 随本仓库源码提供 |
-| ✓ | 侧边与底座灯光 | WS2812B2020 | [灯光接口](docs/api/body.md) | 随本仓库源码提供 |
-| ✓ | 模型目录与人脸推理 | Himax PTL / WV1 | [视觉进阶接口](docs/api/vision.md) | 已安装模型，匹配固件 |
+SDK 支持屏幕界面与触摸、JPEG 拍照与连续取图、PCM 录音与播放、身体转动、身体短按事件、灯光及端侧人脸检测。运行前查看[硬件与配套固件要求](docs/hardware-compatibility.md)；人脸检测还需[安装配套模型](docs/model-deployment.md)。
 
-表内 SDK 组件随本仓库源码提供。
-配套固件与完整依赖说明见[构建要求](examples/README.md#requirements--环境要求)。
-
-## 示例
-
-| 示例 | 可以体验什么 | 使用说明 |
-| --- | --- | --- |
-| 第一行文字 | 最小 app_main、显示初始化和 LVGL 锁 | [hello_display](examples/hello_display/README.md) |
-| 触摸灯光 | 触摸身体亮绿灯，松手后熄灭；记录触摸事件 | [body](examples/body/README.md) |
-| 拍照、录音与屏幕 | 拍照、录音回放、扬声器测试和屏幕操作 | [head](examples/head/README.md) |
-| 组合应用 | 将触摸灯光与拍照、声音、屏幕操作组合 | [robot](examples/robot/README.md) |
-| 硬件体检 | 按屏幕提示逐项检查屏幕、声音、触摸、灯光和运动 | [hardware_check](examples/hardware_check/README_zh.md) |
-| 人脸检测 | 读取目录、核验模型、显示人脸数，60 秒后停止 | [face_detection](examples/face_detection/README_zh.md) |
-
-## 开发文档
-
-开发环境为 **ESP-IDF 6.0.2 / ESP32-S3**，屏幕界面使用 **LVGL 8.4.0**。
-
-- [首次运行教程](docs/getting-started_zh.md)：准备环境、构建烧录、显示并修改第一行文字。
-- [按功能查接口](docs/api/README.md)：运动、灯光、触摸、拍照、声音与屏幕。
-- [贡献指南](CONTRIBUTING.md)：提交修改与运行检查。
-
-当前为开发预览。首次烧录会替换设备应用和分区，需保留的数据请先备份；运动控制请阅读[运动注意事项](docs/api/body.md#motion-safety)。
+- [功能指南](docs/features.md)：按功能查找调用入口和使用文档。
+- [示例目录](examples/README.md)：选择显示、声音、灯光或视觉等可运行工程。
+- [贡献指南](CONTRIBUTING.md)：修改 SDK 时的构建检查和提交规范。
 
 ## 许可
 

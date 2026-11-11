@@ -18,8 +18,8 @@ For changes to the SDK itself; application users should start with the [examples
 | --- | --- |
 | Root README files | Product overview, support boundaries and first-run links / 产品及入口 |
 | `docs/getting-started*.md` | One continuous source-to-device tutorial / 完整上手步骤 |
-| `docs/features.md` | Feature → source → documentation map, including missing tutorials / 功能对照 |
-| `docs/hardware-compatibility.md` | Hardware/firmware conditions, layout and validation limits / 配套条件 |
+| `docs/features.md` | User-facing feature → API → guide map / 面向应用开发的功能与调用入口 |
+| `docs/hardware-compatibility.md` | Hardware/firmware requirements, backup and recovery / 配套条件与恢复 |
 | `docs/model-deployment.md` | Model acquisition, package selection and provisioning procedure / 模型获取与安装流程 |
 | `docs/api/` | Parameters, lifecycle, errors and advanced vision / 功能调用契约 |
 | `examples/<name>/README.md` | Build, expected behavior and modification points for that application / 示例说明 |
@@ -31,6 +31,9 @@ Keep raw logs, backups, review reports and transient plans outside the source tr
 
 Keep product release versions, versioned asset URLs, image hashes and dated verification results in release manifests and validation records. General tutorials focus on prerequisites, commands, expected results and common errors, linking to compatible releases. Leave integrity checks to the tools; do not make users manually audit manifests, hashes or CRCs as routine setup. Build dependencies remain defined by manifests and lock files.
 通用教程围绕准备、操作、预期结果和常见问题编写，链接到适用的发布入口。产品版本、镜像哈希和单次测试结果留在发布清单与验证记录中；文件校验由工具完成，不把手工检查清单、哈希和 CRC 作为日常上手步骤。构建依赖以工程声明和锁文件为准。
+
+Keep artwork provenance out of tutorial prose and preserve applicable licenses and attribution in their dedicated files. Maintain general motion precautions in one section and link to it near relevant operations.
+配图来源说明不混入教程正文，许可与署名保留在对应文件。通用运动注意事项集中维护，在相关操作处链接引用。
 
 ## Checks / 修改后检查
 

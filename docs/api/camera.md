@@ -38,7 +38,7 @@ esp_err_t capture_once(void) {
 
 摄像头有独立的 Himax 处理芯片。两边必须按相同的图像传输规则发送和接收数据；这里把这套配套规则称为 **PTL 协议**。协议只是双方理解消息格式的约定，不是额外的拍照功能。
 
-启用 `CONFIG_WATCHER_CAMERA_BACKEND_PTL=y`，并确认外部 Himax 固件与当前代码匹配。公开接口只支持这一条摄像头通路，不能因源码中还有其他实现就认为可直接替换。采用 head 示例配套配置、八线 PSRAM 和依赖清单；编译成功不能证明摄像头固件匹配，固件文件名或 HELLO 消息也不能替代实际成像检查。
+启用 `CONFIG_WATCHER_CAMERA_BACKEND_PTL=y`，并确认外部 Himax 固件与当前代码匹配。公开接口使用 PTL 通路。采用 head 示例配套配置、八线 PSRAM 和依赖清单；首次使用可运行 [head 示例](../../examples/head/README.md)查看照片与实时画面。
 
 ## 图像何时可以使用
 
