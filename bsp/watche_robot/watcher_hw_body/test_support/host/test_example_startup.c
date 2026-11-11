@@ -76,7 +76,8 @@ int main(int argc, char **argv) {
     _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
 #endif
     assert(argc == 2);
-    const char *expected;
+    /* Retain the expected call order across the test's setjmp/longjmp boundary. */
+    const char *volatile expected;
     if (strcmp(argv[1], "init_failure") == 0) {
         init_result = ESP_FAIL;
         expected = "I"; /* init owns its failure cleanup; do not close a foreign runtime. */
